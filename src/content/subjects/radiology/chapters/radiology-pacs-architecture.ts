@@ -21,6 +21,7 @@ export const radiologyPacsArchitectureChapter: Chapter = {
     'Vendor Lock-in',
     'Client-Server',
   ],
+  simulationIds: ['realistic-radiology-3d'],
   objectives: [
     'อธิบายลำดับวิวัฒนาการของระบบ PACS ตั้งแต่ยุคบุกเบิก ค.ศ. 1972 โครงการกลาโหม 1983 จนถึง Enterprise PACS ในปัจจุบัน',
     'ระบุเกณฑ์มาตรฐาน 4 ข้อในการพิจารณา "PACS ขนาดใหญ่" พร้อมคำนวณภาระงาน (Workload) ของโรงพยาบาล',
@@ -29,6 +30,7 @@ export const radiologyPacsArchitectureChapter: Chapter = {
     'วิเคราะห์ข้อดี-ข้อด้อยของ 3 สถาปัตยกรรมโครงสร้างพื้นฐาน: Standalone (Thick Client), Client/Server (Thin Client), และ Web-based Model',
     'อธิบายข้อกำหนดทางเทคนิคของระบบจัดเก็บ 3 Tiers, ข้อจำกัดของ Lossy Compression (10:1 ใน CXR เฉพาะ Long-term), และมาตรฐานระยะทาง DR Site (50–160 กม.)',
     'เข้าใจบทบาทของ Vendor Neutral Archive (VNA) ในการป้องกัน Vendor Lock-in ด้วย Tag Morphing และ Universal Viewer',
+    'ทดลองสำรวจโครงสร้างและหลักการทำงานของ 3D CT Gantry Scanner และสถานีงานวิเคราะห์ภาพการแพทย์ (Diagnostic Workstation)',
   ],
   sections: [
     {
@@ -41,6 +43,15 @@ export const radiologyPacsArchitectureChapter: Chapter = {
         description:
           'โมดูลเว็บแอปพลิเคชันการเรียนรู้แบบโต้ตอบ: สำรวจ 3 สถาปัตยกรรม PACS, ที่ปรึกษาเลือกกลยุทธ์จัดหา 5 รูปแบบ, พีระมิดจัดเก็บข้อมูล Storage Tiers และแบบจำลองคลังภาพกลาง VNA',
         initialHeight: 880,
+      },
+    },
+    {
+      id: 'sec-pacs-ct-gantry-3d-sim',
+      heading: '2. ห้องปฏิบัติการจำลอง 3 มิติ: CT Scanner Gantry & Diagnostic Workstation (Interactive 3D Studio)',
+      type: 'simulation',
+      content: {
+        simulationId: 'realistic-radiology-3d',
+        title: 'แบบจำลอง 3D CT Scanner Gantry และสถานีงานวิเคราะห์ภาพการแพทย์ (PACS Workstation)',
       },
     },
     {

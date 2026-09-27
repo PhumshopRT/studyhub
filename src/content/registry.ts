@@ -24,7 +24,6 @@ import pathologyMultiLabChapter from './subjects/pathology/chapters/pathology-mu
 import radiologyRisDicomChapter from './subjects/radiology/chapters/radiology-ris-dicom';
 import radiologyRiskScoringChapter from './subjects/radiology/chapters/radiology-risk-scoring';
 import radiologyPacsArchitectureChapter from './subjects/radiology/chapters/radiology-pacs-architecture';
-import radiologyImagingSuiteChapter from './subjects/radiology/chapters/radiology-imaging-suite';
 
 // Internal in-memory registry maps
 const subjectsRegistry = new Map<string, Subject>();
@@ -46,7 +45,6 @@ const initialChapters = [
   radiologyRisDicomChapter,
   radiologyRiskScoringChapter,
   radiologyPacsArchitectureChapter,
-  radiologyImagingSuiteChapter,
 ];
 
 initialSubjects.forEach((sub) => {

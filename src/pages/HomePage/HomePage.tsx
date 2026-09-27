@@ -24,11 +24,11 @@ import styles from './HomePage.module.css';
 const FEATURED_SIMULATIONS = [
   {
     id: 'sim-radiology-suite',
-    title: 'แบบจำลอง 3D CT Gantry Scanner และ RadLearn Imaging Suite',
-    subtitle: 'Sandboxed Medical Imaging Suite',
-    desc: 'ระบบสารสนเทศรังสีวิทยา (RIS), มาตรฐาน DICOM 3.0, ตารางวิเคราะห์ความเสี่ยง 5x5 Matrix, สถาปัตยกรรม PACS/VNA และ 3D CT Gantry Scanner',
-    path: '/chapter/radiology/radiology-imaging-suite',
-    tag: 'Radiology Suite',
+    title: 'แบบจำลอง 3D CT Gantry Scanner และสถานีวิเคราะห์ภาพ PACS',
+    subtitle: 'Three.js 3D & PACS Workstation',
+    desc: 'หมุนสำรวจ 360° เครื่องตรวจ CT Gantry, ระบบหมุน Slip-Ring, หลอดเอกซเรย์, ตัวตรวจวัดรังสี, และสถานีอ่านภาพรังสี PACS',
+    path: '/chapter/radiology/radiology-pacs-architecture',
+    tag: '3D Radiology',
     tagColor: '#0891b2',
     icon: '🩻',
   },
