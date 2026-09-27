@@ -24,7 +24,8 @@ export const SubjectPage: React.FC = () => {
     (c) =>
       c.title.toLowerCase().includes(filterQuery.toLowerCase()) ||
       c.description.toLowerCase().includes(filterQuery.toLowerCase()) ||
-      c.tags.some((t) => t.toLowerCase().includes(filterQuery.toLowerCase()))
+      c.tags.some((t) => t.toLowerCase().includes(filterQuery.toLowerCase())) ||
+      c.sections.some((s) => s.heading && s.heading.toLowerCase().includes(filterQuery.toLowerCase()))
   );
 
   const getStatusBadge = (status: 'not-started' | 'in-progress' | 'completed') => {
@@ -253,6 +254,39 @@ export const SubjectPage: React.FC = () => {
                     </div>
                     <div>{chapter.sections.length} หัวข้อย่อย</div>
                   </div>
+
+                  {/* Section Headings Preview Chips */}
+                  {chapter.sections.filter((s) => s.heading).length > 0 && (
+                    <div style={{ marginTop: '12px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {chapter.sections
+                        .filter((s) => s.heading)
+                        .slice(0, 5)
+                        .map((s, idx) => (
+                          <span
+                            key={s.id || idx}
+                            style={{
+                              fontSize: '0.78rem',
+                              padding: '3px 8px',
+                              borderRadius: 'var(--radius-sm)',
+                              backgroundColor: 'var(--bg-subtle)',
+                              color: 'var(--text-secondary)',
+                              border: '1px solid var(--border-color)',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <span style={{ color: 'var(--primary)', fontWeight: 700 }}>•</span>
+                            {s.heading}
+                          </span>
+                        ))}
+                      {chapter.sections.filter((s) => s.heading).length > 5 && (
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', alignSelf: 'center' }}>
+                          +{chapter.sections.filter((s) => s.heading).length - 5} หัวข้อเพิ่มเติม
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div

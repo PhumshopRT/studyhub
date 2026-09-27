@@ -91,7 +91,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({ sections }) =>
       </div>
 
       <ul style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-        {headings.map(({ id, title }) => {
+        {headings.map(({ id, title }, idx) => {
           const isActive = activeId === id;
           return (
             <li key={id}>
@@ -103,18 +103,35 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({ sections }) =>
                   textAlign: 'left',
                   fontSize: '0.85rem',
                   lineHeight: 1.45,
-                  padding: '7px 12px',
-                  borderRadius: 'var(--radius-sm)',
+                  padding: '8px 12px',
+                  borderRadius: 'var(--radius-md)',
                   backgroundColor: isActive ? 'var(--primary-light)' : 'transparent',
                   color: isActive ? 'var(--primary)' : 'var(--text-secondary)',
                   fontWeight: isActive ? 700 : 500,
                   borderLeft: isActive ? '4px solid var(--primary)' : '4px solid transparent',
-                  boxShadow: isActive ? '0 1px 3px rgba(37, 99, 235, 0.12)' : 'none',
+                  boxShadow: isActive ? '0 2px 6px rgba(37, 99, 235, 0.15)' : 'none',
                   transition: 'all var(--transition-fast)',
                   cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '8px',
                 }}
               >
-                {title}
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    padding: '1px 6px',
+                    borderRadius: '4px',
+                    backgroundColor: isActive ? 'var(--primary)' : 'var(--bg-subtle)',
+                    color: isActive ? '#ffffff' : 'var(--text-muted)',
+                    fontWeight: 700,
+                    marginTop: '2px',
+                    flexShrink: 0,
+                  }}
+                >
+                  {idx + 1}
+                </span>
+                <span style={{ flex: 1 }}>{title}</span>
               </button>
             </li>
           );

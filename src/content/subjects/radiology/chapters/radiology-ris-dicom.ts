@@ -32,8 +32,20 @@ export const radiologyRisDicomChapter: Chapter = {
   ],
   sections: [
     {
+      id: 'sec-ris-dicom-qwen-app',
+      heading: '1. ระบบสารสนเทศรังสีวิทยาและมาตรฐาน DICOM — Interactive Web App & Simulator Suite',
+      type: 'legacy-html',
+      content: {
+        modulePath: '/qwen-modules/radiology/radlearn/index.html#ch9',
+        title: 'RadLearn: บทที่ 9 · RIS & DICOM Interactive Suite',
+        description:
+          'โมดูลเว็บแอปพลิเคชันการเรียนรู้แบบโต้ตอบ: จำลอง Workflow โรงพยาบาล, Modality Worklist, DICOM Tag Inspector, ทดลองส่ง C-STORE/C-MOVE และ GSDF Calibration',
+        initialHeight: 880,
+      },
+    },
+    {
       id: 'sec-ris-workflow',
-      heading: '1. ภาพรวมสถาปัตยกรรมและกระบวนการทำงานของ RIS (Radiology Information System Workflow)',
+      heading: '2. ภาพรวมสถาปัตยกรรมและกระบวนการทำงานของ RIS (Radiology Information System Workflow)',
       type: 'paragraph',
       content:
         'ระบบสารสนเทศรังสีวิทยา (RIS - Radiology Information System) คือระบบฐานข้อมูลหลักสำหรับบริหารจัดการงานเอกสาร ข้อมูลผู้ป่วย และลำดับคิวการตรวจทั้งหมดในแผนกรังสีวิทยา โดยมีเส้นทางการไหลของข้อมูลมาตรฐานเชื่อมต่อระหว่างระบบสารสนเทศโรงพยาบาล (HIS), เครื่องเอกซเรย์/สแกนเนอร์ (Modality), และระบบจัดเก็บภาพ (PACS):\n\n1. ผู้ป่วยรับการสั่งตรวจจากแพทย์ผู้รักษา ข้อมูลส่งผ่าน HL7 จากระบบ HIS เข้าสู่ RIS\n2. เจ้าหน้าที่รังสีเทคนิคตรวจสอบคิว ยืนยันสิทธิ์ ลงทะเบียนรับผู้ป่วย และจัดคิวการตรวจ (Scheduling & Worklist)\n3. ข้อมูลคำสั่งตรวจถูกส่งเข้าเครื่องตรวจ (Modality) ผ่าน DICOM Modality Worklist (DMWL) โดยไม่ต้องคีย์ชื่อ-HN ด้วยมือ\n4. เครื่องตรวจถ่ายภาพเสร็จ ส่งภาพ DICOM เข้าสู่ระบบจัดเก็บภาพ PACS ผ่านคำสั่ง C-STORE\n5. รังสีแพทย์เปิดดูภาพจาก PACS ควบคู่กับใบขอตรวจใน RIS และทำการอ่านแปลผล (Reporting)\n6. ผลการตรวจที่ได้รับการรับรองจะส่งกลับเข้า EMR/HIS เพื่อให้แพทย์เจ้าของไข้ใช้ในการวางแผนการรักษาต่อไป',

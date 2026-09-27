@@ -195,16 +195,17 @@ export const ChapterRenderer: React.FC<ChapterRendererProps> = ({
           {section.heading && (
             <div
               style={{
-                margin: '36px 0 20px',
-                padding: '16px 22px',
+                margin: '40px 0 24px',
+                padding: '20px 24px',
                 borderRadius: 'var(--radius-lg)',
                 backgroundColor: 'var(--bg-surface)',
+                background: 'linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-subtle) 100%)',
                 border: '1px solid var(--border-color-strong)',
                 borderLeft: '6px solid var(--primary)',
                 boxShadow: 'var(--shadow-md)',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '8px',
+                gap: '10px',
                 position: 'relative',
               }}
             >
@@ -222,15 +223,15 @@ export const ChapterRenderer: React.FC<ChapterRendererProps> = ({
                     border: '1px solid var(--primary-border)',
                   }}
                 >
-                  หัวข้อหลัก
+                  หัวข้อบทเรียน
                 </span>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  ID: #{section.id}
+                  #{section.id}
                 </span>
               </div>
               <h2
                 style={{
-                  fontSize: 'clamp(1.35rem, 2.5vw, 1.65rem)',
+                  fontSize: 'clamp(1.4rem, 2.6vw, 1.8rem)',
                   fontWeight: 800,
                   color: 'var(--text-primary)',
                   lineHeight: 1.35,

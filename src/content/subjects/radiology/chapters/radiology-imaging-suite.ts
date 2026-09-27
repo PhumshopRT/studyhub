@@ -32,8 +32,20 @@ export const radiologyImagingSuiteChapter: Chapter = {
   ],
   sections: [
     {
+      id: 'sec-radlearn-full-suite',
+      heading: '1. RadLearn All-in-One Suite: ห้องปฏิบัติการระบบสารสนเทศรังสีวิทยาและสถาปัตยกรรมภาพครบวงจร',
+      type: 'legacy-html',
+      content: {
+        modulePath: '/qwen-modules/radiology/radlearn/index.html#home',
+        title: 'RadLearn All-in-One Educational Web Application',
+        description:
+          'ศูนย์รวมบทเรียนปฏิบัติการสารสนเทศรังสีวิทยาฉบับเต็ม: รวมบทที่ 9, 10, 11 และคลังแบบฝึกหัดโต้ตอบทั้งหมด พร้อมระบบค้นหา บันทึกความคืบหน้า และสร้างเอกสารสรุป',
+        initialHeight: 880,
+      },
+    },
+    {
       id: 'sec-3d-ct-sim',
-      heading: '1. ปฏิบัติการจำลอง 3 มิติ: CT Scanner Gantry และลำแสงเอกซเรย์แบบโต้ตอบ (Interactive 3D CT Simulator)',
+      heading: '2. ปฏิบัติการจำลอง 3 มิติ: CT Scanner Gantry และลำแสงเอกซเรย์แบบโต้ตอบ (Interactive 3D CT Simulator)',
       type: 'simulation',
       content: {
         simulationId: 'realistic-radiology-3d',
@@ -43,20 +55,8 @@ export const radiologyImagingSuiteChapter: Chapter = {
       },
     },
     {
-      id: 'sec-radlearn-full-suite',
-      heading: '2. ศูนย์การเรียนรู้ระบบสารสนเทศรังสีวิทยาฉบับเต็ม (RadLearn Interactive Web Suite)',
-      type: 'legacy-html',
-      content: {
-        modulePath: '/qwen-modules/radiology/radlearn/index.html',
-        title: 'RadLearn · RIS & DICOM · Risk Scoring Matrix · PACS Architecture (Interactive App)',
-        description:
-          'แอปพลิเคชันการเรียนรู้รังสีวิทยาเต็มรูปแบบ: เมทริกซ์ความเสี่ยง 5x5 โต้ตอบได้, ตารางวิเคราะห์ 10 กรณีศึกษา, เครื่องสร้างใบส่งงานพิมพ์ PDF / ดาวน์โหลด Markdown, ระบบจำลองกลยุทธ์จัดหา PACS, พีระมิดจัดเก็บข้อมูล 3 Tiers, แฟลชการ์ด และแบบทดสอบครบวงจร',
-        initialHeight: 960,
-      },
-    },
-    {
       id: 'sec-ct-gantry-physics',
-      heading: '3. กายวิภาคของเครื่อง CT Scanner และฟิสิกส์การกำเนิดรังสี (Gantry Anatomy & Radiation Physics)',
+      heading: '2. กายวิภาคของเครื่อง CT Scanner และฟิสิกส์การกำเนิดรังสี (Gantry Anatomy & Radiation Physics)',
       type: 'paragraph',
       content:
         'เครื่องเอกซเรย์คอมพิวเตอร์ (Computed Tomography - CT) ประกอบด้วยส่วนประกอบหลักที่ติดตั้งอยู่ภายในโครงสร้างวงแหวนหมุน (Rotating Gantry) ดังนี้:\n\n' +
@@ -70,7 +70,7 @@ export const radiologyImagingSuiteChapter: Chapter = {
     },
     {
       id: 'sec-dosimetry-ctdi',
-      heading: '4. มาตรวิทยารังสีและการควบคุมปริมาณรังสี (CT Dosimetry: CTDIvol, DLP, and DRL)',
+      heading: '3. มาตรวิทยารังสีและการควบคุมปริมาณรังสี (CT Dosimetry: CTDIvol, DLP, and DRL)',
       type: 'paragraph',
       content:
         'ในการตรวจเอกซเรย์คอมพิวเตอร์ การควบคุมปริมาณรังสีตามหลัก ALARA (As Low As Reasonably Achievable) มีดัชนีชี้วัดมาตรฐานสากลที่นักรังสีเทคนิคและรังสีแพทย์ต้องตรวจสอบและบันทึกในระบบ RIS เสมอ:\n\n' +
@@ -92,7 +92,7 @@ export const radiologyImagingSuiteChapter: Chapter = {
     },
     {
       id: 'sec-windowing-hounsfield-scale',
-      heading: '5. สเกลความหนาแน่น Hounsfield Units (HU) และการปรับแต่ง Window Width / Window Level',
+      heading: '4. สเกลความหนาแน่น Hounsfield Units (HU) และการปรับแต่ง Window Width / Window Level',
       type: 'table',
       content: {
         headers: ['โครงสร้าง / เนื้อเยื่อในร่างกาย', 'ค่า CT Number เฉลี่ย (HU)', 'การแสดงผลในหน้าต่างดูภาพ', 'การตั้งค่า Window Width (WW) / Window Level (WL)'],
@@ -110,7 +110,7 @@ export const radiologyImagingSuiteChapter: Chapter = {
     },
     {
       id: 'sec-post-processing-techniques',
-      heading: '6. เทคโนโลยีการสร้างและประมวลผลภาพ 3 มิติ (Advanced 3D Post-Processing Modalities)',
+      heading: '5. เทคโนโลยีการสร้างและประมวลผลภาพ 3 มิติ (Advanced 3D Post-Processing Modalities)',
       type: 'key-points',
       content: {
         title: 'เครื่องมือและอัลกอริทึมการประมวลผลภาพ 3 มิติบน Diagnostic Workstation',
@@ -124,7 +124,7 @@ export const radiologyImagingSuiteChapter: Chapter = {
     },
     {
       id: 'sec-quiz-ch12',
-      heading: '7. แบบทดสอบปฏิบัติการจำลองเครื่องตรวจและสถานีงานรังสี (Self-Assessment Quiz - 10 ข้อ)',
+      heading: '6. แบบทดสอบปฏิบัติการจำลองเครื่องตรวจและสถานีงานรังสี (Self-Assessment Quiz - 10 ข้อ)',
       type: 'quiz',
       content: {
         title: 'แบบทดสอบบทที่ 12: CT Gantry Physics, Dosimetry และ Diagnostic Workstation',

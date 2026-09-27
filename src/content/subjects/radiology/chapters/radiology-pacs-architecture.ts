@@ -32,8 +32,20 @@ export const radiologyPacsArchitectureChapter: Chapter = {
   ],
   sections: [
     {
+      id: 'sec-pacs-architecture-qwen-app',
+      heading: '1. สถาปัตยกรรมระบบ PACS และคลังข้อมูลภาพกลาง (VNA) — Interactive Architecture Simulator',
+      type: 'legacy-html',
+      content: {
+        modulePath: '/qwen-modules/radiology/radlearn/index.html#ch11',
+        title: 'RadLearn: บทที่ 11 · PACS Architecture & VNA Simulator',
+        description:
+          'โมดูลเว็บแอปพลิเคชันการเรียนรู้แบบโต้ตอบ: สำรวจ 3 สถาปัตยกรรม PACS, ที่ปรึกษาเลือกกลยุทธ์จัดหา 5 รูปแบบ, พีระมิดจัดเก็บข้อมูล Storage Tiers และแบบจำลองคลังภาพกลาง VNA',
+        initialHeight: 880,
+      },
+    },
+    {
       id: 'sec-pacs-evolution',
-      heading: '1. ประวัติและวิวัฒนาการของระบบ PACS (History & Evolution of Medical Imaging Systems)',
+      heading: '2. ประวัติและวิวัฒนาการของระบบ PACS (History & Evolution of Medical Imaging Systems)',
       type: 'paragraph',
       content:
         'ระบบ PACS (Picture Archiving and Communication System) ได้รับการพัฒนาขึ้นเพื่อทดแทนระบบฟิล์มเอกซเรย์แบบดั้งเดิม (Filmless Radiology) โดยมีลำดับวิวัฒนาการสำคัญดังนี้:\n\n' +
