@@ -14,6 +14,7 @@ import {
   Stethoscope,
   Box,
   Layers,
+  Radio,
 } from 'lucide-react';
 import { getAllSubjects, getChapterById } from '../../content/registry';
 import { useProgress } from '../../hooks/useProgress';
@@ -21,6 +22,16 @@ import { JevAssistantHero } from '../../components/home/JevAssistantHero/JevAssi
 import styles from './HomePage.module.css';
 
 const FEATURED_SIMULATIONS = [
+  {
+    id: 'sim-radiology-suite',
+    title: 'แบบจำลอง 3D CT Gantry Scanner และ RadLearn Imaging Suite',
+    subtitle: 'Sandboxed Medical Imaging Suite',
+    desc: 'ระบบสารสนเทศรังสีวิทยา (RIS), มาตรฐาน DICOM 3.0, ตารางวิเคราะห์ความเสี่ยง 5x5 Matrix, สถาปัตยกรรม PACS/VNA และ 3D CT Gantry Scanner',
+    path: '/chapter/radiology/radiology-imaging-suite',
+    tag: 'Radiology Suite',
+    tagColor: '#0891b2',
+    icon: '🩻',
+  },
   {
     id: 'sim-3d-pathology',
     title: 'แบบจำลอง 3D พยาธิวิทยาระบบสืบพันธุ์สตรีและรอยโรค',
@@ -105,6 +116,8 @@ export const HomePage: React.FC = () => {
         return <Calculator size={24} />;
       case 'Dna':
         return <Dna size={24} />;
+      case 'Radio':
+        return <Radio size={24} />;
       default:
         return <BookOpen size={24} />;
     }
