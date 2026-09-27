@@ -18,6 +18,7 @@ const registry: Record<string, ComponentType<any>> = {
   'realistic-neuropathology-3d': lazy(() => import('./demos/RealisticNeuropathology3DSim/RealisticNeuropathology3DSim')),
   'realistic-hepatobiliary-3d': lazy(() => import('./demos/RealisticHepatobiliary3DSim/RealisticHepatobiliary3DSim')),
   'realistic-bone-joint-3d': lazy(() => import('./demos/RealisticBoneJoint3DSim/RealisticBoneJoint3DSim')),
+  'realistic-radiology-3d': lazy(() => import('./demos/RealisticRadiology3DSim/RealisticRadiology3DSim')),
 };
 
 /**

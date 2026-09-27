@@ -1,9 +1,10 @@
 import type { Subject, Chapter } from '../types/content';
 import { validateSubject, validateChapter } from './schema';
 
-// Import Subject definitions (Real Medical Physiology & Pathology)
+// Import Subject definitions (Real Medical Physiology & Pathology & Radiology)
 import physiologySubject from './subjects/physiology/subject';
 import pathologySubject from './subjects/pathology/subject';
+import radiologySubject from './subjects/radiology/subject';
 
 // Import Chapter definitions (Real Physiology content from Qwen / PhysioStudy)
 import respiratoryPhysiologyChapter from './subjects/physiology/chapters/respiratory-physiology';
@@ -19,12 +20,18 @@ import musculoskeletalChapter from './subjects/pathology/chapters/musculoskeleta
 import hepatobiliaryPancreasChapter from './subjects/pathology/chapters/hepatobiliary-pancreas';
 import pathologyMultiLabChapter from './subjects/pathology/chapters/pathology-multi-lab';
 
+// Import Chapter definitions (Radiological Technology & Medical Imaging Systems)
+import radiologyRisDicomChapter from './subjects/radiology/chapters/radiology-ris-dicom';
+import radiologyRiskScoringChapter from './subjects/radiology/chapters/radiology-risk-scoring';
+import radiologyPacsArchitectureChapter from './subjects/radiology/chapters/radiology-pacs-architecture';
+import radiologyImagingSuiteChapter from './subjects/radiology/chapters/radiology-imaging-suite';
+
 // Internal in-memory registry maps
 const subjectsRegistry = new Map<string, Subject>();
 const chaptersRegistry = new Map<string, Chapter>();
 
 // Register initial data with validation
-const initialSubjects = [physiologySubject, pathologySubject];
+const initialSubjects = [physiologySubject, pathologySubject, radiologySubject];
 const initialChapters = [
   respiratoryPhysiologyChapter,
   giTractPhysiologyChapter,
@@ -36,6 +43,10 @@ const initialChapters = [
   musculoskeletalChapter,
   hepatobiliaryPancreasChapter,
   pathologyMultiLabChapter,
+  radiologyRisDicomChapter,
+  radiologyRiskScoringChapter,
+  radiologyPacsArchitectureChapter,
+  radiologyImagingSuiteChapter,
 ];
 
 initialSubjects.forEach((sub) => {

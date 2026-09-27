@@ -193,19 +193,54 @@ export const ChapterRenderer: React.FC<ChapterRendererProps> = ({
           style={{ scrollMarginTop: '80px', marginBottom: '24px' }}
         >
           {section.heading && (
-            <h2
+            <div
               style={{
-                fontSize: '1.45rem',
-                fontWeight: 700,
-                color: 'var(--text-primary)',
-                margin: '28px 0 16px',
+                margin: '36px 0 20px',
+                padding: '16px 22px',
+                borderRadius: 'var(--radius-lg)',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--border-color-strong)',
+                borderLeft: '6px solid var(--primary)',
+                boxShadow: 'var(--shadow-md)',
                 display: 'flex',
-                alignItems: 'center',
+                flexDirection: 'column',
                 gap: '8px',
+                position: 'relative',
               }}
             >
-              {section.heading}
-            </h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <span
+                  style={{
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                    padding: '3px 10px',
+                    borderRadius: 'var(--radius-full)',
+                    backgroundColor: 'var(--primary-light)',
+                    color: 'var(--primary)',
+                    border: '1px solid var(--primary-border)',
+                  }}
+                >
+                  หัวข้อหลัก
+                </span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                  ID: #{section.id}
+                </span>
+              </div>
+              <h2
+                style={{
+                  fontSize: 'clamp(1.35rem, 2.5vw, 1.65rem)',
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                  lineHeight: 1.35,
+                  margin: 0,
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                {section.heading}
+              </h2>
+            </div>
           )}
           {renderSectionContent(section)}
         </section>

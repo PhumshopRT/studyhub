@@ -1,0 +1,113 @@
+@import '../../shared/MedicalWorkstationUI.module.css';
+
+/* Specialized Radiology CT Workstation styles */
+.radBadge {
+  background: rgba(6, 182, 212, 0.15);
+  color: #22d3ee;
+  border: 1px solid rgba(34, 211, 238, 0.4);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dosimetryPanel {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  background: rgba(13, 20, 36, 0.88);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  border-radius: 1rem;
+  padding: 1.1rem 1.4rem;
+  max-width: 320px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
+  z-index: 20;
+}
+
+.doseGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.6rem;
+}
+
+.doseStat {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.doseLabel {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+
+.doseValue {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #22d3ee;
+}
+
+.sliderRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+}
+
+.sliderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #cbd5e1;
+}
+
+.sliderInput {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #1e293b;
+  border-radius: 3px;
+  outline: none;
+}
+
+.sliderInput::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #06b6d4;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.7);
+  transition: transform 0.15s ease;
+}
+
+.sliderInput::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.beamBadgeOn {
+  color: #34d399;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.beamBadgeOff {
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
