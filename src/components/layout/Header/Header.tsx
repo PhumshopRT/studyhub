@@ -46,6 +46,31 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
               หน้าแรก
             </Link>
             <Link
+              to="/subject/radiology"
+              className={styles.navLink}
+              style={{
+                color: '#06b6d4',
+                fontWeight: 700,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              <span>เทคโนโลยีรังสี</span>
+              <span
+                style={{
+                  fontSize: '0.65rem',
+                  padding: '1px 5px',
+                  borderRadius: '4px',
+                  background: 'rgba(6, 182, 212, 0.15)',
+                  color: '#06b6d4',
+                  fontWeight: 800,
+                }}
+              >
+                NEW
+              </span>
+            </Link>
+            <Link
               to="/subject/pathology"
               className={styles.navLink}
               style={{
@@ -57,17 +82,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
               }}
             >
               <span>พยาธิวิทยา</span>
-              <span
-                style={{
-                  fontSize: '0.65rem',
-                  padding: '1px 5px',
-                  borderRadius: '4px',
-                  background: 'rgba(190, 18, 60, 0.15)',
-                  color: '#be123c',
-                }}
-              >
-                NEW
-              </span>
             </Link>
             <Link to="/subject/physiology" className={styles.navLink}>
               สรีรวิทยา

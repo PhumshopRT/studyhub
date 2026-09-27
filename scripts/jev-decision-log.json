@@ -207,5 +207,15 @@
       "input_tokens": 1748,
       "output_tokens": 227
     }
+  },
+  {
+    "timestamp": "2026-09-27T14:52:23.100Z",
+    "context": "User requested identical interactive web app integration for Radiology, with top subjects bar and full RadLearn suite",
+    "decisions": {
+      "embed_full_app": "hybrid_embedded_and_native",
+      "header_nav": "dynamic_all_subjects_with_highlight",
+      "qwen_module_suite": "public_qwen_modules_radiology_radlearn",
+      "workflow": "keep_rich_native_chapters_and_embed_radlearn_suite"
+    }
   }
 ]
