@@ -168,89 +168,15 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured 3D & Interactive Labs Section */}
-      <section className={styles.section} style={{ paddingBottom: '12px' }}>
+      {/* All Subjects Grid (หมวดวิชาหลัก) */}
+      <section className={styles.section} style={{ paddingTop: '8px', paddingBottom: '16px' }}>
         <div className={styles.sectionHeader}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Layers size={22} color="var(--primary)" />
+            <BookOpen size={24} color="var(--primary)" />
             <div>
-              <h2 className={styles.sectionTitle}>ห้องทดลองจำลองและโมเดล 3D (Interactive Labs)</h2>
-              <p className={styles.sectionDesc}>
-                ทดลองปรับเปลี่ยนพารามิเตอร์ สังเกตผลลัพธ์แบบเรียลไทม์ และหมุนดูมิติกายวิภาคแบบ 360°
-              </p>
+              <h2 className={styles.sectionTitle}>เลือกวิชาที่ต้องการเรียนรู้ (Medical Curriculum)</h2>
+              <p className={styles.sectionDesc}>คลิกที่วิชาเพื่อดูสารบัญบทเรียนและแบบจำลองทั้งหมด</p>
             </div>
-          </div>
-        </div>
-
-        <div className={styles.simGrid}>
-          {FEATURED_SIMULATIONS.map((sim) => (
-            <Link
-              key={sim.id}
-              to={sim.path}
-              className={styles.simCard}
-              style={{ '--tag-color': sim.tagColor } as React.CSSProperties}
-            >
-              <div>
-                <div className={styles.simCardTop}>
-                  <span className={styles.simIcon}>{sim.icon}</span>
-                  <span className={styles.simTag}>{sim.tag}</span>
-                </div>
-                <h4 className={styles.simTitle}>{sim.title}</h4>
-                <p className={styles.simDesc}>{sim.desc}</p>
-              </div>
-
-              <div className={styles.simFooter}>
-                <span className={styles.simSubtitle}>{sim.subtitle}</span>
-                <span className={styles.simCta}>
-                  <span>เปิดทดลอง</span>
-                  <ChevronRight size={16} />
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Recent Chapters if any */}
-      {recentIds.length > 0 && (
-        <section className={styles.section} style={{ marginBottom: '12px' }}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <h3 className={styles.sectionTitle} style={{ fontSize: '1.25rem' }}>
-                บทเรียนที่เปิดอ่านล่าสุด
-              </h3>
-              <p className={styles.sectionDesc}>เรียนต่อจากจุดที่คุณอ่านค้างไว้</p>
-            </div>
-          </div>
-
-          <div className={styles.recentGrid}>
-            {recentIds.map((cId) => {
-              const chap = getChapterById(cId);
-              if (!chap) return null;
-              return (
-                <Link
-                  key={cId}
-                  to={`/chapter/${chap.subjectId}/${chap.id}`}
-                  className={styles.recentCard}
-                >
-                  <div>
-                    <div className={styles.recentLabel}>อ่านค้างไว้</div>
-                    <div className={styles.recentTitle}>{chap.title}</div>
-                  </div>
-                  <ChevronRight size={18} color="var(--primary)" />
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* All Subjects Grid */}
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <div>
-            <h2 className={styles.sectionTitle}>เลือกวิชาที่ต้องการเรียนรู้</h2>
-            <p className={styles.sectionDesc}>คลิกที่วิชาเพื่อดูสารบัญบทเรียนและแบบจำลองทั้งหมด</p>
           </div>
         </div>
 
@@ -300,6 +226,83 @@ export const HomePage: React.FC = () => {
               </Link>
             );
           })}
+        </div>
+      </section>
+
+      {/* Recent Chapters if any */}
+      {recentIds.length > 0 && (
+        <section className={styles.section} style={{ marginBottom: '12px' }}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <h3 className={styles.sectionTitle} style={{ fontSize: '1.25rem' }}>
+                บทเรียนที่เปิดอ่านล่าสุด
+              </h3>
+              <p className={styles.sectionDesc}>เรียนต่อจากจุดที่คุณอ่านค้างไว้</p>
+            </div>
+          </div>
+
+          <div className={styles.recentGrid}>
+            {recentIds.map((cId) => {
+              const chap = getChapterById(cId);
+              if (!chap) return null;
+              return (
+                <Link
+                  key={cId}
+                  to={`/chapter/${chap.subjectId}/${chap.id}`}
+                  className={styles.recentCard}
+                >
+                  <div>
+                    <div className={styles.recentLabel}>อ่านค้างไว้</div>
+                    <div className={styles.recentTitle}>{chap.title}</div>
+                  </div>
+                  <ChevronRight size={18} color="var(--primary)" />
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Featured 3D & Interactive Labs Section */}
+      <section className={styles.section} style={{ paddingBottom: '12px' }}>
+        <div className={styles.sectionHeader}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Layers size={22} color="var(--primary)" />
+            <div>
+              <h2 className={styles.sectionTitle}>ห้องทดลองจำลองและโมเดล 3D (Interactive Labs)</h2>
+              <p className={styles.sectionDesc}>
+                ทดลองปรับเปลี่ยนพารามิเตอร์ สังเกตผลลัพธ์แบบเรียลไทม์ และหมุนดูมิติกายวิภาคแบบ 360°
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.simGrid}>
+          {FEATURED_SIMULATIONS.map((sim) => (
+            <Link
+              key={sim.id}
+              to={sim.path}
+              className={styles.simCard}
+              style={{ '--tag-color': sim.tagColor } as React.CSSProperties}
+            >
+              <div>
+                <div className={styles.simCardTop}>
+                  <span className={styles.simIcon}>{sim.icon}</span>
+                  <span className={styles.simTag}>{sim.tag}</span>
+                </div>
+                <h4 className={styles.simTitle}>{sim.title}</h4>
+                <p className={styles.simDesc}>{sim.desc}</p>
+              </div>
+
+              <div className={styles.simFooter}>
+                <span className={styles.simSubtitle}>{sim.subtitle}</span>
+                <span className={styles.simCta}>
+                  <span>เปิดทดลอง</span>
+                  <ChevronRight size={16} />
+                </span>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
     </div>
