@@ -5,6 +5,7 @@ import { validateSubject, validateChapter } from './schema';
 import physiologySubject from './subjects/physiology/subject';
 import pathologySubject from './subjects/pathology/subject';
 import radiologySubject from './subjects/radiology/subject';
+import radiationPhysicsSubject from './subjects/radiation-physics/subject';
 
 // Import Chapter definitions (Real Physiology content from Qwen / PhysioStudy)
 import respiratoryPhysiologyChapter from './subjects/physiology/chapters/respiratory-physiology';
@@ -25,12 +26,16 @@ import radiologyRisDicomChapter from './subjects/radiology/chapters/radiology-ri
 import radiologyRiskScoringChapter from './subjects/radiology/chapters/radiology-risk-scoring';
 import radiologyPacsArchitectureChapter from './subjects/radiology/chapters/radiology-pacs-architecture';
 
+// Import Chapter definitions (Radiation Physics & Radioactivity)
+import radiationQuantitiesUnitsChapter from './subjects/radiation-physics/chapters/radiation-quantities-units';
+import radioactivityNuclearDecayChapter from './subjects/radiation-physics/chapters/radioactivity-nuclear-decay';
+
 // Internal in-memory registry maps
 const subjectsRegistry = new Map<string, Subject>();
 const chaptersRegistry = new Map<string, Chapter>();
 
 // Register initial data with validation
-const initialSubjects = [physiologySubject, pathologySubject, radiologySubject];
+const initialSubjects = [physiologySubject, pathologySubject, radiologySubject, radiationPhysicsSubject];
 const initialChapters = [
   respiratoryPhysiologyChapter,
   giTractPhysiologyChapter,
@@ -45,6 +50,8 @@ const initialChapters = [
   radiologyRisDicomChapter,
   radiologyRiskScoringChapter,
   radiologyPacsArchitectureChapter,
+  radiationQuantitiesUnitsChapter,
+  radioactivityNuclearDecayChapter,
 ];
 
 initialSubjects.forEach((sub) => {

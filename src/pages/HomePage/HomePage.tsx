@@ -23,6 +23,16 @@ import styles from './HomePage.module.css';
 
 const FEATURED_SIMULATIONS = [
   {
+    id: 'sim-radiation-physics-3d',
+    title: 'แบบจำลอง 3D ฟิสิกส์นิวเคลียร์และการสลายตัวของสารกัมมันตรังสี',
+    subtitle: 'Three.js 3D Quantum Nuclear Studio',
+    desc: 'สำรวจนิวเคลียสอะตอม, การปล่อยอนุภาคแอลฟา/เบตา, รังสีแอนนิฮิเลชัน PET 511 keV, และการเบี่ยงเบนในสนามแม่เหล็กลอเรนซ์',
+    path: '/chapter/radiation-physics/radioactivity-nuclear-decay',
+    tag: '3D Physics',
+    tagColor: '#8b5cf6',
+    icon: '⚛️',
+  },
+  {
     id: 'sim-radiology-suite',
     title: 'แบบจำลอง 3D CT Gantry Scanner และสถานีวิเคราะห์ภาพ PACS',
     subtitle: 'Three.js 3D & PACS Workstation',

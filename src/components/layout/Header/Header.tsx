@@ -57,15 +57,28 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
               }}
             >
               <span>🩻 เทคโนโลยีรังสี</span>
+            </Link>
+            <Link
+              to="/subject/radiation-physics"
+              className={styles.navLink}
+              style={{
+                color: '#8b5cf6',
+                fontWeight: 700,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+              }}
+            >
+              <span>⚛️ ฟิสิกส์รังสี</span>
               <span
                 style={{
                   fontSize: '0.65rem',
                   fontWeight: 800,
                   padding: '1px 5px',
                   borderRadius: '4px',
-                  background: 'rgba(6, 182, 212, 0.18)',
-                  color: '#0891b2',
-                  border: '1px solid rgba(6, 182, 212, 0.35)',
+                  background: 'rgba(139, 92, 246, 0.18)',
+                  color: '#8b5cf6',
+                  border: '1px solid rgba(139, 92, 246, 0.35)',
                 }}
               >
                 NEW
