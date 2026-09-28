@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RadLibrary — คลังไฟล์สรุป & ห้องจำลองรังสีชีววิทยา</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans-thai/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans-thai/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans-thai/600.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans-thai/700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono/700.css">
+<style>
+:root{
+ --bg:#0b0f17; --surface:#121826; --surface2:#0e1420; --ink:#e8eef7; --muted:#8fa3bd;
+ --line:#233047; --brand:#38bdf8; --brand2:#818cf8; --ok:#34d399; --warn:#fbbf24; --bad:#fb7185;
+ --shadow:0 10px 30px rgba(0,0,0,.45); --radius:16px;
+}
+[data-theme="light"]{--bg:#f1f5fb; --surface:#ffffff; --surface2:#f7fafc; --ink:#0f172a; --muted:#5b6b81; --line:#dbe4f0; --brand:#0e7490; --brand2:#4f46e5; --ok:#059669; --warn:#d97706; --bad:#e11d48; --shadow:0 8px 24px rgba(15,23,42,.10)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'IBM Plex Sans Thai','Noto Sans Thai',system-ui,sans-serif;font-size:1rem;line-height:1.75;background:var(--bg);color:var(--ink);transition:background .3s,color .3s}
+.mono{font-family:'JetBrains Mono',monospace}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+img{max-width:100%}
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;padding:10px 16px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px}
+.tab{font:inherit;font-size:.86rem;font-weight:600;border:0;background:transparent;color:var(--muted);border-radius:10px;padding:8px 16px;cursor:pointer;display:flex;gap:8px;align-items:center;transition:.2s}
+.tab:hover{color:var(--ink)}
+.tab.on{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 4px 14px color-mix(in srgb,var(--brand) 40%,transparent)}
+.searchwrap{position:relative;flex:1;max-width:420px;margin-left:auto;min-width:180px}
+.searchwrap input{width:100%;font:inherit;font-size:.86rem;padding:10px 14px 10px 38px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.searchwrap .ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.6}
+.sres{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);max-height:320px;overflow:auto;display:none;z-index:60}
+.sres.on{display:block}
+.sres button{display:flex;gap:10px;width:100%;text-align:left;font:inherit;font-size:.83rem;border:0;background:transparent;color:var(--ink);padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--line)}
+.sres button:hover{background:var(--surface2)}
+.sres button:last-child{border:0}
+.sres .k{font-size:.66rem;background:var(--brand);color:#fff;border-radius:6px;padding:1px 7px;height:fit-content;white-space:nowrap}
+.iconbtn{font:inherit;font-size:.82rem;font-weight:700;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:9px 12px;cursor:pointer;transition:.15s}
+.iconbtn:hover{border-color:var(--brand);color:var(--brand)}
+.ring{width:40px;height:40px;flex:none}
+.ring circle{fill:none;stroke-width:4}
+.ring .bgc{stroke:var(--line)}
+.ring .fgc{stroke:var(--ok);stroke-linecap:round;transition:stroke-dashoffset .5s}
+.ringtxt{font-size:.6rem;font-weight:700;fill:var(--ink);font-family:'JetBrains Mono',monospace}
+.app{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 63px)}
+.sidebar{position:sticky;top:63px;height:calc(100vh - 63px);overflow-y:auto;background:var(--surface);border-right:1px solid var(--line);padding:18px 14px 50px}
+.main{padding:24px clamp(14px,3.4vw,48px) 90px;max-width:1200px;width:100%}
+.brand{display:flex;gap:12px;align-items:center;padding:4px 6px 14px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.brand .logo{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:grid;place-items:center;font-size:22px;flex:none}
+.brand h1{font-size:1.05rem;font-weight:700;line-height:1.3}
+.brand small{color:var(--muted);font-size:.7rem;letter-spacing:.04em}
+.navgroup{margin:14px 0 6px;font-size:.68rem;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;padding:0 6px;display:flex;align-items:center;gap:8px}
+.navgroup::after{content:'';flex:1;height:1px;background:var(--line)}
+.filebtn{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface2);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer;font:inherit;color:inherit;transition:.2s}
+.filebtn:hover{border-color:var(--brand);transform:translateX(2px)}
+.filebtn.active{border-color:var(--brand);box-shadow:inset 3px 0 0 var(--brand);background:color-mix(in srgb,var(--brand) 10%,var(--surface2))}
+.filebtn .code{font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:700;background:color-mix(in srgb,var(--brand) 18%,transparent);color:var(--brand);border:1px solid color-mix(in srgb,var(--brand) 40%,transparent);border-radius:8px;padding:2px 7px;white-space:nowrap}
+.filebtn b{font-size:.84rem;display:block;line-height:1.4}
+.seclist{margin:2px 0 12px 10px;border-left:2px solid var(--line);padding-left:6px}
+.seclist a{display:block;padding:6px 10px;border-radius:10px;text-decoration:none;color:var(--muted);margin:2px 0;transition:.15s;cursor:pointer}
+.seclist a:hover{background:var(--surface2);color:var(--ink)}
+.seclist .n{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;opacity:.75;margin-right:8px}
+.seclist .t{font-size:.8rem;font-weight:600;color:inherit;display:block;line-height:1.45}
+.seclist .s{font-size:.66rem;opacity:.7;display:block;font-family:'JetBrains Mono',monospace}
+.seclist a.read .n{color:var(--ok)}
+.hero{position:relative;border-radius:22px;overflow:hidden;margin-bottom:22px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.hero img{width:100%;height:clamp(220px,30vw,330px);object-fit:cover;display:block}
+.hero .ov{position:absolute;inset:0;background:linear-gradient(75deg,rgba(5,10,20,.93) 10%,rgba(5,10,20,.6) 60%,rgba(5,10,20,.25));display:flex;flex-direction:column;justify-content:center;padding:clamp(18px,4vw,44px)}
+.hero h2{color:#fff;font-size:clamp(1.35rem,3.4vw,2.3rem);line-height:1.3;font-weight:700}
+.hero p{color:#c9dcee;font-size:clamp(.8rem,1.3vw,.95rem);max-width:720px;margin-top:8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.chip{background:rgba(255,255,255,.09);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.22);color:#eaf6ff;border-radius:12px;padding:7px 15px;font-size:.76rem;font-weight:600}
+.chip b{font-family:'JetBrains Mono',monospace;color:var(--brand);font-size:.9rem}
+.group{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-bottom:22px;box-shadow:var(--shadow)}
+.grouphead{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--brand) 6%,transparent)}
+.grouphead .code{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;color:var(--brand);border:1px solid color-mix(in srgb,var(--brand) 45%,transparent);background:color-mix(in srgb,var(--brand) 14%,transparent);border-radius:9px;padding:3px 10px;white-space:nowrap}
+.grouphead h3{font-size:1rem}
+.grouphead .cnt{margin-left:auto;color:var(--muted);font-size:.76rem;font-family:'JetBrains Mono',monospace}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;padding:16px}
+.fcard{background:var(--surface2);border:1px solid var(--line);border-radius:16px;padding:18px;cursor:pointer;transition:.2s;position:relative}
+.fcard:hover{transform:translateY(-3px);border-color:var(--brand)}
+.fcard .row{display:flex;gap:12px;align-items:flex-start}
+.fcard .ic{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:22px;flex:none;background:color-mix(in srgb,var(--brand) 15%,transparent)}
+.fcard h3{font-size:.95rem;line-height:1.45}
+.fcard .meta{color:var(--muted);font-size:.74rem;margin-top:2px}
+.fcard .go{margin-left:auto;font-size:18px;color:var(--muted)}
+.fcard .tags{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.tagpill{font-size:.68rem;font-weight:700;border-radius:999px;padding:2px 11px;border:1px solid;color:var(--brand);border-color:color-mix(in srgb,var(--brand) 45%,transparent);background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.tagpill.alt{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent);background:color-mix(in srgb,var(--warn) 10%,transparent)}
+.pbar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:12px}
+.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--brand2));border-radius:99px;transition:width .5s}
+.pmeta{font-size:.72rem;color:var(--muted);margin-top:6px;font-family:'JetBrains Mono',monospace}
+.addcard{border:2px dashed var(--line);border-radius:16px;display:grid;place-items:center;padding:26px;color:var(--muted);cursor:pointer;background:transparent;transition:.2s;text-align:center}
+.addcard:hover{border-color:var(--brand);color:var(--brand)}
+.addcard .big{font-size:30px}
+.filehead{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;margin:6px 0 20px;box-shadow:var(--shadow)}
+.filehead .fic{font-size:30px}
+.filehead h2{font-size:1.12rem}
+.filehead p{color:var(--muted);font-size:.78rem}
+.filehead .tag{margin-left:auto;background:var(--brand);color:#fff;border-radius:999px;padding:4px 14px;font-size:.7rem;font-weight:700;white-space:nowrap}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px clamp(14px,2.6vw,28px);margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:80px}
+section.card>h3{font-size:1.12rem;font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:2px}
+section.card>h3 .no{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;min-width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:.85rem;font-family:'JetBrains Mono',monospace;flex:none}
+section.card .sub{color:var(--muted);font-size:.78rem;margin-bottom:12px;font-family:'JetBrains Mono',monospace}
+h4{font-size:.96rem;margin:16px 0 8px;color:var(--brand)}
+h5.subh{font-size:.92rem;margin:14px 0 6px;color:var(--brand2)}
+p{margin:8px 0}
+ul,ol{margin:8px 0 8px 22px}
+li{margin:4px 0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin:12px 0}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:12px 0}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:12px 0}
+.box{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.box h5{font-size:.86rem;margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.box p,.box li{font-size:.84rem}
+.callout{border-left:4px solid var(--brand);background:color-mix(in srgb,var(--brand) 8%,var(--surface2));border-radius:0 12px 12px 0;padding:12px 16px;margin:12px 0;font-size:.86rem}
+.callout.warn{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 9%,var(--surface2))}
+.callout.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 8%,var(--surface2))}
+.callout.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,var(--surface2))}
+.tw{overflow-x:auto;margin:12px 0;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:.83rem;min-width:520px}
+th{background:color-mix(in srgb,var(--brand) 12%,var(--surface2));text-align:left;padding:9px 12px;font-weight:700;white-space:nowrap}
+td{padding:8px 12px;border-top:1px solid var(--line);vertical-align:top}
+tr:hover td{background:color-mix(in srgb,var(--brand) 5%,transparent)}
+.pill{display:inline-block;border-radius:999px;padding:1px 11px;font-size:.7rem;font-weight:700;color:#fff;white-space:nowrap}
+.p-vhigh{background:#e11d48}.p-high{background:#ea580c}.p-med{background:#d97706}.p-low{background:#059669}
+.kv{display:flex;justify-content:space-between;gap:10px;font-size:.84rem;padding:5px 0;border-bottom:1px dashed var(--line)}
+.kv:last-child{border:0}
+.kv b{font-family:'JetBrains Mono',monospace;font-weight:700}
+img.fig{width:100%;max-height:360px;object-fit:cover;border-radius:14px;border:1px solid var(--line);margin:10px 0}
+.sim{background:var(--surface2);border:1px solid color-mix(in srgb,var(--brand2) 40%,var(--line));border-radius:14px;padding:18px clamp(10px,2.2vw,20px);margin:16px 0;scroll-margin-top:90px}
+.sim>h3{font-size:1rem;display:flex;gap:10px;align-items:center;color:var(--ink)}
+.sim>h3 .em{font-size:22px}
+.sim .desc{color:var(--muted);font-size:.78rem;margin:4px 0 12px}
+.simctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.simctl .grp{flex:1;min-width:170px}
+.simctl .grp label{font-size:.73rem;font-weight:700;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.simctl .grp label output{color:var(--brand);font-family:'JetBrains Mono',monospace}
+.btn{font:inherit;font-size:.8rem;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:7px 13px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));border-color:transparent;color:#fff}
+.btn.primary:hover{filter:brightness(1.12);color:#fff}
+.btn.on{background:var(--brand2);border-color:var(--brand2);color:#fff}
+.btn.sm{padding:4px 10px;font-size:.73rem}
+input[type=range]{width:100%;accent-color:var(--brand);height:26px}
+select,input[type=text]{font:inherit;font-size:.85rem;padding:7px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+canvas.simcv{width:100%;height:330px;background:var(--surface);border:1px solid var(--line);border-radius:12px;display:block}
+canvas.small{height:240px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:10px;margin:12px 0}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.stat .v{font-family:'JetBrains Mono',monospace;font-size:1.18rem;font-weight:700;color:var(--brand)}
+.stat .l{font-size:.66rem;color:var(--muted);font-weight:600}
+.stat.bad .v{color:var(--bad)}.stat.ok .v{color:var(--ok)}.stat.warn .v{color:var(--warn)}
+.verdict{border-radius:12px;padding:12px 16px;font-size:.87rem;font-weight:600;margin-top:10px;border:1px solid}
+.v-ok{background:color-mix(in srgb,var(--ok) 12%,transparent);border-color:var(--ok);color:var(--ok)}
+.v-warn{background:color-mix(in srgb,var(--warn) 12%,transparent);border-color:var(--warn);color:var(--warn)}
+.v-bad{background:color-mix(in srgb,var(--bad) 12%,transparent);border-color:var(--bad);color:var(--bad)}
+.bodywrap{display:grid;grid-template-columns:minmax(220px,320px) 1fr;gap:18px}
+@media(max-width:820px){.bodywrap{grid-template-columns:1fr}}
+#bodySvg{width:100%;height:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+#bodySvg .sil *{fill:rgba(148,163,184,.16)}
+#bodySvg .organ{cursor:pointer;transition:.2s}
+#bodySvg .organ *{fill:rgba(56,189,248,.5);stroke:var(--brand);stroke-width:1.2}
+#bodySvg .organ .oline,#bodySvg .organ .cline,#bodySvg .organ .cordline{fill:none;stroke-width:5;stroke-linecap:round}
+#bodySvg .organ:hover *{fill:rgba(56,189,248,.85)}
+#bodySvg .organ.sel *{fill:var(--brand2);stroke:var(--brand2)}
+#bodySvg .organ.dim{opacity:.15}
+#bodySvg .organ.lv-vhigh *{fill:rgba(225,29,72,.72);stroke:#e11d48}
+#bodySvg .organ.lv-high *{fill:rgba(234,88,12,.72);stroke:#ea580c}
+#bodySvg .organ.lv-med *{fill:rgba(217,119,6,.66);stroke:#d97706}
+#bodySvg .organ.lv-low *{fill:rgba(5,150,105,.6);stroke:#059669}
+.segrow{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.seg{width:48px;height:40px;border-radius:9px;border:2px solid var(--line);background:var(--surface);cursor:pointer;display:grid;place-items:center;font-size:.72rem;font-weight:700;color:var(--muted);transition:.15s}
+.seg:hover{transform:translateY(-2px);border-color:var(--brand)}
+.seg.hit{background:var(--bad);border-color:var(--bad);color:#fff}
+.barrow{display:grid;grid-template-columns:160px 1fr 84px;gap:10px;align-items:center;margin:7px 0;font-size:.78rem}
+.barrow .bar{height:20px;background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.barrow .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--brand2));border-radius:6px;transition:width .5s}
+.barrow .val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.74rem;text-align:right}
+@media(max-width:640px){.barrow{grid-template-columns:100px 1fr 66px}}
+.qcard{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+.qcard .qt{font-weight:700;margin-bottom:10px}
+.qopt{display:block;width:100%;text-align:left;font:inherit;font-size:.86rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:9px 14px;margin:6px 0;cursor:pointer;transition:.15s}
+.qopt:hover{border-color:var(--brand)}
+.qopt.right{background:color-mix(in srgb,var(--ok) 15%,transparent);border-color:var(--ok);font-weight:600}
+.qopt.wrong{background:color-mix(in srgb,var(--bad) 12%,transparent);border-color:var(--bad)}
+.qexp{display:none;font-size:.8rem;background:color-mix(in srgb,var(--brand) 8%,transparent);border-radius:10px;padding:10px 14px;margin-top:8px}
+.qexp.on{display:block}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.fnode{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 14px;font-size:.8rem;font-weight:600;cursor:pointer;transition:.2s}
+.fnode:hover{border-color:var(--brand2);transform:translateY(-2px)}
+.fnode.lit{background:var(--brand2);color:#fff;border-color:var(--brand2)}
+.arrow{color:var(--muted);font-weight:700}
+.drop{border:2px dashed var(--line);border-radius:16px;padding:30px;text-align:center;color:var(--muted);background:var(--surface2)}
+.drop .big{font-size:38px}
+.tabview{display:none;animation:fade .35s ease}
+.tabview.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.simindex{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.simcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
+.simcard .em{font-size:26px}
+.simcard h4{margin:0;color:var(--ink);font-size:.92rem}
+.simcard p{font-size:.78rem;color:var(--muted);flex:1}
+.menuToggle{display:none;position:fixed;bottom:18px;right:18px;z-index:70;border-radius:999px;padding:12px 18px;box-shadow:var(--shadow)}
+@media(max-width:1000px){
+ .app{grid-template-columns:1fr}
+ .sidebar{position:fixed;left:-320px;top:0;height:100vh;z-index:65;width:300px;transition:left .3s;box-shadow:var(--shadow)}
+ .sidebar.open{left:0}
+ .menuToggle{display:block}
+ .tabs .tab span.lbl{display:none}
+}
+@media print{.topbar,.sidebar,.menuToggle{display:none}.app{grid-template-columns:1fr}}
+footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.76rem;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="iconbtn" id="menuToggle" title="เมนู">☰</button>
+  <div class="tabs">
+    <button class="tab on" data-tab="home">🏠 <span class="lbl">หน้าแรก</span></button>
+    <button class="tab" data-tab="read">📖 <span class="lbl">อ่านสรุป</span></button>
+    <button class="tab" data-tab="sim">🧪 <span class="lbl">จำลอง</span></button>
+    <button class="tab" data-tab="quiz">🎯 <span class="lbl">ทดสอบ</span></button>
+  </div>
+  <div class="searchwrap">
+    <span class="ic">🔍</span>
+    <input type="text" id="searchIn" placeholder="ค้นหาสรุป / จำลอง / ชื่อไฟล์..." autocomplete="off">
+    <div class="sres" id="sres"></div>
+  </div>
+  <button class="iconbtn" id="fontMinus" title="ลดขนาดตัวอักษร">A−</button>
+  <button class="iconbtn" id="fontPlus" title="เพิ่มขนาดตัวอักษร">A＋</button>
+  <svg class="ring" viewBox="0 0 40 40" title="ความคืบหน้าการอ่านรวม">
+    <circle class="bgc" cx="20" cy="20" r="16"></circle>
+    <circle class="fgc" id="ringFg" cx="20" cy="20" r="16" stroke-dasharray="100.5" stroke-dashoffset="100.5" transform="rotate(-90 20 20)"></circle>
+    <text class="ringtxt" x="20" y="24" text-anchor="middle" id="ringTxt">0/31</text>
+  </svg>
+  <button class="iconbtn" id="themeBtn" title="สลับธีม">🌙</button>
+  <button class="iconbtn" id="printBtn" title="พิมพ์/บันทึก PDF">🖨️</button>
+</div>
+
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="logo">☢️</div>
+    <div><h1>RadLibrary</h1><small>คลังไฟล์สรุป & ห้องจำลองรังสีชีววิทยา • KMPHT</small></div>
+  </div>
+  <div class="navgroup">คอร์ส & ไฟล์เรียน</div>
+  <div id="fileList"></div>
+  <div class="navgroup">สารบัญไฟล์ที่เปิดอยู่</div>
+  <div class="seclist" id="secList"></div>
+  <div class="navgroup">แบบจำลองในบทเรียน</div>
+  <div class="seclist" id="simList"></div>
+  <div class="navgroup">จัดการแฟ้ม</div>
+  <button class="filebtn" id="goAdd"><span class="code">➕</span><span><b>เพิ่มไฟล์ใหม่ (รายสัปดาห์)</b></span></button>
+</aside>
+
+<main class="main">
+<div class="tabview on" id="tab-home">
+  <div class="hero">
+    <img src="https://image.qwenlm.ai/public_source/9f6507ce-03fe-44a7-8561-a7ce4c2a4007/152f0fb21-6c70-4e57-90b8-0c3585bed464.png" alt="atomic nucleus hero">
+    <div class="ov">
+      <h2>RadLibrary — คลังไฟล์สรุปรังสีชีววิทยา</h2>
+      <p>แยกไฟล์ชัดเจนเป็นรายชื่อไฟล์ กดเข้าไฟล์เพื่ออ่านสรุปฉบับเต็มพร้อมแบบจำลองโต้ตอบ • เพิ่มชีตใหม่ได้ทุกสัปดาห์</p>
+      <div class="chips" id="heroChips"></div>
+    </div>
+  </div>
+  <div id="homeBody"></div>
+</div>
+
+<div class="tabview" id="tab-read">
+  <div id="readBody"></div>
+</div>
+
+<div class="tabview" id="tab-sim">
+  <div class="filehead"><span class="fic">🧪</span><div><h2>ดัชนีแบบจำลองทั้งหมด</h2><p>ทุกแบบจำลองฝังอยู่ในบทเรียนสรุป — กดการ์ดเพื่อกระโดดไปเล่นตรงจุดนั้น</p></div><span class="tag" id="simCount">17 สถานี</span></div>
+  <div class="simindex" id="simIndex"></div>
+</div>
+
+<div class="tabview" id="tab-quiz">
+  <div class="filehead"><span class="fic">🎯</span><div><h2>แบบทดสอบท้ายบท — 30 ข้อ</h2><p>สุ่มจากทุกไฟล์ในคลัง + สไลด์ • เฉลยพร้อมคำอธิบายทุกข้อ</p></div><span class="tag">คะแนนสด</span></div>
+  <div class="stats">
+    <div class="stat ok"><div class="v" id="qRight">0</div><div class="l">ตอบถูก</div></div>
+    <div class="stat bad"><div class="v" id="qWrong">0</div><div class="l">ตอบผิด</div></div>
+    <div class="stat"><div class="v" id="qLeft">30</div><div class="l">ข้อที่เหลือ</div></div>
+  </div>
+  <div id="quizBox"></div>
+  <button class="btn primary" id="quizRestart">↺ สุ่มข้อสอบใหม่</button>
+</div>
+
+<footer>RadLibrary • คลังไฟล์สรุปแยกรายไฟล์ • เนื้อหาจากรายวิชา 0208307211 (KMPHT) • ใช้ทบทวนเท่านั้น ไม่แทนคำแนะนำทางคลินิก</footer>
+</main>
+</div>
+<button class="btn primary menuToggle" id="menuToggle2">☰ เมนู</button>
+
+<script>
+/* ================= helpers ================= */
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+function hx(h){h=h.replace('#','');return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];}
+function lerp(a,b,t){const A=hx(a),B=hx(b);t=Math.max(0,Math.min(1,t));return 'rgb('+A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')+')';}
+function themeCols(){const light=document.documentElement.dataset.theme==='light';return light?{grid:'rgba(100,116,139,.3)',txt:'#5b6b81',cursor:'#4f46e5'}:{grid:'rgba(148,163,184,.25)',txt:'#8fa3bd',cursor:'#818cf8'};}
+const CREG=[];
+function regCanvas(cv,fitFn,drawFn){CREG.push({cv,fit:fitFn,draw:drawFn});}
+function refreshCanvases(){CREG.forEach(o=>{if(o.cv&&o.cv.isConnected&&o.cv.offsetParent){o.fit();if(o.draw)o.draw();}});}
+window.addEventListener('resize',()=>{clearTimeout(window.__rz);window.__rz=setTimeout(refreshCanvases,150);});
+
+const IMG={
+ src:'https://image.qwenlm.ai/public_source/9f6507ce-03fe-44a7-8561-a7ce4c2a4007/168ef07a9-2fbf-44c3-8d87-1d309011256b.png',
+ dna:'https://image.qwenlm.ai/public_source/9f6507ce-03fe-44a7-8561-a7ce4c2a4007/166fb6335-47fa-49c9-98b1-902aadeecd64.png',
+ serpar:'https://image.qwenlm.ai/public_source/9f6507ce-03fe-44a7-8561-a7ce4c2a4007/18cb97f50-f48c-4ff7-8678-b172c0877b74.png',
+ linac:'https://image.qwenlm.ai/public_source/9f6507ce-03fe-44a7-8561-a7ce4c2a4007/1de076605-c6a1-420d-babe-ff241b5270d2.png',
+ window:'https://image.qwenlm.ai/public_source/9f6507ce-03fe-44a7-8561-a7ce4c2a4007/16d9c022c-6f01-4c90-acfb-068cceb0f54b.png',
+ skin:'https://image.qwenlm.ai/public_source/9f6507ce-03fe-44a7-8561-a7ce4c2a4007/131e898f7-a713-4a00-a2aa-50e1bb0ea280.png',
+ eye:'https://image.qwenlm.ai/public_source/9f6507ce-03fe-44a7-8561-a7ce4c2a4007/1b56652d2-a8a4-4a22-80b2-1e76f2903664.png',
+ oral:'https://image.qwenlm.ai/public_source/9f6507ce-03fe-44a7-8561-a7ce4c2a4007/145b2f1e6-855f-417d-aecf-6f0da3579d81.png',
+ blood:'https://image.qwenlm.ai/public_source/9f6507ce-03fe-44a7-8561-a7ce4c2a4007/1262a7209-4790-4a5c-9eb0-91dba8cfab4d.png',
+ gi:'https://image.qwenlm.ai/public_source/9f6507ce-03fe-44a7-8561-a7ce4c2a4007/1b74cca41-810e-4cee-8fed-7d17b7b28eeb.png',
+ cns:'https://image.qwenlm.ai/public_source/9f6507ce-03fe-44a7-8561-a7ce4c2a4007/148a296f1-7092-4b62-b3f9-86bacbb1b437.png'
+};
+
+/* ================= SIM markup (ไฟล์ 1: 1–12) ================= */
+const SIM_DNA='<div class="sim" id="sim-dna"><h3><span class="em">🧬</span> แบบจำลอง 1 — DNA Damage Simulator (Direct 25% / Indirect 75%)</h3><p class="desc">กด "ยิงรังสี": โฟตอน 25% ชน DNA ตรง • 75% แตกน้ำเกิด OH• แล้วค่อยทำลาย DNA • เปิด Amifostine เพื่อจับ radical • breaks มาก = เซลล์ตาย (deterministic) / ซ่อมผิด = กลายพันธุ์ (stochastic)</p><div class="simctl"><button class="btn primary" id="dnaFire">☢️ ยิงรังสี 1 ชุด</button><button class="btn" id="dnaAuto">▶ อัตโนมัติ</button><div class="grp"><label>อัตราโดส (dose rate) <output id="dnaRateOut">5</output></label><input type="range" id="dnaRate" min="1" max="20" value="5"></div><button class="btn" id="dnaProt">💊 Amifostine: OFF</button><button class="btn" id="dnaRepair">🔧 ซ่อมเซลล์ (รีเซ็ต)</button></div><canvas class="simcv" id="dnaCv"></canvas><div class="stats"><div class="stat"><div class="v" id="dnaDirect">0</div><div class="l">Direct (25%)</div></div><div class="stat"><div class="v" id="dnaIndirect">0</div><div class="l">Indirect (75%)</div></div><div class="stat warn"><div class="v" id="dnaScav">0</div><div class="l">OH• ถูกยาจับ</div></div><div class="stat bad"><div class="v" id="dnaBreaks">0</div><div class="l">Breaks คงค้าง</div></div></div><div class="verdict v-ok" id="dnaVerdict">เซลล์ปกติ — ยังไม่มีความเสียหาย</div></div>';
+const SIM_CROSS='<div class="sim" id="sim-cross"><h3><span class="em">🔀</span> แบบจำลอง 2 — Cellular Crossroads</h3><p class="desc">คลิกแต่ละเส้นทางดูชะตากรรมเซลล์ตามสไลด์</p><div class="simctl"><button class="btn" data-path="repair">🛠️ A: ซ่อมสำเร็จ</button><button class="btn" data-path="death">☠️ B: เซลล์ตาย</button><button class="btn" data-path="somatic">🧟 C: รอดแต่ผิด (Somatic)</button><button class="btn" data-path="germ">🧬 D: รอดแต่ผิด (Germ)</button></div><div class="flow" id="crossFlow"></div><div class="verdict v-ok" id="crossOut">เลือกเส้นทางเพื่อจำลองชะตากรรมของเซลล์ที่ DNA ถูกทำลาย</div></div>';
+const SIM_BODY='<div class="sim" id="sim-body"><h3><span class="em">🧍</span> แบบจำลอง 3 — Body Sensitivity & Tolerance Map</h3><p class="desc">คลิกอวัยวะบนร่างกายเพื่อดูความไวรังสี, Serial/Parallel, เซลล์เป้าหมาย, ผลกระทบ และ dose constraint • ปุ่มกรองไฮไลต์ตามระดับความไว</p><div class="simctl"><button class="btn sm on" data-flt="all">ทั้งหมด</button><button class="btn sm" data-flt="vhigh">ไวสูงมาก</button><button class="btn sm" data-flt="high">ไวสูง</button><button class="btn sm" data-flt="med">ปานกลาง</button><button class="btn sm" data-flt="low">ไวต่ำ</button></div><div class="bodywrap"><svg id="bodySvg" viewBox="0 0 320 640" aria-label="human body organ map"><g class="sil"><circle cx="160" cy="46" r="30"/><rect x="146" y="72" width="28" height="20" rx="9"/><path d="M104 96 Q160 82 216 96 L228 178 Q230 200 222 222 L214 302 Q210 322 196 324 L124 324 Q110 322 106 302 L98 222 Q90 200 92 178 Z"/><path d="M102 100 L76 122 L62 212 Q60 226 71 228 Q81 230 85 218 L100 152 Z"/><path d="M218 100 L244 122 L258 212 Q260 226 249 228 Q239 230 235 218 L220 152 Z"/><path d="M122 320 L112 470 L108 600 Q108 614 121 614 Q133 614 134 600 L148 470 L154 320 Z"/><path d="M198 320 L208 470 L212 600 Q212 614 199 614 Q187 614 186 600 L172 470 L166 320 Z"/></g><g id="organLayer"><g class="organ" data-key="cord" tabindex="0"><path class="cordline" d="M160 78 L160 300"/></g><g class="organ" data-key="brain" tabindex="0"><ellipse cx="160" cy="42" rx="21" ry="16"/></g><g class="organ" data-key="lens" tabindex="0"><circle cx="151" cy="49" r="4.5"/><circle cx="169" cy="49" r="4.5"/></g><g class="organ" data-key="thyroid" tabindex="0"><path d="M160 84 q-10 -3 -11 6 q0 8 11 7 q11 1 11 -7 q-1 -9 -11 -6z"/></g><g class="organ" data-key="esoph" tabindex="0"><path class="oline" d="M160 100 L160 198"/></g><g class="organ" data-key="breast" tabindex="0"><circle cx="134" cy="130" r="12"/><circle cx="186" cy="130" r="12"/></g><g class="organ" data-key="lungs" tabindex="0"><path d="M140 124 q-24 8 -26 46 q-1 26 10 34 q13 6 17 -6 q3 -36 -1 -74z"/><path d="M180 124 q24 8 26 46 q1 26 -10 34 q-13 6 -17 -6 q-3 -36 1 -74z"/></g><g class="organ" data-key="heart" tabindex="0"><path d="M160 160 q-14 -9 -21 3 q-6 14 8 25 q9 7 13 11 q4 -4 13 -11 q14 -11 8 -25 q-7 -12 -21 -3z"/></g><g class="organ" data-key="liver" tabindex="0"><path d="M116 210 q32 -9 54 2 q-4 22 -31 26 q-23 2 -27 -12 q-2 -10 4 -16z"/></g><g class="organ" data-key="stomach" tabindex="0"><path d="M178 208 q21 -2 23 14 q1 15 -15 19 q-15 3 -17 -8 q-2 -15 9 -25z"/></g><g class="organ" data-key="kidneys" tabindex="0"><ellipse cx="130" cy="242" rx="9" ry="14"/><ellipse cx="190" cy="242" rx="9" ry="14"/></g><g class="organ" data-key="colon" tabindex="0"><path class="cline" d="M126 236 q-7 44 6 56 q28 11 56 0 q13 -12 6 -56"/></g><g class="organ" data-key="sbowel" tabindex="0"><ellipse cx="160" cy="266" rx="25" ry="20"/></g><g class="organ" data-key="marrow" tabindex="0"><path d="M130 306 q30 -11 60 0 q-7 17 -30 17 q-23 0 -30 -17z"/></g><g class="organ" data-key="gonads" tabindex="0"><circle cx="149" cy="318" r="7"/><circle cx="171" cy="318" r="7"/></g><g class="organ" data-key="muscle" tabindex="0"><rect x="116" y="470" width="24" height="118" rx="11"/><rect x="180" y="470" width="24" height="118" rx="11"/></g></g></svg><div><div style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px"><span class="pill p-vhigh">ไวสูงมาก</span><span class="pill p-high">ไวสูง</span><span class="pill p-med">ปานกลาง</span><span class="pill p-low">ไวต่ำ</span></div><div class="box" id="organInfo"><h5>👆 เลือกอวัยวะ</h5><p>คลิกอวัยวะบนรูปร่างกายเพื่อดูรายละเอียดเต็ม</p></div><div class="callout" style="margin-top:10px">💡 ผิวหนัง = HIGH (hair follicle, sweat gland) • ดูพยาธิสภาพเต็มในหัวข้อ 12</div></div></div></div>';
+const SIM_ARS='<div class="sim" id="sim-ars"><h3><span class="em">🚨</span> แบบจำลอง 4 — ARS Whole-Body Dose Simulator</h3><p class="desc">เลื่อนโดสทั้งตัวเฉียบพลัน (สเกลล็อก 0.1–100 Sv) ดูกลุ่มอาการ ระยะรอด อัตราตาย และลำดับเฟส</p><div class="simctl"><div class="grp"><label>โดสทั้งตัวเฉียบพลัน <output id="arsOut">3.16 Sv</output></label><input type="range" id="arsDose" min="0" max="1000" value="500"></div></div><div class="stats"><div class="stat"><div class="v" id="arsSynd" style="font-size:.92rem">–</div><div class="l">กลุ่มอาการ</div></div><div class="stat warn"><div class="v" id="arsSurv">–</div><div class="l">ระยะรอด</div></div><div class="stat bad"><div class="v" id="arsDeath">–</div><div class="l">อัตราตาย</div></div></div><div class="box"><h5>📋 อาการเด่น</h5><p id="arsSym">–</p></div><div class="box" style="margin-top:10px"><h5>⏳ ลำดับเฟสของโรค</h5><div class="segrow" id="arsPhase"></div><p id="arsPhaseTxt" style="font-size:.78rem;color:var(--muted)"></p></div><div class="verdict v-ok" id="arsVerdict">–</div></div>';
+const SIM_SKIN='<div class="sim" id="sim-skin"><h3><span class="em">🧴</span> แบบจำลอง 5 — Skin Reaction Timeline</h3><p class="desc">เลือกโดส + วันหลังรับรังสี: Erythema → Dry → Moist desquamation → Necrosis และผลระยะยาว (&gt;6 เดือน)</p><div class="simctl"><div class="grp"><label>โดสผิวหนัง <output id="skinDoseOut">10 Gy</output></label><input type="range" id="skinDose" min="0" max="70" value="10"></div><div class="grp"><label>เวลาหลังรับรังสี <output id="skinDayOut">14 วัน</output></label><input type="range" id="skinDay" min="0" max="400" value="14"></div></div><svg id="skinSvg" viewBox="0 0 640 220" style="width:100%;background:var(--surface);border:1px solid var(--line);border-radius:12px"><rect x="0" y="0" width="640" height="26" id="skKer" fill="#e9c9a4"/><rect x="0" y="26" width="640" height="22" id="skGran" fill="#dca87e"/><rect x="0" y="48" width="640" height="34" id="skPrick" fill="#d09069"/><rect x="0" y="82" width="640" height="16" id="skBasal" fill="#8a5fa8"/><rect x="0" y="98" width="640" height="46" id="skLam" fill="#c07a68"/><rect x="0" y="144" width="640" height="40" id="skFib" fill="#a8763f"/><rect x="0" y="184" width="640" height="36" id="skSub" fill="#e0b493"/><g id="skMarks"></g><text x="8" y="18" font-size="11" fill="#ffffff">Keratin layer</text><text x="8" y="42" font-size="11" fill="#ffffff">Granular layer</text><text x="8" y="70" font-size="11" fill="#ffffff">Prickle layer</text><text x="8" y="94" font-size="11" fill="#ffffff">Basal layer (stem cells)</text><text x="8" y="126" font-size="11" fill="#ffffff">Lamina propria</text><text x="8" y="168" font-size="11" fill="#ffffff">Dense fibrous layer</text><text x="8" y="206" font-size="11" fill="#ffffff">Submucosa</text></svg><div class="verdict v-ok" id="skinVerdict">–</div></div>';
+const SIM_EYE='<div class="sim" id="sim-eye"><h3><span class="em">👁️</span> แบบจำลอง 6 — Lens Cataract Risk & Eye Shield</h3><p class="desc">ความเสี่ยงต้อกระจกเริ่มที่ 2 Gy / สูงมากที่ 4 Gy • เลนส์ Dmax &lt; 10 Gy • เปิด eye shield ลดโดสอาชีพจาก fluoroscopy</p><div class="simctl"><div class="grp"><label>โดสเลนส์ตา (ก่อนป้องกัน) <output id="eyeOut">2.0 Gy</output></label><input type="range" id="eyeDose" min="0" max="120" value="20"></div><button class="btn" id="eyeShield">🥽 Eye shield: OFF</button></div><svg viewBox="0 0 300 160" style="width:100%;max-width:400px;background:var(--surface);border:1px solid var(--line);border-radius:12px;display:block;margin:auto"><ellipse cx="150" cy="80" rx="120" ry="66" fill="none" stroke="#8fa3bd" stroke-width="3"/><circle cx="150" cy="80" r="42" fill="none" stroke="#38bdf8" stroke-width="3"/><ellipse id="lensOp" cx="150" cy="80" rx="30" ry="30" fill="#ffffff" opacity="0.05"/><circle cx="150" cy="80" r="13" fill="#0b0f17" opacity=".85"/></svg><div class="stats"><div class="stat"><div class="v" id="eyeEff">–</div><div class="l">โดสเลนส์สุทธิ</div></div><div class="stat warn"><div class="v" id="eyeRisk" style="font-size:.88rem">–</div><div class="l">โอกาสต้อกระจก</div></div><div class="stat"><div class="v">10 Gy</div><div class="l">Constraint Dmax</div></div></div><div class="verdict v-ok" id="eyeVerdict">–</div></div>';
+const SIM_MUCO='<div class="sim" id="sim-muco"><h3><span class="em">🗣️</span> แบบจำลอง 7 — Mucositis & Xerostomia (Head & Neck)</h3><p class="desc">เลื่อนสัปดาห์การฉาย (2 Gy/fx × 5 fx/wk): mucositis เริ่ม wk 2–3 พีคท้ายคอร์ส ฟื้น 2–3 wk หลังจบ • เลื่อน Mean dose ต่อมน้ำลายดู xerostomia (เป้า &lt; 26 Gy)</p><div class="simctl"><div class="grp"><label>สัปดาห์ที่ฉาย <output id="mucoWkOut">wk 3</output></label><input type="range" id="mucoWk" min="0" max="12" value="3"></div><div class="grp"><label>Mean dose ต่อมน้ำลาย <output id="paroOut">30 Gy</output></label><input type="range" id="paroDose" min="0" max="70" value="30"></div></div><svg viewBox="0 0 300 150" style="width:100%;max-width:400px;background:var(--surface);border:1px solid var(--line);border-radius:12px;display:block;margin:auto"><path id="mucBase" d="M40 40 Q150 10 260 40 Q262 90 150 128 Q38 90 40 40z" fill="#e8a3ae" stroke="#b91c1c" stroke-width="2"/><g id="mucUlcers"></g><path d="M70 60 Q150 40 230 60" fill="none" stroke="#8fa3bd" stroke-width="2" stroke-dasharray="4 4"/></svg><div class="stats"><div class="stat"><div class="v" id="mucoDose">–</div><div class="l">โดสสะสม</div></div><div class="stat bad"><div class="v" id="mucoGrade">–</div><div class="l">Grade Mucositis</div></div><div class="stat warn"><div class="v" id="paroRisk" style="font-size:.88rem">–</div><div class="l">เสี่ยง Xerostomia</div></div></div><div class="verdict v-ok" id="mucoVerdict">–</div></div>';
+const SIM_BLOOD='<div class="sim" id="sim-blood"><h3><span class="em">🩸</span> แบบจำลอง 8 — Blood Cell Depletion Timeline</h3><p class="desc">Platelets ลด 2–4 วัน • WBC ลด 5–10 วัน • RBC ลด 3–4 สัปดาห์ (RBC ทนสุด) • โดสสูง = ลดลึก ฟื้นช้า</p><div class="simctl"><div class="grp"><label>โดสไขกระดูก <output id="blDoseOut">4.0 Gy</output></label><input type="range" id="blDose" min="0" max="100" value="40"></div><button class="btn primary" id="blPlay">▶ เล่นเส้นเวลา</button><button class="btn" id="blReset">↺ รีเซ็ต</button></div><canvas class="simcv small" id="blCv"></canvas><div class="stats"><div class="stat"><div class="v" id="blDay">0</div><div class="l">วันหลังรับรังสี</div></div><div class="stat warn"><div class="v" id="blPlt">100%</div><div class="l">Platelets</div></div><div class="stat bad"><div class="v" id="blWbc">100%</div><div class="l">WBC</div></div><div class="stat"><div class="v" id="blRbc">100%</div><div class="l">RBC</div></div></div><div class="verdict v-ok" id="blVerdict">–</div></div>';
+const SIM_ARCH='<div class="sim" id="sim-arch"><h3><span class="em">🎮</span> แบบจำลอง 9 — Serial vs Parallel Planning Game</h3><p class="desc">คลิกช่องเนื้อเยื่อเพื่อ "ฉายทำลาย": Serial พังทั้งอันเมื่อเสียจุดเดียว (Dmax) • Parallel ทำงานตามสัดส่วนที่เหลือ (Mean/Vxx)</p><div class="grid2"><div class="box"><h5>🔗 Serial (เช่น ไขสันหลัง)</h5><div class="segrow" id="segSerial"></div><div class="kv"><span>การทำงาน</span><b id="serFn">100%</b></div><div class="kv"><span>Constraint</span><b>Dmax</b></div></div><div class="box"><h5>🕸️ Parallel (เช่น ปอด)</h5><div class="segrow" id="segPara"></div><div class="kv"><span>การทำงาน</span><b id="paraFn">100%</b></div><div class="kv"><span>Constraint</span><b>Mean/Vxx</b></div></div></div><div class="verdict v-ok" id="archVerdict">คลิกช่องเพื่อเริ่มวางแผน — ลองทำลาย 1 ช่องของ serial เทียบกับ parallel</div><button class="btn sm" id="archReset" style="margin-top:10px">↺ รีเซ็ตเกม</button></div>';
+const SIM_WINDOW='<div class="sim" id="sim-window"><h3><span class="em">🎛️</span> แบบจำลอง 10 — Therapeutic Window Explorer (TCP vs NTCP)</h3><p class="desc">เลื่อนโดสรวม + เลือก fraction size: fraction เล็กขยาย window • fraction ใหญ่ปิดหน้าต่าง • ตัวอย่างสไลด์: ก้อน 2 ซม. ≈ 70 Gy → TCP 95%</p><div class="simctl"><div class="grp"><label>โดสรวม (Total dose) <output id="twDoseOut">70 Gy</output></label><input type="range" id="twDose" min="10" max="120" value="70"></div><div class="grp"><label>ขนาดต่อครั้ง</label><select id="twFx"><option value="1.8">1.8 Gy/fx</option><option value="2" selected>2 Gy/fx (conventional)</option><option value="3">3 Gy/fx</option><option value="5">5 Gy/fx (hypo)</option><option value="8">8 Gy/fx (SBRT-like)</option></select></div></div><canvas class="simcv" id="twCv"></canvas><div class="stats"><div class="stat ok"><div class="v" id="twTcp">–</div><div class="l">TCP</div></div><div class="stat bad"><div class="v" id="twNtcp">–</div><div class="l">NTCP</div></div><div class="stat"><div class="v" id="twFxN">–</div><div class="l">Fractions</div></div><div class="stat"><div class="v" id="twWin">–</div><div class="l">Window</div></div></div><div class="verdict v-ok" id="twVerdict">–</div></div>';
+const SIM_BED='<div class="sim" id="sim-bed"><h3><span class="em">🧮</span> แบบจำลอง 11 — Fractionation & BED Calculator</h3><p class="desc">BED = n·d·(1 + d/(α/β)) • EQD2 = BED/(1 + 2/(α/β)) • α/β = 10 (ก้อน) / 3 (late tissue)</p><div class="simctl"><div class="grp"><label>โดสรวม (Gy) <output id="bedDOut">50</output></label><input type="range" id="bedD" min="10" max="90" value="50"></div><div class="grp"><label>จำนวน fractions <output id="bedNOut">25</output></label><input type="range" id="bedN" min="1" max="45" value="25"></div></div><div class="simctl"><button class="btn sm" data-pre="50,25">เต้านม 50/25</button><button class="btn sm" data-pre="60,30">60/30</button><button class="btn sm" data-pre="70,35">ศีรษะ-คอ 70/35</button><button class="btn sm" data-pre="45,25">ไขสันหลัง 45/25</button><button class="btn sm" data-pre="30,5">SBRT ปอด 30/5</button><button class="btn sm" data-pre="54,30">ก้านสมอง 54/30</button></div><div class="stats"><div class="stat"><div class="v" id="bedDpf">–</div><div class="l">Gy/fx</div></div><div class="stat ok"><div class="v" id="bedT10">–</div><div class="l">BED₁₀</div></div><div class="stat bad"><div class="v" id="bedT3">–</div><div class="l">BED₃</div></div><div class="stat"><div class="v" id="bedEq2">–</div><div class="l">EQD2₃</div></div></div><div class="verdict v-ok" id="bedVerdict">–</div></div>';
+const SIM_DOSE='<div class="sim" id="sim-dose"><h3><span class="em">📊</span> แบบจำลอง 12 — Medical Dose Comparator</h3><p class="desc">เทียบ effective dose + ความเสี่ยง + เทียบพื้นหลังธรรมชาติ (~2.4 mSv/ปี) + เทียบ chest X-ray กี่ครั้ง</p><div class="simctl" id="doseChips" style="gap:6px"></div><div id="doseBars" style="margin-top:8px"></div><div class="verdict v-ok" id="doseVerdict">เลือกการตรวจด้านบนเพื่อเปรียบเทียบ (เลือกได้หลายรายการ)</div></div>';
+
+/* ================= SIM markup (ไฟล์ 2: 13–17) ================= */
+const SIM_LET='<div class="sim" id="sim-let"><h3><span class="em">⚡</span> แบบจำลอง 13 — LET & Quality Factor Converter (1 Sv = 1 Gy × QF)</h3><p class="desc">เลือกชนิดรังสี + โดสดูดกลืน (Gy) → คำนวณโดสสมมูล (Sv) • ดูความหนาแน่นการแตกตัวตามแนวเส้นทาง: Low LET จุดห่างกระจาย / High LET จุดหนาแน่นถี่</p><div class="simctl"><div class="grp"><label>โดสดูดกลืน (Gy) <output id="letGyOut">1.0 Gy</output></label><input type="range" id="letGy" min="1" max="100" value="10"></div><div class="grp"><label>ชนิดรังสี</label><select id="letType"><option value="1">X-ray / Gamma (Low LET, QF 1)</option><option value="1b">Beta (Low LET, QF 1)</option><option value="20">Alpha (High LET, QF 20)</option><option value="c">กำหนด QF เอง</option></select></div><div class="grp" id="letQfWrap" style="display:none"><label>Quality Factor (QF) <output id="letQfOut">10</output></label><input type="range" id="letQf" min="1" max="20" value="10"></div></div><svg id="letSvg" viewBox="0 0 640 120" style="width:100%;background:var(--surface);border:1px solid var(--line);border-radius:12px"><text x="20" y="20" font-size="11" fill="#8fa3bd">เส้นทางรังสีในเนื้อเยื่อ — จุด = การแตกตัว (ionization)</text><line x1="20" y1="70" x2="620" y2="70" stroke="#8fa3bd" stroke-width="2"/><g id="letDots"></g></svg><div class="stats"><div class="stat"><div class="v" id="letSv">–</div><div class="l">โดสสมมูล (Sv)</div></div><div class="stat"><div class="v" id="letQfV">–</div><div class="l">QF ที่ใช้</div></div><div class="stat warn"><div class="v" id="letX">–</div><div class="l">อันตรายเทียบ Gamma (เท่า)</div></div></div><div class="verdict v-ok" id="letVerdict">–</div></div>';
+const SIM_WBL='<div class="sim" id="sim-wbl"><h3><span class="em">🚨</span> แบบจำลอง 14 — Whole-Body Exposure Levels (Level 1–6)</h3><p class="desc">เลื่อนโดสทั้งตัว (Sv สเกลล็อก) → ดู Level อาการ อัตราตาย เวลาเสียชีวิต และระบบที่ล้มเหลว ตามตารางในสไลด์</p><div class="simctl"><div class="grp"><label>โดสทั้งตัว (Sv) <output id="wblOut">3.16 Sv</output></label><input type="range" id="wblDose" min="0" max="1000" value="600"></div></div><div class="stats"><div class="stat"><div class="v" id="wblLv" style="font-size:.95rem">–</div><div class="l">Level</div></div><div class="stat"><div class="v" id="wblSynd" style="font-size:.86rem">–</div><div class="l">ระบบที่ล้มเหลว</div></div><div class="stat bad"><div class="v" id="wblDeath">–</div><div class="l">อัตราตาย</div></div><div class="stat warn"><div class="v" id="wblTime">–</div><div class="l">เวลาเสียชีวิต</div></div></div><div class="box"><h5>📋 อาการแสดงทางคลินิก</h5><p id="wblSym">–</p></div><div class="verdict v-ok" id="wblVerdict">–</div></div>';
+const SIM_HEMO='<div class="sim" id="sim-hemo"><h3><span class="em">🩸</span> แบบจำลอง 15 — Haematological Response (1 Gy vs 3 Gy)</h3><p class="desc">กราฟตามสไลด์: Lymphocytes ลดเร็วสุด (interphase death) → Neutrophils → Platelets → Hemoglobin ลดช้าสุด • กดเล่นเพื่อดูเส้นเวลา 60 วัน</p><div class="simctl"><button class="btn on" id="hemo1">1 Gy</button><button class="btn" id="hemo3">3 Gy</button><button class="btn primary" id="hemoPlay">▶ เล่นเส้นเวลา</button><button class="btn" id="hemoReset">↺ รีเซ็ต</button></div><canvas class="simcv small" id="hemoCv"></canvas><div class="stats"><div class="stat"><div class="v" id="hemoDay">0</div><div class="l">วัน</div></div><div class="stat bad"><div class="v" id="hemoLym">100%</div><div class="l">Lymphocytes</div></div><div class="stat warn"><div class="v" id="hemoNeu">100%</div><div class="l">Neutrophils</div></div><div class="stat"><div class="v" id="hemoPlt">100%</div><div class="l">Platelets</div></div><div class="stat ok"><div class="v" id="hemoHb">100%</div><div class="l">Hemoglobin</div></div></div><div class="verdict v-ok" id="hemoVerdict">–</div></div>';
+const SIM_LD50='<div class="sim" id="sim-ld50"><h3><span class="em">☠️</span> แบบจำลอง 16 — LD50/30 Species Comparator + Mortality Curve</h3><p class="desc">แท่งบาร์สเกลล็อก: LD50/30 ข้ามสปีชีส์ (มนุษย์ 3–4 Gy = 300 rad) • เปิดจุลชีพเห็นความต่างเกือบ 1,000 เท่า • กราฟ sigmoid แสดงจุด LD50/30 มนุษย์</p><div class="simctl"><button class="btn sm on" id="ldMicroOff">ซ่อนจุลชีพ</button><button class="btn sm" id="ldMicroOn">แสดงจุลชีพ (E.coli → Paramecia)</button></div><div id="ldBars"></div><canvas class="simcv small" id="ldCv" style="margin-top:12px"></canvas><div class="verdict v-ok" id="ldVerdict">ยิ่งวิวัฒนาการซับซ้อน → ทนรังสีได้น้อย • สิ่งมีชีวิตเซลล์เดียวทนได้มหาศาล</div></div>';
+const SIM_ICRP='<div class="sim" id="sim-icrp"><h3><span class="em">🛡️</span> แบบจำลอง 17 — ICRP 103 (2007) Dose Limit Checker</h3><p class="desc">เลือกกลุ่มบุคคล + อวัยวะ + โดสต่อปี → ตรวจตามเกณฑ์ ICRP ทันที (ผู้ปฏิบัติงาน effective 20 mSv/ปี เฉลี่ย 5 ปี ปีใด ๆ ≤ 50 • ประชาชน 1 mSv/ปี)</p><div class="simctl"><div class="grp"><label>กลุ่มบุคคล</label><select id="icrpRole"><option value="occ">ผู้ปฏิบัติงานทางรังสี (&gt;18 ปี)</option><option value="pub">บุคคลทั่วไป</option></select></div><div class="grp"><label>อวัยวะ/ปริมาณ</label><select id="icrpOrgan"><option value="eff">Effective dose (ทั้งตัว)</option><option value="lens">เลนส์ตา</option><option value="skin">ผิวหนัง</option><option value="hands">มือและเท้า</option></select></div><div class="grp"><label>โดสที่ได้รับ/ปี <output id="icrpOut">15 mSv</output></label><input type="range" id="icrpDose" min="0" max="600" value="15"></div></div><div class="stats"><div class="stat"><div class="v" id="icrpLim" style="font-size:.9rem">–</div><div class="l">ขีดจำกัด/ปี</div></div><div class="stat"><div class="v" id="icrpRatio">–</div><div class="l">สัดส่วนที่ใช้ไป</div></div></div><div class="verdict v-ok" id="icrpVerdict">–</div></div>';
+
+/* ================= FILES ================= */
+const FILES=[{
+ id:'c1', code:'ไฟล์ 1', name:'เอฟเฟครังสีจ้า', icon:'📘',
+ tagline:'Radiation Effect on Major Organs + ชีตสรุป 14 หัวข้อ (ฉบับรวมเล่มเดียว)',
+ meta:'รายวิชา 0208307211 รังสีชีววิทยา • KMPHT',
+ tags:['สรุป .md','สไลด์ .pdf'],
+ sections:[
+{t:'ภาพรวมรายวิชา & Outline & Scale of Impact',s:'Introduction • Journey MICRO→MACRO→CLINICAL',h:
+ '<p class="sub">Radiobiology: From Physical Energy to Clinical Outcomes</p>'+
+ '<h4>Outline ของบทเรียน (จากสไลด์)</h4><ul><li>Introduction — บทนำรังสีชีววิทยา</li><li>Pathology of Tissues and Organs after Radiotherapeutic Treatment</li><li>Tissues and Organs Tolerance dose</li><li>Example of Tissues and Organs Effects</li></ul>'+
+ '<h4>The Scale of Impact — 4 ระดับผลกระทบ</h4>'+
+ '<div class="grid4"><div class="box"><h5>1️⃣ Physics & Units</h5><p>พลังงานถูกปล่อยและวัดอย่างไร</p></div>'+
+ '<div class="box"><h5>2️⃣ Cellular Level</h5><p>การไอออไนซ์ทำลายโครงสร้าง DNA อย่างไร</p></div>'+
+ '<div class="box"><h5>3️⃣ Tissue Response</h5><p>ทำไมอวัยวะต่าง ๆ ตอบสนองด้วยอัตราที่ต่างกันมาก</p></div>'+
+ '<div class="box"><h5>4️⃣ Clinical Application</h5><p>ใช้หลักชีววิทยาทำลายก้อนมะเร็งขณะสงวนอวัยวะปกติ</p></div></div>'+
+ '<h4>The Radiobiological Journey</h4>'+
+ '<div class="flow"><span class="fnode">MICRO: Radiation Sources</span><span class="arrow">→</span><span class="fnode">Molecular Damage</span><span class="arrow">→</span><span class="fnode">MACRO: Organ Pathology</span><span class="arrow">→</span><span class="fnode">CLINICAL: Therapeutic Application</span></div>'+
+ '<div class="callout">Internal & External Exposure → Direct & Indirect Action → Deterministic vs Stochastic → TCP vs NTCP Optimization</div>'},
+{t:'บทนำ: แหล่งกำเนิดและเส้นทางรับรังสี',s:'Sources & Exposure Routes + Hazard table',h:
+ '<img class="fig" src="'+IMG.src+'" alt="external vs internal exposure">'+
+ '<div class="grid2"><div class="box"><h5>🔩 External / Sealed sources</h5><ul><li>กำเนิดจากเครื่อง (X-ray, Linear Accelerator) หรือไอโซโทปปิดผนึก (Cobalt-60)</li><li>รับสัมผัสเฉพาะที่หรือทั้งตัว (local / whole-body irradiation)</li><li>รังสีมาจากภายนอกขอบเขตผิวหนัง</li></ul></div>'+
+ '<div class="box"><h5>💧 Internal / Unsealed sources</h5><ul><li>สารกัมมันตรังสีเข้าทางหายใจ กลืนกิน หรือบาดแผล</li><li>ตัวอย่าง: ไอโอดีน-131 ทางปากหรือ IV infusion</li><li>เนื้อเยื่อเป้าหมายถูกระคายต่อเนื่องจากภายใน</li></ul></div></div>'+
+ '<h4>Radiation Hazard by Exposure Route</h4>'+
+ '<div class="tw"><table><tr><th>ชนิดรังสี</th><th>ภายนอกร่างกาย</th><th>ภายในร่างกาย</th></tr>'+
+ '<tr><td><b>Alpha particle</b> (หนัก, ประจุสูง He²⁺)</td><td>ไม่เป็นอันตราย (ผิวหนังกันไว้)</td><td><span class="pill p-vhigh">อันตรายมาก</span></td></tr>'+
+ '<tr><td><b>Beta particle</b> (อิเล็กตรอนเบา)</td><td>ปานกลาง (ผิวหนัง, ตา)</td><td><span class="pill p-high">อันตรายสูง</span></td></tr>'+
+ '<tr><td><b>Gamma ray</b> (พลังงานล้วน)</td><td>ทั้งตัว (whole body)</td><td><span class="pill p-med">อันตรายน้อยกว่า</span></td></tr></table></div>'+
+ '<div class="callout warn">⚠️ จำง่าย: Alpha อันตรายสุดเมื่อเข้าภายใน แต่ภายนอกแทบไม่อันตราย • Gamma ทะลุทะลวง → อันตรายจากภายนอกทั้งตัว</div>'},
+{t:'กลไกระดับเซลล์ (Mechanism)',s:'Sequence of events + Direct/Indirect + Crossroads',h:
+ '<h4>ลำดับเหตุการณ์: From Physics to Pathology</h4>'+
+ '<div class="tw"><table><tr><th>ขั้น</th><th>เหตุการณ์</th><th>สาขา</th><th>เวลา</th></tr>'+
+ '<tr><td>1</td><td>Energy Absorption</td><td>Physics</td><td class="mono">10⁻¹⁷ s</td></tr>'+
+ '<tr><td>2</td><td>Ionization and Excitation</td><td>Physics</td><td class="mono">10⁻¹⁵ s</td></tr>'+
+ '<tr><td>3</td><td>Molecular Changes</td><td>Chemistry</td><td class="mono">10⁻⁵ s</td></tr>'+
+ '<tr><td>4</td><td>Biochemical Changes</td><td>Chem/Bio</td><td>วินาที–ชั่วโมง</td></tr>'+
+ '<tr><td>5</td><td>Physiologic & Anatomic Changes</td><td>Biology</td><td>นาที–ชั่วโมง</td></tr>'+
+ '<tr><td>6</td><td>Biological Effects (มะเร็ง, การกลายพันธุ์)</td><td>Biology</td><td>ชั่วโมง–ปี</td></tr>'+
+ '<tr><td>7</td><td>Death of Organism (Final Outcome)</td><td>Biology</td><td>ชั่วโมง–ปี</td></tr></table></div>'+
+ '<h4>Molecular Damage: The 75% Culprit</h4><img class="fig" src="'+IMG.dna+'" alt="direct vs indirect action">'+
+ '<div class="grid2"><div class="box"><h5>🎯 Direct Action (25%)</h5><p>รังสีชนโมเลกุล DNA โดยตรง → ionization และสาย DNA ขาด (strand breaks)</p></div>'+
+ '<div class="box"><h5>💦 Indirect Action (75%)</h5><p>รังสีแตกโมเลกุลน้ำ (H₂O) → <b>hydroxyl free radical (OH•)</b> อิเล็กตรอนเดี่ยวไม่เป็นคู่ → ทำลาย DNA จนสายขาด</p></div></div>'+
+ '<h4>Cellular Crossroads: ทางแยกของเซลล์</h4><ul><li>Successful Repair → เซลล์รอด ทำงานปกติ</li><li><b>DETERMINISTIC:</b> Cell Death → Damage to Organ → Death of Organism</li><li><b>STOCHASTIC:</b> Modified Cell → Somatic (Cancer/Leukemia) หรือ Germ (Hereditary Effects)</li></ul>'+
+ SIM_DNA+SIM_CROSS},
+{t:'Deterministic vs Stochastic Effects',s:'Tissue reactions vs probabilistic + graphs',h:
+ '<div class="tw"><table><tr><th></th><th>Deterministic (Tissue reactions)</th><th>Stochastic (Probabilistic)</th></tr>'+
+ '<tr><td>กลไก</td><td>เซลล์ตายโดยตรง</td><td>เซลล์กลายพันธุ์แต่รอด</td></tr>'+
+ '<tr><td>Threshold</td><td><b>มี</b> — เกิดเหนือโดสหนึ่งเท่านั้น</td><td><b>ไม่มี</b> — สมมติฐาน LNT</td></tr>'+
+ '<tr><td>ความรุนแรง</td><td>เพิ่มตามโดสแบบเส้นตรง</td><td>คงที่ (a cancer is a cancer) — เพิ่มแค่โอกาส</td></tr>'+
+ '<tr><td>ตัวอย่างคลินิก</td><td>แผลไหม้, ผมร่วง, ต้อกระจก, อวัยวะล้มเหลว</td><td>Leukemia, solid cancers, genetic mutations</td></tr></table></div>'+
+ '<div class="grid2"><div class="box"><h5>📈 Severity vs Dose (Deterministic)</h5><svg viewBox="0 0 260 150" style="width:100%"><line x1="30" y1="120" x2="245" y2="120" stroke="#8fa3bd" stroke-width="1.5"/><line x1="30" y1="120" x2="30" y2="12" stroke="#8fa3bd" stroke-width="1.5"/><line x1="90" y1="124" x2="90" y2="114" stroke="#fbbf24" stroke-width="2.5"/><path d="M90 120 L235 25" stroke="#fb7185" stroke-width="3" fill="none"/><text x="70" y="140" font-size="10" fill="#fbbf24">Threshold Dose</text><text x="150" y="140" font-size="10" fill="#8fa3bd">Dose →</text><text x="34" y="20" font-size="10" fill="#8fa3bd">Severity</text></svg></div>'+
+ '<div class="box"><h5>📉 Probability vs Dose (Stochastic)</h5><svg viewBox="0 0 260 150" style="width:100%"><line x1="30" y1="120" x2="245" y2="120" stroke="#8fa3bd" stroke-width="1.5"/><line x1="30" y1="120" x2="30" y2="12" stroke="#8fa3bd" stroke-width="1.5"/><path d="M30 120 L235 30" stroke="#34d399" stroke-width="3" stroke-dasharray="6 4" fill="none"/><text x="40" y="140" font-size="10" fill="#34d399">LNT (Linear-No-Threshold)</text><text x="34" y="20" font-size="10" fill="#8fa3bd">Probability</text></svg></div></div>'},
+{t:'ความไวต่อรังสีของเนื้อเยื่อ (Heatmap)',s:'Sensitivity ↔ cellular reproductive rate',h:
+ '<p class="sub">Tissue Sensitivity Heatmap — Sensitivity correlates with cellular reproductive rate</p>'+
+ '<ul><li><span class="pill p-vhigh">VERY HIGH</span> ไขกระดูก (WBCs), เซลล์สืบพันธุ์, เยื่อบุลำไส้ (fast-dividing)</li>'+
+ '<li><span class="pill p-high">HIGH</span> เลนส์ตา, เยื่อบุหลอดอาหาร, เยื่อเมือก (mucous membranes)</li>'+
+ '<li><span class="pill p-med">MEDIUM</span> สมอง (glial cells), ปอด, ลำไส้, ตับ, ไต, ไทรอยด์</li>'+
+ '<li><span class="pill p-low">LOW</span> เม็ดเลือดแดงโตเต็มวัย, กล้ามเนื้อ, กระดูก/กระดูกอ่อนโตเต็มวัย</li></ul>'+
+ SIM_BODY},
+{t:'Acute Radiation Syndrome (ARS)',s:'Whole-body deterministic effects',h:
+ '<div class="tw"><table><tr><th>ช่วงโดส</th><th>กลุ่มอาการ</th><th>ระยะรอด</th><th>อัตราตาย</th></tr>'+
+ '<tr><td class="mono">1–2 Sv</td><td>Bone Marrow Syndrome</td><td>เป็นเดือน</td><td>0–10%</td></tr>'+
+ '<tr><td class="mono">2–10 Sv</td><td>Severe Bone Marrow Syndrome</td><td>เป็นสัปดาห์</td><td>0–90%</td></tr>'+
+ '<tr><td class="mono">10–15 Sv</td><td>GI Syndrome (ท้องเสียรุนแรง, ไข้)</td><td>~2 สัปดาห์</td><td>90–100%</td></tr>'+
+ '<tr><td class="mono">&gt;50 Sv</td><td>Neurological / Cardiovascular</td><td>1–4 ชั่วโมง</td><td>100%</td></tr></table></div>'+
+ '<div class="callout bad">☠️ โดสยิ่งสูง → กลุ่มอาการเลื่อนจากไขกระดูก → GI → ประสาท/หัวใจหลอดเลือด และระยะรอดสั้นลง</div>'+
+ SIM_ARS},
+{t:'โครงสร้างอวัยวะ: Serial vs Parallel',s:'Organ Architecture + constraints',h:
+ '<img class="fig" src="'+IMG.serpar+'" alt="serial chain vs parallel network">'+
+ '<div class="grid2"><div class="box"><h5>🔗 Serial Organs (The Single Chain)</h5><ul><li>ข้อใดเสีย → อวัยวะล้มเหลวทั้งหมด (critical path) เช่น อัมพาต/ตาบอด</li><li>ตัวอย่าง: ไขสันหลัง, ลำไส้, เส้นประสาทตา, optic chiasm</li><li><b>Constraint: Max Dose (Dmax)</b> เข้มงวดสัมบูรณ์</li><li>ค่าจำ: ไขสันหลัง max 45 Gy • ประสาทตา ≤ 54 Gy</li></ul></div>'+
+ '<div class="box"><h5>🕸️ Parallel Organs (The Network)</h5><ul><li>บางส่วนเสีย → ยังทำงานด้วยประสิทธิภาพลดลง</li><li>ตัวอย่าง: ปอด, ตับ, ไต, ต่อมน้ำลาย (parotid)</li><li><b>Constraint: Mean Dose / Volume (Vxx)</b></li><li>กลยุทธ์: ยอมเสียปริมาตรเล็กด้วยโดสสูงมากเพื่อกำจัดก้อนเฉพาะที่</li></ul></div></div>'+
+ SIM_ARCH},
+{t:'การใช้รังสีทางการแพทย์ 3 รูปแบบ',s:'Diagnostic / Nuclear Medicine / Radiation Therapy',h:
+ '<div class="grid3"><div class="box"><h5>1) Diagnostic Radiology</h5><p>X-rays, CT • ภาพชัดสุดด้วยโดสต่ำสุด — หลัก <b>ALARA</b> • กังวล Stochastic</p></div>'+
+ '<div class="box"><h5>2) Nuclear Medicine</h5><p>Unsealed sources (I-131 ทางปาก) • ประเมินหน้าที่อวัยวะ</p></div>'+
+ '<div class="box"><h5>3) Radiation Therapy</h5><p>ใช้ Deterministic effects ทำลายก้อนมะเร็งอย่างจงใจ</p></div></div>'+
+ '<h4>Radiation Risks in X-rays Examination</h4>'+
+ '<div class="tw"><table><tr><th>Examination</th><th>Skin dose (mGy)</th><th>Effective dose (mGy)</th><th>Risk (%)</th></tr>'+
+ '<tr><td>Urography</td><td class="mono">30</td><td class="mono">8</td><td class="mono">0.04</td></tr>'+
+ '<tr><td>Lumbar spine</td><td class="mono">40</td><td class="mono">5</td><td class="mono">0.025</td></tr>'+
+ '<tr><td>Abdomen</td><td class="mono">10</td><td class="mono">2.5</td><td class="mono">0.013</td></tr>'+
+ '<tr><td>Chest</td><td class="mono">2</td><td class="mono">0.25</td><td class="mono">0.0013</td></tr>'+
+ '<tr><td>Extremities</td><td class="mono">3</td><td class="mono">0.025</td><td class="mono">0.00013</td></tr></table></div>'+
+ '<h4>Radiation Risks in Nuclear Medicine</h4>'+
+ '<div class="tw"><table><tr><th>Examination</th><th>Radiopharmaceutical</th><th>Effective dose (mSv)</th><th>Risk (%)</th></tr>'+
+ '<tr><td>Myocardium</td><td>Tl-201 chloride</td><td class="mono">23</td><td class="mono">0.12</td></tr>'+
+ '<tr><td>Bone</td><td>Tc-99m MDP</td><td class="mono">3.6</td><td class="mono">0.018</td></tr>'+
+ '<tr><td>Thyroid</td><td>Tc-99m pertechnetate</td><td class="mono">1.1</td><td class="mono">0.006</td></tr>'+
+ '<tr><td>Lungs</td><td>Tc-99m MAA</td><td class="mono">0.9</td><td class="mono">0.005</td></tr>'+
+ '<tr><td>Kidney clearance</td><td>Cr-51 EDTA</td><td class="mono">0.01</td><td class="mono">0.00005</td></tr></table></div>'+
+ '<p class="sub">ภาพประกอบสไลด์: Normal Lung Perfusion Images • Myocardial Perfusion Scan (LPO, Post, RPO, RLat, Ant, LLat)</p>'+
+ '<h4>Radiation Therapy — เทคโนโลยีและการวางแผน</h4><img class="fig" src="'+IMG.linac+'" alt="LINAC room">'+
+ '<ul><li><b>เทคโนโลยี:</b> Linear Accelerator, Cobalt-60</li>'+
+ '<li><b>Precision Planning:</b> Immobilization (หน้ากากตรึงท่า) + Target Contouring จาก CT</li>'+
+ '<li><b>องค์ประกอบเครื่อง:</b> Gantry, Isocentre, Collimated primary beam, Treatment couch, Axis of gantry/collimator/couch rotation</li>'+
+ '<li><b>ตัวอย่างโปรโตคอล:</b> มะเร็งเต้านม 50 Gy = 25 fractions × 2 Gy • ช่วงรวม 50–60 Gy</li></ul>'+
+ SIM_DOSE},
+{t:'Therapeutic Window (หัวใจของรังสีรักษา)',s:'TCP vs NTCP + Fractionation + BED',h:
+ '<img class="fig" src="'+IMG.window+'" alt="TCP NTCP therapeutic window">'+
+ '<ul><li><b>TCP:</b> โอกาสควบคุมก้อนมะเร็งหมด — เพิ่มตามโดส</li>'+
+ '<li><b>NTCP:</b> โอกาสแทรกซ้อนเนื้อเยื่อปกติ — เพิ่มตามโดสแต่เริ่มที่โดสสูงกว่า</li>'+
+ '<li><b>Therapeutic Window</b> = ช่วงระหว่างโค้งทั้งสอง → Sparing normal tissue is essential</li>'+
+ '<li><b>ตัวอย่าง:</b> ก้อน 2 ซม. ต้องการ ~70 Gy → ควบคุมโรค 95%</li>'+
+ '<li><b>Fractionation</b> ให้เวลาซ่อมแซมระหว่างครั้ง → ขยาย window</li>'+
+ '<li><b>Therapeutic Ratio / Tumoricidal doses</b> = การถ่วงดุลประโยชน์ต่อความเสี่ยง</li></ul>'+
+ SIM_WINDOW+SIM_BED},
+{t:'ปัจจัยควบคุมการตอบสนองต่อรังสี (6 ข้อ)',s:'Factors in Radiation Response',h:
+ '<div class="grid2"><div class="box"><h5>1. Volume</h5><p>ปริมาตรรับรังสีมาก = ผลกระทบมาก</p></div>'+
+ '<div class="box"><h5>2. Oxygenation</h5><p>ออกซิเจนดี = ตอบสนองดี • hypoxic areas → ดื้อรังสีมากกว่า</p></div>'+
+ '<div class="box"><h5>3. Chemicals</h5><p>บางยาเพิ่มผล • <b>Amifostine</b> ช่วยป้องกัน/บรรเทา</p></div>'+
+ '<div class="box"><h5>4. Dose Rate</h5><p>อัตราต่ำ = ผลกระทบน้อยลง (มีเวลาซ่อม)</p></div>'+
+ '<div class="box"><h5>5. Cellular Kinetics</h5><p>growth fraction มีผลโดยตรง</p></div>'+
+ '<div class="box"><h5>6. Cell Type</h5><p>non-cycling ตอบสนองน้อยกว่า</p></div></div>'+
+ '<div class="callout">💊 ลองเปิดปุ่ม Amifostine ในแบบจำลอง 1 (หัวข้อ 3) เพื่อดูยาจับ OH• ลด strand breaks จริง</div>'},
+{t:'Radiosensitivity Spectrum',s:'เรียงจากไวมาก → น้อย (7 ระบบ)',h:
+ '<div class="tw"><table><tr><th>ลำดับ</th><th>ระบบ</th><th>ตัวอย่าง</th></tr>'+
+ '<tr><td>1</td><td>ไขกระดูกและน้ำเหลือง</td><td>Bone marrow, spleen, lymph node</td></tr>'+
+ '<tr><td>2</td><td>สืบพันธุ์</td><td>Testis and ovary</td></tr>'+
+ '<tr><td>3</td><td>ทางเดินอาหาร</td><td>Mucous membrane, small-intestinal villus</td></tr>'+
+ '<tr><td>4</td><td>ผิวหนังและดวงตา</td><td>Hair follicle, sweat gland, lens</td></tr>'+
+ '<tr><td>5</td><td>อวัยวะภายใน</td><td>Lung, kidney, liver, thyroid</td></tr>'+
+ '<tr><td>6</td><td>โครงสร้าง</td><td>Blood vessel, muscle, bone</td></tr>'+
+ '<tr><td>7</td><td>ประสาท (น้อยสุด)</td><td>Nerve</td></tr></table></div>'},
+{t:'พยาธิสภาพรายอวัยวะ (Organ Pathology)',s:'Skin • Eyes • H&N • Blood • GI • Parallel • CV/Bone • CNS',h:
+ '<h5 class="subh">🧴 ผิวหนัง (Skin)</h5><img class="fig" src="'+IMG.skin+'" alt="skin layers">'+
+ '<ul><li>&lt;6–8 Gy แทบไม่มีปฏิกิริยา • ≥10 Gy: Erythema + ผลเฉียบพลัน/เรื้อรัง</li>'+
+ '<li>Early: Erythema → Dry desquamation → Moist desquamation → Necrosis</li>'+
+ '<li>Late (&gt;6 เดือน): Atrophy, Fibrosis, Hyper/Hypo pigmentation, ผมร่วง, ทำลายต่อมเหงื่อ/ต่อมไขมัน</li>'+
+ '<li>ชั้น: Keratin → Granular → Prickle → <b>Basal (stem cells = แหล่งความไว/ฟื้นตัว)</b> → Lamina propria → Dense fibrous → Submucosa</li></ul>'+
+ SIM_SKIN+
+ '<h5 class="subh">👁️ ดวงตา (Eyes)</h5><img class="fig" src="'+IMG.eye+'" alt="eye anatomy">'+
+ '<ul><li>Dose-limiting structure • เลนส์ไวมาก • <b>Cataract</b> เป็นผลหลัก</li>'+
+ '<li>Risk-to-Action Timeline: ความเสี่ยงเริ่มที่ <b>2 Gy</b> • very likely ที่ <b>4 Gy</b></li>'+
+ '<li>Occupational: fluoroscopy เป็นภัย → สวม eye shields • ผลข้างเคียงสำคัญ RT ศีรษะ-คอ • เลนส์ Dmax &lt; 10 Gy</li></ul>'+
+ SIM_EYE+
+ '<h5 class="subh">🗣️ ศีรษะและคอ (Head & Neck)</h5><img class="fig" src="'+IMG.oral+'" alt="oral mucositis">'+
+ '<ul><li>≥25 subsites • แต่ละแห่งใช้ port เฉพาะ • โดส 50–80 Gy</li>'+
+ '<li>ผล: Mucositis, Xerostomia, ปัญหาฟัน/ช่องปาก, Pain, Dysphagia → น้ำหนักลด</li>'+
+ '<li>Severity curve: Onset wk 2–3 • Peak ท้ายคอร์ส • Recovery 2–3 wk หลังจบ</li></ul>'+
+ '<div class="tw"><table><tr><th>Grade</th><th>อาการ Mucositis</th></tr><tr><td>1</td><td>Soreness ± erythema</td></tr><tr><td>2</td><td>Erythema, ulcers — ยังกลืนอาหารแข็งได้</td></tr><tr><td>3</td><td>Ulcers extensive — กลืนอาหารแข็งไม่ได้</td></tr><tr><td>4</td><td>Alimentation not possible</td></tr></table></div>'+
+ SIM_MUCO+
+ '<h5 class="subh">🩸 ระบบเลือดและไขกระดูก (Hemopoietic)</h5><img class="fig" src="'+IMG.blood+'" alt="blood components">'+
+ '<ul><li>Plasma ~55% • RBC (O₂/CO₂) • WBC (สู้ติดเชื้อ) • Platelets (ห้ามเลือด)</li>'+
+ '<li>Platelets ลด 2–4 วัน → WBC ลด 5–10 วัน → RBC ลด 3–4 สัปดาห์</li>'+
+ '<li><b>RBC ทนรังสีสุดในร่างกาย</b> • Lymphocyte ไวมาก (ยกเว้นฉายทรวงอก)</li>'+
+ '<li>Dose-dependent: โดสสูง = ลดเร็ว/แรง และฟื้นช้า</li></ul>'+
+ SIM_BLOOD+
+ '<h5 class="subh">🍽️ ทางเดินอาหาร (GI Tract) — Serial</h5><img class="fig" src="'+IMG.gi+'" alt="GI tract">'+
+ '<ul><li>ไวสูง: ลำไส้เล็ก, กระเพาะ (secretory cells) • กลาง: ลำไส้ใหญ่/ทวาร • ทน: ปาก/หลอดอาหาร</li>'+
+ '<li>Acute: mucosal depopulation, ulceration, เสียสารน้ำ/เอนไซม์/ฮอร์โมน • Late: Fibrosis → stricture/obstruction</li></ul>'+
+ '<h5 class="subh">🫁 Parallel: ปอด ไต ตับ + หัวใจ</h5>'+
+ '<ul><li><b>ปอด:</b> ไวสุดแห่งหนึ่ง • Pneumonitis → Progressive fibrosis • &lt;ครึ่งปอดมักไม่มีผลคลินิก • Mean &lt; 20 Gy</li>'+
+ '<li><b>ไต:</b> ทนต่ำ Mean &lt; 18 Gy • fractionation ช่วยน้อย • nephropathy/ความดันสูง</li>'+
+ '<li><b>ตับ:</b> 30 Gy ทั้งอวัยวะอาจเสียชีวิต (RILD) • บางส่วนทนมากกว่า (volume-dependent) • Mean &lt; 30–32 Gy</li>'+
+ '<li><b>หัวใจ:</b> ผสม กลาง/ต่ำ • เยื่อหุ้ม/กล้ามเนื้อหัวใจอักเสบ • Mean &lt; 26 Gy</li></ul>'+
+ '<h5 class="subh">🫀 หลอดเลือดและกระดูก</h5>'+
+ '<ul><li><b>หลอดเลือด:</b> Endothelium → Oxidative stress → NF-κB → cytokines + adhesion molecules → อักเสบ/foam cell → Thrombosis/Hemorrhage; ซ่อมเกิน → ตีบตัน</li>'+
+ '<li><b>กระดูก/อ่อน:</b> ผู้ใหญ่ทน (โดสสูงมาก → Osteoradionecrosis) • เด็ก &lt;2 ปี growth plate ไว → โตช้า/ผิดรูป</li></ul>'+
+ '<h5 class="subh">🧠 ระบบประสาทส่วนกลาง (CNS)</h5><img class="fig" src="'+IMG.cns+'" alt="CNS">'+
+ '<ul><li>ผู้ใหญ่ radioresistant • เด็ก &lt;12 ปี ฉายทั้งสมองลดพัฒนาการ</li>'+
+ '<li>Target: Glial cells + หลอดเลือด • ปริมาตรใหญ่ &gt;40 Gy → การทำงานลดถาวร • Constraint: Dmax</li></ul>'},
+{t:'แผนความทนทานอวัยวะสำคัญ (Tolerance Map)',s:'Conventional 1.8–2 Gy/fraction',h:
+ '<div class="tw"><table><tr><th>อวัยวะ</th><th>ค่าจำกัด</th><th>อวัยวะ</th><th>ค่าจำกัด</th></tr>'+
+ '<tr><td>เลนส์ตา (Serial)</td><td class="mono">Dmax &lt; 10 Gy</td><td>ก้านสมอง (Serial)</td><td class="mono">Dmax &lt; 54 Gy</td></tr>'+
+ '<tr><td>ต่อมน้ำลาย (Parallel)</td><td class="mono">Mean &lt; 26 Gy</td><td>ไขสันหลัง (Serial)</td><td class="mono">Dmax &lt; 45–50 Gy</td></tr>'+
+ '<tr><td>ปอด (Parallel)</td><td class="mono">Mean &lt; 20 Gy</td><td>หัวใจ (Parallel)</td><td class="mono">Mean &lt; 26 Gy</td></tr>'+
+ '<tr><td>ตับ (Parallel)</td><td class="mono">Mean &lt; 30–32 Gy</td><td>กระเพาะ (Serial)</td><td class="mono">Dmax &lt; 54 Gy</td></tr>'+
+ '<tr><td>ลำไส้ใหญ่ (Serial)</td><td class="mono">Dmax &lt; 55 Gy</td><td>ไต (Parallel)</td><td class="mono">Mean &lt; 18 Gy</td></tr></table></div>'+
+ '<div class="callout">🔑 <b>Dmax</b> = Serial (จุดร้อนจุดเดียวพังทั้งอวัยวะ) • <b>Mean</b> = Parallel (volume-dependent tolerance)</div>'},
+{t:'กรอบเวลาการตอบสนอง (Acute vs Chronic)',s:'Classification of Radiation Effects',h:
+ '<div class="grid2"><div class="box"><h5>⚡ Acute / Early (ระหว่างฉาย – 3 เดือน)</h5><p><b>Pathology:</b> การอักเสบ + เซลล์ตายในเนื้อเยื่อ</p><p><b>อาการ:</b> ผิวแดง, คลื่นไส้, อาเจียน, อ่อนเพลีย, บวม (edema)</p></div>'+
+ '<div class="box"><h5>🐢 Chronic / Late (หลัง 6 เดือน – หลายปี)</h5><p><b>Pathology:</b> ซ่อมไม่สมดุล + พังผืด</p><p><b>อาการ:</b> Telangiectasia, Fibrosis, Fistulas, ไขสันหลังบาดเจ็บ/อัมพาต, Cancer induction</p></div></div>'},
+{t:'บทสรุปหลัก 4 ข้อ + ภาพรวมผลต่ออวัยวะ',s:'The Delicate Balance Achieved',h:
+ '<ol><li><b>พยาธิสภาพเนื้อเยื่อปกติ vs ก้อนมะเร็ง:</b> Sparing of normal tissues คือหัวใจของผลรักษาดี</li>'+
+ '<li><b>โครงสร้างกำหนดผลลัพธ์:</b> Serial/Parallel = กุญแจประเมินและกำหนดปริมาณรังสี</li>'+
+ '<li><b>ความไวเฉพาะส่วน:</b> เซลล์แบ่งตัวเร็วไวสุด • เนื้อเยื่อโตเต็มวัยทนกว่า</li>'+
+ '<li><b>เป้าหมายทางคลินิก:</b> Tumoricidal doses พร้อมสมดุลภาพ/หน้าที่อวัยวะเสี่ยง</li></ol>'+
+ '<h4>Radiation Effect on Major Organs (สรุปภาพรวม)</h4>'+
+ '<div class="tw"><table><tr><th>อวัยวะ</th><th>ผลจากรังสี</th></tr>'+
+ '<tr><td>เลนส์ตา</td><td>ต้อกระจก (Eye Cataract)</td></tr><tr><td>ไทรอยด์</td><td>ต่อมเสียหายจากไอโอดีนรังสี</td></tr>'+
+ '<tr><td>ปอด/เต้านม</td><td>เพิ่มความเสี่ยงมะเร็งปอด/เต้านม</td></tr><tr><td>ผิวหนัง</td><td>รอยแดง แผลไหม้ มะเร็งผิวหนัง</td></tr>'+
+ '<tr><td>ทางเดินอาหาร</td><td>กระเพาะ/ลำไส้เสียหาย</td></tr><tr><td>ไขกระดูก</td><td>ระบบสร้างเลือดเสียหาย → Leukemia</td></tr>'+
+ '<tr><td>ระบบสืบพันธุ์</td><td>ความเสียหายระบบสืบพันธุ์</td></tr><tr><td>หลอดเลือด/เซลล์เลือด</td><td>สูญเสียเม็ดเลือดขาวรวดเร็ว</td></tr></table></div>'+
+ '<div class="callout ok">🎓 Thank you for your attention — ทดสอบความเข้าใจที่แท็บ 🎯 ได้เลย!</div>'}
+]},
+{
+ id:'c2', code:'ไฟล์ 2', name:'Radiation Effect on Whole Body 2026', icon:'📕',
+ tagline:'ผลของรังสีต่อร่างกายส่วนรวม • TBI • ARS • LD50 • ICRP (38 สไลด์)',
+ meta:'ผู้สอน: Nuanpen Damrongkijudom, PhD • Dept. Radiological Technology, KMPHT',
+ tags:['สไลด์ .pdf'],
+ sections:[
+{t:'The Clinical Spectrum & Outline',s:'Cause → Effect → Control',h:
+ '<p class="sub">Radiation Effects on the Whole Body — 3 เสาหลักของบทเรียน</p>'+
+ '<div class="grid3"><div class="box"><h5>1️⃣ The Cause</h5><p>กลไก + ปัจจัยทางฟิสิกส์: Molecular Damage, LET, Radiosensitivity</p></div>'+
+ '<div class="box"><h5>2️⃣ The Effect</h5><p>ผลทางชีววิทยา + คลินิก: Deterministic vs Stochastic, Epidemiology, ARS, LD50</p></div>'+
+ '<div class="box"><h5>3️⃣ The Control</h5><p>การประยุกต์ + มาตรฐานความปลอดภัย: TBI, ICRP Recommendations</p></div></div>'+
+ '<h4>Outline</h4><ul><li>Biological Effect of Radiation (Deterministic / Stochastic)</li><li>Epidemiology</li><li>Whole Body Irradiation Treatment</li><li>Acute Radiation Syndromes: Hematopoietic, Gastrointestinal, Cerebrovascular</li><li>Mean Lethal Dose (LD 50)</li><li>ICRP Recommendation</li></ul>'+
+ '<div class="callout">🎯 จับคู่ให้ถูก: LET = The Cause • ARS = The Effect • ICRP = The Control</div>'},
+{t:'The Biological Cascade + Direct/Indirect',s:'5 ขั้น + ชะตากรรม 3 ทางของการซ่อมแซม',h:
+ '<h4>The Biological Cascade (เล็ก → ใหญ่)</h4>'+
+ '<div class="flow"><span class="fnode">1. Energy Transfer (ionization)</span><span class="arrow">→</span><span class="fnode">2. Molecular Impact (direct hits / free radicals)</span><span class="arrow">→</span><span class="fnode">3. Cellular Fate (apoptosis / repair / mutation)</span><span class="arrow">→</span><span class="fnode">4. Systemic Manifestation (deterministic vs stochastic)</span><span class="arrow">→</span><span class="fnode">5. Clinical Outcomes (ARS vs TBI)</span></div>'+
+ '<div class="grid2"><div class="box"><h5>🎯 Direct Damage</h5><ul><li>รังสีชนเป้าหมายโดยตรง = DNA</li><li>กลไกเด่นของรังสี <b>High LET</b> (Alpha, Proton, Neutron)</li></ul></div>'+
+ '<div class="box"><h5>💦 Indirect Damage</h5><ul><li>รังสีชนน้ำ (H₂O) → Radiolysis → <b>Free radicals</b> ว่องไวสูง → ทำลาย DNA</li><li>กลไกเด่นของ <b>Low LET</b> (X-ray, Gamma) — ร่างกายมีน้ำ ~70–80%</li></ul></div></div>'+
+ '<h4>Outcomes หลังซ่อมแซม DNA (ออกสอบ)</h4>'+
+ '<div class="tw"><table><tr><th>ผลการซ่อมแซม</th><th>ผลลัพธ์ต่อเซลล์</th><th>จัดเป็นผลกระทบ</th></tr>'+
+ '<tr><td><b>Correct Repair</b></td><td>Cell survival — รอดเป็นปกติ</td><td>ไม่เกิดผลเสีย</td></tr>'+
+ '<tr><td><b>Mis-repair</b></td><td>กลายพันธุ์但有ชีวิตต่อ</td><td><span class="pill p-high">Stochastic effect</span></td></tr>'+
+ '<tr><td><b>Un-repair</b></td><td>Cell death</td><td><span class="pill p-vhigh">Deterministic effect</span></td></tr></table></div>'+
+ '<div class="callout">แก่น: "เซลล์ตายมาก = Deterministic / เซลล์รอดแต่ผิดเพี้ยน = Stochastic"</div>'},
+{t:'Biological Effects: Deterministic vs Stochastic',s:'Threshold examples + ตารางเทียบ',h:
+ '<h4>Deterministic Effects (มีขีดเริ่ม)</h4><ul><li>ต่ำกว่า threshold = ไม่เกิดอาการเลย • ความรุนแรง ∝ โดส • เกิดจากเซลล์ตายจำนวนมาก</li>'+
+ '<li>ค่า threshold ที่ต้องจำ: <b>ต้อกระจก 2–10 Gy</b> • <b>หมันหญิง 2.5–6 Gy</b> • <b>หมันชาย 3.5–6 Gy</b> • ผิวหนังอักเสบ (erythema/dermatitis)</li></ul>'+
+ '<h4>Stochastic Effects (ไม่มีขีดเริ่ม)</h4><ul><li>Non-threshold • โอกาสเกิด ∝ โดส แต่ความรุนแรงไม่ขึ้นกับโดส • เกิดจาก mis-repair</li><li>ตัวอย่าง: มะเร็ง (carcinogenesis), ผลทางพันธุกรรม (genetic effects)</li></ul>'+
+ '<div class="tw"><table><tr><th>ประเด็น</th><th>Deterministic</th><th>Stochastic</th></tr>'+
+ '<tr><td>Threshold</td><td>มี</td><td>ไม่มี</td></tr>'+
+ '<tr><td>ความสัมพันธ์กับโดส</td><td>ความรุนแรง ∝ โดส</td><td>โอกาสเกิด ∝ โดส</td></tr>'+
+ '<tr><td>กลไกเซลล์</td><td>เซลล์ตาย (un-repair)</td><td>เซลล์กลายพันธุ์ (mis-repair)</td></tr>'+
+ '<tr><td>ตัวอย่าง</td><td>ต้อกระจก, เป็นหมัน, ผิวหนังอักเสบ, ARS</td><td>มะเร็ง, ผลทางพันธุกรรม</td></tr>'+
+ '<tr><td>หลักป้องกัน</td><td>คุมโดสใต้ threshold</td><td>ALARA</td></tr></table></div>'},
+{t:'Epidemiology of Irradiated Populations',s:'หลักฐานเชิงประจักษ์ 3 กลุ่ม',h:
+ '<div class="grid3"><div class="box"><h5>☢️ Nuclear Accidents</h5><ul><li>Hiroshima/Nagasaki: กลุ่มศึกษาใหญ่สุด อุบัติการณ์มะเร็งเพิ่มชัด</li><li>Chernobyl: <b>Leukemia + Thyroid cancer ในเด็ก</b> เพิ่มสูง (I-131 สะสมในไทรอยด์) — กราฟเด็ก &lt;15 ปี เบลารุส/ยูเครน/รัสเซีย 1986–98</li></ul></div>'+
+ '<div class="box"><h5>🏥 Medical Exposure</h5><ul><li><b>Thorotrast</b> (สารทึบรังสี Thorium อดีต) สะสมในตับ → มะเร็งตับ</li></ul></div>'+
+ '<div class="box"><h5>️ Occupational</h5><ul><li>คนงานเหมืองเรเดียม / <b>Radium dial painters</b> → มะเร็งปอด + <b>Osteosarcoma</b> (เรเดียมคล้ายแคลเซียม สะสมในกระดูก)</li></ul></div></div>'+
+ '<div class="callout warn">ทั้งหมดเป็นตัวอย่าง <b>Stochastic effect</b> ระยะยาว (late effect)</div>'},
+{t:'LET & Quality Factor (QF)',s:'LET = dE/dl • 1 Sv = 1 Gy × QF',h:
+ '<h4>Linear Energy Transfer (LET)</h4><p class="mono">LET = dE (keV) / dl (µm) — อัตราถ่ายทอดพลังงานต่อระยะทางที่เคลื่อนที่ในเนื้อเยื่อ</p>'+
+ '<div class="tw"><table><tr><th>ประเภท</th><th>ชนิดรังสี</th><th>ลักษณะ</th><th>ความเสียหาย DNA</th></tr>'+
+ '<tr><td><b>Low LET</b></td><td>Gamma, X-rays</td><td>ถ่ายเทพลังงานเบาบางกระจาย • ทะลุสูง</td><td>ต่ำกว่า (ส่วนใหญ่ indirect)</td></tr>'+
+ '<tr><td><b>High LET</b></td><td>Alpha, Protons, Neutron</td><td>ถ่ายเทหนาแน่นระยะสั้น • ทะลุต่ำ</td><td>รุนแรง (direct, double-strand break)</td></tr></table></div>'+
+ '<h4>Quality Factor & หน่วย</h4><p class="mono">1 Sv = 1 Gy × QF</p><ul><li>Low LET: QF = 1 → 1 Gy = 1 Sv</li><li><b>Alpha: QF = 20</b> → อันตรายทางชีวภาพกว่าแกมมา 20 เท่าที่ Gy เท่ากัน</li><li>ตัวอย่าง: รับ alpha 0.1 Gy → 0.1 × 20 = <b>2 Sv</b></li><li>หมายเหตุหน่วย: 100 rad = 1 Gy (ตาราง LD50 ใช้ rad ด้วย)</li></ul>'+
+ SIM_LET},
+{t:'Radiosensitivity & Bergonié–Tribondeau Law',s:'กฎ 3 ข้อ + Spectrum + Modifiers',h:
+ '<div class="callout"><b>Law of Bergonié and Tribondeau (1906):</b> เซลล์ไวรังสีสุดเมื่อ (1) แบ่งตัวเร็ว (highly mitotic) (2) ยังไม่แปรสภาพ (undifferentiated) (3) มีอนาคตการแบ่งตัวยาว (long dividing future)</div>'+
+ '<div class="tw"><table><tr><th>High RS</th><th>Medium RS</th><th>Low RS</th></tr>'+
+ '<tr><td>Bone Marrow, Spleen, Lymphatic Nodes, Gonads, Eye Lens</td><td>Skin, Liver, Heart, Lungs</td><td>Muscle, Bones, Nervous System</td></tr></table></div>'+
+ '<p class="sub">ข้อยกเว้นที่ต้องจำ: Lymphocytes ไวสูงทั้งที่เป็นเซลล์โตเต็มวัย (interphase death)</p>'+
+ '<h4>Sensitivity Modifiers</h4>'+
+ '<div class="tw"><table><tr><th>เพิ่มความไว</th><th>ลดความไว</th></tr>'+
+ '<tr><td>High LET, high dose rate, มีออกซิเจน (oxygen effect), ระยะเซลล์ G2/M</td><td>Sulfur compounds, ระยะ S-phase</td></tr></table></div>'+
+ '<h4>Normal Tissue Response</h4>'+
+ '<div class="tw"><table><tr><th>ระดับ</th><th>เนื้อเยื่อ</th></tr>'+
+ '<tr><td><span class="pill p-vhigh">High</span></td><td>Bone marrow, GI mucosa, Reproductive organs, Basal stratum of epidermis</td></tr>'+
+ '<tr><td><span class="pill p-med">Intermediate</span></td><td>Skin, Blood vessels, Liver</td></tr>'+
+ '<tr><td><span class="pill p-low">Low</span></td><td>Muscle, Nerve & Brain, Bone</td></tr></table></div>'+
+ '<div class="callout warn">⚠️ ข้อสอบชอบหลอก: Basal stratum of epidermis = High แต่ Skin ทั้งชั้น = Intermediate</div>'},
+{t:'Whole Body Irradiation: แหล่งความรู้ & เครื่องมือ',s:'Bombs • Animal studies • TBI • PET-CT • TSEI',h:
+ '<h4>แหล่งองค์ความรู้ 3 ทาง</h4><ol><li>ประสบการณ์ระเบิดนิวเคลียร์/อุบัติเหตุโรงไฟฟ้า (มนุษย์จริง แต่วัดโดสยาก)</li><li>Animal studies: Monkey, Mouse, Hamster, Rat, Rabbit (คุมโดสแม่น แต่ต้องแปลผลระวัง)</li><li>TBI ในการรักษา (มนุษย์ + คุมโดสดีที่สุด)</li></ol>'+
+ '<h4>Whole Body PET-CT (วินิจฉัย)</h4><ul><li>ขั้นตอน: Preparation → Injection → Uptake (~1 ชม.) → Scanning (PET/CT hybrid, 5–25 นาที) → Discharge</li><li>ให้โดสระดับ <b>mSv</b> (stochastic risk) — ต่างจาก TBI ที่ให้ระดับ <b>Gy</b> (deterministic โดยเจตนา)</li></ul>'+
+ '<h4>Total Skin Electron Irradiation (TSEI)</h4><ul><li>ฉายอิเล็กตรอนคลุมผิวหนังทั้งตัว — อิเล็กตรอนทะลุตื้น → โดสผิวสูงแต่ spare อวัยวะภายใน</li><li>ข้อบ่งใช้: มะเร็งผิวหนังกระจายทั่วตัว เช่น Mycosis fungoides / Cutaneous T-cell lymphoma</li><li>ต่างจาก TBI: TSEI = ผิวทั้งตัว (ตื้น) / TBI = ทั่วร่างกายลึก+ตื้น</li></ul>'},
+{t:'TBI: Treatment of Whole Body Irradiation',s:' goals 3 ข้อ • Extended SSD • Lung blocks',h:
+ '<img class="fig" src="'+IMG.linac+'" alt="LINAC TBI setup">'+
+ '<h4>เป้าหมาย 3 ข้อ (กด – ฆ่า – เคลียร์ที่)</h4><ol><li><b>Immunosuppression</b> — กดภูมิคุ้มกัน ป้องกันการปฏิเสธไขกระดูกผู้บริจาค (prevent rejection)</li><li><b>Eradicate Malignant Cells</b> — ทำลายเซลล์มะเร็งที่เหลือ (reducing tumor burden)</li><li><b>Deplete Bone Marrow</b> — เคลียร์พื้นที่ให้ stem cell ใหม่ฝังตัว (space for engraftment)</li></ol>'+
+ '<h4>เทคนิคเชิงปฏิบัติการ</h4><ul><li>เครื่อง: <b>Co-60 / LINAC</b> • ลำรังสีขนานตรงข้าม (parallel opposed beams)</li><li><b>Extended SSD</b> (เช่น SSD = 312 cm) — เพิ่มระยะเพื่อให้ field ขยายคลุมตัวผู้ป่วยทั้งตัว</li><li><b>Lung Shielding / Lung Blocks</b> — กำบังปอด ป้องกัน <b>Radiation-induced pneumonitis</b> (ปอดทนรังสีต่ำ)</li><li>จัดท่าได้หลายแบบ: ท่ายืน / ท่านอนบน stretcher</li></ul>'+
+ '<h4>Harnessing the Damage: ARS vs TBI</h4>'+
+ '<div class="grid2"><div class="box"><h5>☠️ The Threat: ARS</h5><p>Uncontrolled exposure → lethal pancytopenia & immune collapse</p></div>'+
+ '<div class="box"><h5>💚 The Therapy: TBI</h5><p>Controlled exposure → ล้างไขกระดูกโรค + กดภูมิคุ้มกันโดยเจตนา เพื่อเปิดทางให้ donor engraftment</p></div></div>'+
+ '<div class="callout ok">ความไวรังสีของไขกระดูกที่ทำให้ marrow failure เป็นด่านแรกของ ARS — ถูกนำมาใช้โดยเจตนาเพื่อรักษามะเร็งเม็ดเลือดผ่าน BMT</div>'},
+{t:'Effects of Whole Body Irradiation: Levels & Thresholds',s:'Level 1–6 + Acute thresholds + Dose-survival',h:
+ '<div class="tw"><table><tr><th>Level</th><th>Dose (Sv)</th><th>อาการแสดง</th><th>อัตราตาย</th></tr>'+
+ '<tr><td>1</td><td class="mono">0.05–0.2</td><td>ไม่มีอาการ (no symptoms)</td><td>0%</td></tr>'+
+ '<tr><td>2</td><td class="mono">0.5–1</td><td>Mild radiation sickness</td><td>0%</td></tr>'+
+ '<tr><td>3</td><td class="mono">1–2</td><td>Mild radiation toxicity</td><td>10% ใน 30 วัน</td></tr>'+
+ '<tr><td>4</td><td class="mono">3–4</td><td>Severe toxicity (= LD50)</td><td>50% ใน 30 วัน</td></tr>'+
+ '<tr><td>5</td><td class="mono">6–10</td><td>ARS เต็มรูป</td><td>เกือบ 100% ใน 14 วัน</td></tr>'+
+ '<tr><td>6</td><td class="mono">10–50</td><td>GI + CNS damage รุนแรง</td><td>100% ใน 7 วัน</td></tr></table></div>'+
+ '<h4>Acute Whole-Body Thresholds</h4>'+
+ '<div class="tw"><table><tr><th>Dose</th><th>ระบบที่ล้มเหลว</th><th>อัตราตาย / เวลา</th></tr>'+
+ '<tr><td class="mono">1–2 Sv</td><td>Bone marrow affected</td><td>0–10% • ตาย (ถ้าตาย) เป็นเดือน</td></tr>'+
+ '<tr><td class="mono">2–10 Sv</td><td>Severe bone marrow syndrome</td><td>0–90% • ตายในสัปดาห์</td></tr>'+
+ '<tr><td class="mono">10–15 Sv</td><td>GI tract failure (ท้องร่วงรุนแรง + ไข้)</td><td>90–100% • ~2 สัปดาห์</td></tr>'+
+ '<tr><td class="mono">&gt;50 Sv</td><td>Neurological collapse</td><td>100% • 1–4 ชั่วโมง</td></tr></table></div>'+
+ '<h4>Dose-Survival Modalities (กราฟ Survival time vs Dose)</h4><ul><li><b>1–10 Gy:</b> BONE MARROW — รอดเป็นสัปดาห์</li><li><b>10–50 Gy:</b> GASTROINTESTINAL — รอดเป็นวัน (plateau 3–10 วัน)</li><li><b>&gt;50 Gy:</b> CNS — รอดเป็นชั่วโมง</li><li>จุดอ้างอิงบนกราฟ: <b>LD50/30</b></li></ul>'+
+ SIM_WBL},
+{t:'ARS: 4 ระยะ + 3 กลุ่มอาการ',s:'Prodromal → Latent → Manifest → Recovery/Death',h:
+ '<h4>ระยะของ ARS (ต้องจำลำดับ)</h4><ol><li><b>Prodromal (ระยะนำ):</b> เกิดในไม่กี่ชั่วโมง — <b>N-V-D</b> (Nausea, Vomiting, Diarrhea) • มาเร็ว = โดสสูง = พยากรณ์แย่</li><li><b>Latent (ระยะแฝง):</b> ดูเหมือนหายดี แต่เซลล์กำลังตายภายใน — โดสสูง = ระยะนี้สั้น (หลอกลวงทางคลินิก)</li><li><b>Manifest illness:</b> อาการชัด ความรุนแรงขึ้นกับโดสและระบบที่ล้มเหลว</li><li><b>Recovery or death:</b> หากฟื้นอาจใช้เวลาถึง 2 ปี</li></ol>'+
+ '<div class="tw"><table><tr><th>หัวข้อ</th><th>Hematopoietic</th><th>Gastrointestinal</th><th>Cerebrovascular</th></tr>'+
+ '<tr><td>Dose</td><td class="mono">1–10 Gy</td><td class="mono">10–50 Gy</td><td class="mono">&gt;50 Gy</td></tr>'+
+ '<tr><td>อวัยวะเป้าหมาย</td><td>ไขกระดูก</td><td>เยื่อบุลำไส้</td><td>หลอดเลือดสมอง</td></tr>'+
+ '<tr><td>Latent</td><td>ไม่กี่วัน–3 สัปดาห์</td><td>สั้น (3–5 วัน)</td><td>สั้นมาก/แทบไม่มี</td></tr>'+
+ '<tr><td>อาการเด่น</td><td>Pancytopenia, ไข้, ซีด, เลือดออก</td><td>ท้องร่วงรุนแรง, ขาดน้ำ, electrolyte เสีย</td><td>ชัก, กระวนกระวาย, ไวต่อสัมผัส</td></tr>'+
+ '<tr><td>สาเหตุตาย</td><td>ติดเชื้อ + ตกเลือด</td><td>Sepsis + ขาดน้ำ</td><td>ระบบประสาท/หลอดเลือดล้มเหลว</td></tr>'+
+ '<tr><td>เวลาเสียชีวิต</td><td>ไม่กี่สัปดาห์</td><td>3–10 วัน</td><td>ชั่วโมง – 2–3 วัน</td></tr>'+
+ '<tr><td>โอกาสรอด</td><td>มี (ประคอง + BMT)</td><td>น้อยมาก</td><td>ไม่มี (100% fatal)</td></tr></table></div>'},
+{t:'Hematopoietic (Bone Marrow) Syndrome',s:'1–10 Gy • Pancytopenia',h:
+ '<ul><li><b>Dose:</b> 1–10 Gy • Prodromal: คลื่นไส้ อาเจียน • Latent: ไม่กี่วันถึง 3 สัปดาห์ • Manifest: ไขกระดูกถูกทำลาย</li>'+
+ '<li><b>Pancytopenia</b> = เซลล์เม็ดเลือดทุกชนิดต่ำ → Malaise (อ่อนเพลีย/ไข้), Anemia (โลหิตจาง), Hemorrhage (เลือดออก)</li>'+
+ '<li>ลำดับลด: <b>Lymphocytes ลดเร็วสุด</b> (ตายแบบ interphase death → ใช้เป็น biological dosimeter) → Neutrophils → Platelets → RBC (ช้าสุด อายุ ~120 วัน)</li>'+
+ '<li><b>Cause of death:</b> การติดเชื้อรุนแรง + ตกเลือด ภายในไม่กี่สัปดาห์</li></ul>'+
+ '<img class="fig" src="'+IMG.blood+'" alt="blood cells">'+
+ SIM_HEMO},
+{t:'Gastrointestinal Syndrome',s:'10–50 Gy • ตาย 3–10 วัน',h:
+ '<img class="fig" src="'+IMG.gi+'" alt="GI mucosa">'+
+ '<ul><li><b>Dose:</b> 10–50 Gy • Prodromal เริ่มไม่กี่ชั่วโมง ยาว ~1 วัน • Latent 3–5 วัน • Manifest ไม่กี่วัน</li>'+
+ '<li>อาการ: ทำลายเยื่อบุ GI (denudation), ท้องร่วงรุนแรงมีเลือดปน, ขาดน้ำรุนแรง, electrolyte imbalance, เสีย plasma volume</li></ul>'+
+ '<h4>Pathophysiology 4 ขั้น</h4><ol><li>Loss of epithelial cells — crypt ตาย → villi หลุดลอก ผนังลำไส้เปลือย</li><li>Bacterial invasion — แบคทีเรียในลำไส้เข้ากระแสเลือด → sepsis</li><li>Hemorrhage — เลือดออกผ่านพื้นที่เปลือย (เกล็ดเลือดต่ำร่วม)</li><li>Loss of absorptive capacity — ดูดซึมน้ำ/สารอาหารไม่ได้</li></ol>'+
+ '<div class="callout bad">ผู้ป่วย GI syndrome ได้ความเสียหายไขกระดูกซ้อนไปด้วย (โดสเกินช่วง 1–10 Gy อยู่แล้ว) → ล้มเหลว 2 ระบบซ้อน พยากรณ์แย่มาก • ตายใน 3–10 วัน</div>'},
+{t:'Cerebrovascular (CNS) Syndrome',s:'>50 Gy • ตายชั่วโมง–2-3 วัน',h:
+ '<img class="fig" src="'+IMG.cns+'" alt="CNS">'+
+ '<ul><li><b>Dose:</b> &gt;50 Gy • Latent สั้นมาก/แทบไม่มี</li>'+
+ '<li>อาการ: Excitability/กระวนกระวาย, Hyperesthesia (ไวต่อสัมผัสเกิน), Autonomic dysfunction (neurovegetative disorder), <b>Convulsions (ชัก)</b> + หมดสติ</li>'+
+ '<li>Outcome: ตายในไม่กี่ชั่วโมงถึง 2–3 วัน — ไม่มีทางรอด</li></ul>'+
+ '<div class="callout warn">ทำไมเรียก Cerebro<b>vascular</b>: สมองเป็นอวัยวะ low radiosensitivity แต่ที่ &gt;50 Gy ความเสียหายเกิดที่ <b>หลอดเลือด</b> → สมองบวม + ความดันในกะโหลกสูง ไม่ใช่การตายของเซลล์ประสาทโดยตรง</div>'},
+{t:'Mean Lethal Dose (LD 50)',s:'LD50/30 vs LD50/60 + Species variability',h:
+ '<ul><li><b>LD 50/30:</b> โดสทั้งตัวที่ทำให้ประชากรตาย 50% ภายใน 30 วัน — ใช้กับสัตว์ทดลอง</li>'+
+ '<li><b>LD 50/60:</b> ภายใน 60 วัน — ใช้กับมนุษย์ (มี supportive care ทำให้ตายช้าลง)</li>'+
+ '<li>กลไกตายที่ LD50: <b>Hematopoietic syndrome</b> เป็นหลัก (LD50 มนุษย์ 3–4 Gy ตกในช่วง 1–10 Gy พอดี)</li>'+
+ '<li>กราฟ mortality vs dose เป็น sigmoid: แบนใต้ threshold → ชัน → อิ่มตัว 100% (ลักษณะ deterministic)</li></ul>'+
+ '<h4>LD50/30 ข้ามสปีชีส์ (จำหัว–ท้าย)</h4>'+
+ '<div class="tw"><table><tr><th>Species</th><th>LD50/30</th><th>Species</th><th>LD50/30</th></tr>'+
+ '<tr><td>Pig</td><td class="mono">2.5 Gy (250 rad)</td><td>Rat</td><td class="mono">7.1 Gy (710 rad)</td></tr>'+
+ '<tr><td>Guinea pig</td><td class="mono">2.5 Gy</td><td>Rabbit</td><td class="mono">8.0 Gy (725 rad)</td></tr>'+
+ '<tr><td>Dog</td><td class="mono">2.75 Gy (275 rad)</td><td>Turtle</td><td class="mono">15 Gy (1,500 rad)</td></tr>'+
+ '<tr><td><b>Human</b></td><td class="mono"><b>3–4 Gy (300 rad)</b></td><td>E. coli</td><td class="mono">56 Gy</td></tr>'+
+ '<tr><td>Monkey</td><td class="mono">4.75 Gy (475 rad)</td><td>Yeast</td><td class="mono">300 Gy</td></tr>'+
+ '<tr><td>Mouse</td><td class="mono">6.2 Gy (620 rad)</td><td>Amoeba / Paramecia</td><td class="mono">1,000 / 3,000 Gy</td></tr></table></div>'+
+ '<div class="callout">Species variability: ยิ่งวิวัฒนาการซับซ้อน → ทนรังสีน้อย • เซลล์เดียวทนมหาศาล (ต่างเกือบ 1,000 เท่า)</div>'+
+ SIM_LD50},
+{t:'ICRP Recommendations',s:'Prevent vs Limit • ALARA • ICRP 103 (2007)',h:
+ '<div class="tw"><table><tr><th>ชนิดผลกระทบ</th><th>เป้าหมาย</th><th>วิธี</th></tr>'+
+ '<tr><td>Deterministic</td><td>ป้องกันไม่ให้เกิดเลย (Prevent)</td><td>ตั้งเกณฑ์ใต้ threshold เสมอ</td></tr>'+
+ '<tr><td>Stochastic</td><td>จำกัดความเสี่ยงต่ำสุด (Limit)</td><td><b>ALARA</b> = As Low As Reasonably Achievable (Time–Distance–Shielding)</td></tr></table></div>'+
+ '<h4>เกณฑ์จำกัดปริมาณรังสี ICRP 103 (2007)</h4>'+
+ '<div class="tw"><table><tr><th>ปริมาณ</th><th>ผู้ปฏิบัติงาน (&gt;18 ปี)</th><th>บุคคลทั่วไป</th></tr>'+
+ '<tr><td>Effective dose (ทั้งตัว)</td><td class="mono">20 mSv/ปี (เฉลี่ย 5 ปี; ปีใด ๆ ≤ 50)</td><td class="mono">1 mSv/ปี</td></tr>'+
+ '<tr><td>เลนส์ตา (Equivalent)</td><td class="mono">20 mSv/ปี</td><td class="mono">15 mSv/ปี</td></tr>'+
+ '<tr><td>ผิวหนัง</td><td class="mono">500 mSv/ปี</td><td class="mono">50 mSv/ปี</td></tr>'+
+ '<tr><td>มือและเท้า</td><td class="mono">500 mSv/ปี</td><td>—</td></tr></table></div>'+
+ '<ul><li>ผู้ปฏิบัติงานได้ 20 mSv = 20 เท่าของประชาชน (มีอบรม/เฝ้าระวัง/ได้ประโยชน์จากงาน)</li><li>เลนส์ตาตั้งต่ำเพราะ high radiosensitivity + ต้อกระจกมี threshold ต่ำ</li><li>ผิวหนังได้สูงเพราะทนและผลัดเซลล์ตลอด</li><li>ICRP 105: เทียบกับอัตรามะเร็งเกิดเองตามธรรมชาติ (spontaneous cancer rates) เมื่อประเมินความเสี่ยง</li></ul>'+
+ SIM_ICRP},
+{t:'บทสรุป: Radiobiology in Practice',s:'สายโซ่ความรู้ทั้งบท + ตัวเลขทอง',h:
+ '<ol><li><b>ระดับ DNA:</b> ทำลายตรง + อ้อมผ่านอนุมูลอิสระ</li><li><b>ระดับเซลล์:</b> ผลซ่อมแซมกำหนด deterministic (ตาย) / stochastic (กลายพันธุ์)</li><li><b>ระดับร่างกาย:</b> โดสสูงทั้งตัว → ARS ตามลำดับ ไขกระดูก → GI → CNS</li><li><b>การประยุกต์:</b> ความรู้เดียวกันใช้ทำ TBI ก่อนปลูกถ่ายไขกระดูกอย่างควบคุม</li><li><b>มาตรฐาน:</b> ICRP + ALARA คุ้มครองผู้ปฏิบัติงานและประชาชน</li></ol>'+
+ '<h4>ตัวเลขทองที่ต้องจำ</h4>'+
+ '<div class="tw"><table><tr><th>หัวข้อ</th><th>ค่า</th></tr>'+
+ '<tr><td>LD50/30 มนุษย์</td><td class="mono">3–4 Gy (300 rad)</td></tr>'+
+ '<tr><td>Hematopoietic / GI / CNS syndrome</td><td class="mono">1–10 / 10–50 / &gt;50 Gy</td></tr>'+
+ '<tr><td>ต้อกระจก / หมันหญิง / หมันชาย</td><td class="mono">2–10 / 2.5–6 / 3.5–6 Gy</td></tr>'+
+ '<tr><td>QF ของ Alpha</td><td class="mono">20</td></tr>'+
+ '<tr><td>ICRP ผู้ปฏิบัติงาน / ประชาชน</td><td class="mono">20 / 1 mSv ต่อปี</td></tr>'+
+ '<tr><td>เลนส์ตา occ / pub</td><td class="mono">20 / 15 mSv ต่อปี</td></tr>'+
+ '<tr><td>ผิวหนัง occ / pub</td><td class="mono">500 / 50 mSv ต่อปี</td></tr></table></div>'+
+ '<div class="callout ok">🎓 จบบท Whole Body — ไปทดสอบข้อสอบบทใหม่ที่แท็บ 🎯 ได้เลย!</div>'}
+]}];
+
+const SIMS=[
+ {id:'sim-dna',em:'🧬',t:'DNA Damage Simulator',d:'ยิงรังสีใส่ DNA: direct 25% / indirect 75% + Amifostine',sec:3,fid:'c1'},
+ {id:'sim-cross',em:'🔀',t:'Cellular Crossroads',d:'ทางแยกชะตากรรมเซลล์: รอด / ตาย / กลายพันธุ์',sec:3,fid:'c1'},
+ {id:'sim-body',em:'🧍',t:'Body Sensitivity Map',d:'คลิกอวัยวะดูความไว + constraint',sec:5,fid:'c1'},
+ {id:'sim-ars',em:'🚨',t:'ARS Dose Simulator',d:'โดสทั้งตัว → กลุ่มอาการ/ระยะรอด/อัตราตาย',sec:6,fid:'c1'},
+ {id:'sim-arch',em:'🎮',t:'Serial vs Parallel Game',d:'ทำลายเซกเมนต์เปรียบเทียบโครงสร้างอวัยวะ',sec:7,fid:'c1'},
+ {id:'sim-dose',em:'📊',t:'Medical Dose Comparator',d:'เทียบโดส/ความเสี่ยงของการตรวจต่าง ๆ',sec:8,fid:'c1'},
+ {id:'sim-window',em:'🎛️',t:'Therapeutic Window Explorer',d:'TCP vs NTCP + fractionation',sec:9,fid:'c1'},
+ {id:'sim-bed',em:'🧮',t:'Fractionation / BED Calc',d:'BED, EQD2 + preset โปรโตคอลจริง',sec:9,fid:'c1'},
+ {id:'sim-skin',em:'🧴',t:'Skin Reaction Timeline',d:'Erythema → Desquamation → Necrosis',sec:12,fid:'c1'},
+ {id:'sim-eye',em:'👁️',t:'Lens / Cataract Risk',d:'2 Gy / 4 Gy + eye shield',sec:12,fid:'c1'},
+ {id:'sim-muco',em:'🗣️',t:'Mucositis & Xerostomia',d:'เกรดมิวโคซิติสตามสัปดาห์ + ต่อมน้ำลาย',sec:12,fid:'c1'},
+ {id:'sim-blood',em:'🩸',t:'Blood Cell Depletion',d:'Platelets/WBC/RBC ลดตามเวลา',sec:12,fid:'c1'},
+ {id:'sim-let',em:'⚡',t:'LET & QF Converter',d:'1 Sv = 1 Gy × QF • Alpha QF 20',sec:5,fid:'c2'},
+ {id:'sim-wbl',em:'🚨',t:'Whole-Body Levels 1–6',d:'โดสทั้งตัว → Level/อัตราตาย/เวลา',sec:9,fid:'c2'},
+ {id:'sim-hemo',em:'🩸',t:'Haematological Response',d:'กราฟเม็ดเลือด 1 Gy vs 3 Gy',sec:11,fid:'c2'},
+ {id:'sim-ld50',em:'☠️',t:'LD50/30 Species Comparator',d:'ข้ามสปีชีส์ + sigmoid mortality curve',sec:14,fid:'c2'},
+ {id:'sim-icrp',em:'🛡️',t:'ICRP 103 Limit Checker',d:'ตรวจโดสปีตามเกณฑ์ผู้ปฏิบัติงาน/ประชาชน',sec:15,fid:'c2'}];
+
+/* ================= STATE & RENDER ================= */
+let activeFile='c1', activeTab='home', renderedFile=null;
+const readSet=new Set();
+const SIM_INITS=[];
+function totalSecs(){return FILES.reduce((s,f)=>s+f.sections.length,0);}
+function fileProg(f){let r=0;for(let i=0;i<f.sections.length;i++){if(readSet.has(f.id+'-s'+i))r++;}return {r,n:f.sections.length};}
+function updateProgress(){
+  const tot=totalSecs(), n=Math.min(readSet.size,tot);
+  $('#ringTxt').textContent=n+'/'+tot;
+  $('#ringFg').style.strokeDashoffset=(100.5*(1-n/tot)).toFixed(1);
+  $('#heroChips').innerHTML='<span class="chip">ไฟล์ในคลัง <b>'+FILES.length+'</b></span><span class="chip">บทสรุป <b>'+tot+'</b></span><span class="chip">แบบจำลอง <b>'+SIMS.length+'</b></span><span class="chip">ข้อสอบ <b>30</b></span><span class="chip">อ่านแล้ว <b>'+n+'/'+tot+'</b></span>';
+  FILES.forEach(f=>{const p=fileProg(f);
+    const bar=document.querySelector('[data-fprog="'+f.id+'"]');if(bar)bar.style.width=(p.r/p.n*100)+'%';
+    const tx=document.querySelector('[data-fprogtxt="'+f.id+'"]');if(tx)tx.textContent='อ่านแล้ว '+p.r+'/'+p.n+' บท';});
+}
+function initSims(){ CREG.length=0; SIM_INITS.forEach(f=>{try{f();}catch(e){console.error('sim init:',e);} }); }
+function renderHome(){
+  const cards=FILES.map(f=>{const p=fileProg(f);
+    return '<div class="fcard" data-file="'+f.id+'"><div class="row"><div class="ic">'+f.icon+'</div><div><h3>'+f.name+'</h3><div class="meta">'+f.tagline+'</div><div class="meta">'+f.meta+' • '+f.sections.length+' บท</div></div><div class="go">→</div></div>'+
+    '<div class="tags">'+f.tags.map((t,i)=>'<span class="tagpill'+(i%2?' alt':'')+'">'+t+'</span>').join('')+'<span class="tagpill">'+f.sections.length+' บท</span></div>'+
+    '<div class="pbar"><i data-fprog="'+f.id+'" style="width:'+(p.r/p.n*100)+'%"></i></div><div class="pmeta" data-fprogtxt="'+f.id+'">อ่านแล้ว '+p.r+'/'+p.n+' บท</div></div>';
+  }).join('');
+  $('#homeBody').innerHTML=
+   '<div class="group"><div class="grouphead"><span class="code">RADIOBIO</span><h3>รังสีชีววิทยา • Radiation Effect & ชีตสรุปประจำสัปดาห์</h3><span class="cnt">'+FILES.length+' ไฟล์</span></div>'+
+   '<div class="cards">'+cards+
+   '<div class="addcard" id="quickAdd"><div><div class="big">➕</div><b>เพิ่มไฟล์ชีตสัปดาห์ถัดไป</b><div style="font-size:.74rem;margin-top:4px">สร้างการ์ดไฟล์ใหม่พร้อมสารบัญอัตโนมัติ</div></div></div>'+
+   '</div></div>'+
+   '<section class="card" id="addCard"><h3><span class="no">➕</span> เพิ่มไฟล์บทเรียนใหม่ (รองรับชีตรายสัปดาห์)</h3>'+
+   '<p class="sub">Future-ready slot — เพิ่มชื่อไฟล์แล้วระบบสร้างการ์ด + หน้าอ่าน + สารบัญให้อัตโนมัติ</p>'+
+   '<div class="drop"><div class="big">📥</div><p><b>ลากไฟล์สรุป PDF/ชีตถัดไปมาวางที่นี่ (เชิงสัญลักษณ์)</b></p><p style="font-size:.8rem">เช่น "ชีตสัปดาห์ที่ 3 — Radiation Quantities", "รังสีป้องกัน"</p></div>'+
+   '<div class="grid2" style="margin-top:12px">'+
+   '<div><label style="font-size:.74rem;font-weight:700;color:var(--muted)">ชื่อไฟล์ใหม่</label><input type="text" id="newFileName" placeholder="เช่น ชีตสัปดาห์ที่ 3 — รังสีป้องกัน" style="width:100%;margin-top:4px"></div>'+
+   '<div><label style="font-size:.74rem;font-weight:700;color:var(--muted)">คำอธิบายสั้น</label><input type="text" id="newFileDesc" placeholder="เช่น สรุปหน่วยวัดรังสีและปริมาณโดสิเมตริก" style="width:100%;margin-top:4px"></div></div>'+
+   '<button class="btn primary" id="addFileBtn" style="margin-top:12px">➕ เพิ่มเข้าคลังไฟล์</button>'+
+   '<div id="addedList" style="margin-top:12px"></div></section>';
+  $$('#homeBody .fcard').forEach(c=>c.onclick=()=>selectFile(c.dataset.file));
+  $('#quickAdd').onclick=()=>$('#addCard').scrollIntoView({behavior:'smooth'});
+  $('#addFileBtn').onclick=addNewFile;
+}
+function renderSidebar(){
+  $('#fileList').innerHTML=FILES.map(f=>'<button class="filebtn'+(f.id===activeFile?' active':'')+'" data-file="'+f.id+'"><span class="code">'+f.code+'</span><span><b>'+f.name+'</b></span></button>').join('');
+  $$('#fileList .filebtn').forEach(b=>b.onclick=()=>selectFile(b.dataset.file));
+  const f=FILES.find(x=>x.id===activeFile)||FILES[0];
+  $('#secList').innerHTML=f.sections.map((s,i)=>{const sid=f.id+'-s'+i;return '<a data-sec="'+sid+'" class="'+(readSet.has(sid)?'read':'')+'"><span class="n">'+String(i+1).padStart(2,'0')+'</span><span class="t">'+s.t+'</span><span class="s">'+s.s+'</span></a>';}).join('');
+  $$('#secList a').forEach(a=>a.onclick=()=>{showTab('read');setTimeout(()=>{const el=document.getElementById(a.dataset.sec);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},80);closeSide();});
+  $('#simList').innerHTML=SIMS.map((s,i)=>'<a data-sim="'+s.id+'"><span class="n">'+String(i+1).padStart(2,'0')+'</span><span class="t">'+s.t+'</span><span class="s">ไฟล์ '+(s.fid==='c2'?'2':'1')+' • หัวข้อ '+s.sec+'</span></a>').join('');
+  $$('#simList a').forEach(a=>a.onclick=()=>gotoSim(a.dataset.sim));
+}
+let obs=null;
+function renderRead(){
+  const f=FILES.find(x=>x.id===activeFile)||FILES[0];
+  renderedFile=f.id;
+  $('#readBody').innerHTML='<div class="filehead"><span class="fic">'+f.icon+'</span><div><h2>'+f.name+' — '+f.tagline+'</h2><p>'+f.meta+'</p></div><span class="tag">'+f.code+'</span></div>'+
+   '<div style="margin-bottom:14px"><button class="btn sm" id="backHome">🏠 กลับหน้าแรก (คลังไฟล์)</button></div>'+
+   f.sections.map((s,i)=>'<section class="card sec" id="'+f.id+'-s'+i+'"><h3><span class="no">'+String(i+1).padStart(2,'0')+'</span>'+s.t+'</h3><p class="sub">'+s.s+'</p>'+s.h+'</section>').join('');
+  $('#backHome').onclick=()=>showTab('home');
+  if(obs)obs.disconnect();
+  obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting&&!readSet.has(e.target.id)){readSet.add(e.target.id);updateProgress();const link=document.querySelector('#secList a[data-sec="'+e.target.id+'"]');if(link)link.classList.add('read');}});},{threshold:.12});
+  $$('#readBody .sec').forEach(s=>obs.observe(s));
+}
+function ensureFile(id){
+  if(renderedFile===id){ if(activeFile!==id){activeFile=id;renderSidebar();} return; }
+  activeFile=id;
+  renderSidebar();
+  renderRead();
+  initSims();
+}
+function renderSimIndex(){
+  $('#simCount').textContent=SIMS.length+' สถานี';
+  $('#simIndex').innerHTML=SIMS.map(s=>'<div class="simcard"><span class="em">'+s.em+'</span><h4>'+s.t+'</h4><p>'+s.d+'</p><button class="btn primary sm" data-go="'+s.id+'">▶ เปิดในบทเรียน (ไฟล์ '+(s.fid==='c2'?'2':'1')+' หัวข้อ '+s.sec+')</button></div>').join('');
+  $$('#simIndex [data-go]').forEach(b=>b.onclick=()=>gotoSim(b.dataset.go));
+}
+function gotoSim(id){ const m=SIMS.find(s=>s.id===id); ensureFile(m&&m.fid?m.fid:'c1'); showTab('read'); setTimeout(()=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},120); closeSide(); }
+function selectFile(id){ ensureFile(id); showTab('read'); window.scrollTo({top:0,behavior:'smooth'}); }
+function showTab(t){
+  activeTab=t;
+  $$('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  $$('.tabview').forEach(v=>v.classList.remove('on'));
+  $('#tab-'+t).classList.add('on');
+  requestAnimationFrame(refreshCanvases);
+  closeSide();
+}
+$$('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+function closeSide(){$('#sidebar').classList.remove('open');}
+$('#menuToggle').onclick=()=>$('#sidebar').classList.toggle('open');
+$('#menuToggle2').onclick=()=>$('#sidebar').classList.toggle('open');
+$('#goAdd').onclick=()=>{showTab('home');setTimeout(()=>$('#addCard').scrollIntoView({behavior:'smooth'}),80);closeSide();};
+const sIn=$('#searchIn'), sRes=$('#sres');
+sIn.addEventListener('input',()=>{
+  const q=sIn.value.trim().toLowerCase();
+  if(q.length<2){sRes.classList.remove('on');return;}
+  const out=[];
+  FILES.forEach(f=>{
+    if((f.name+' '+f.tagline).toLowerCase().includes(q))out.push({k:'ไฟล์',t:f.name+' — '+f.tagline,go:()=>selectFile(f.id)});
+    f.sections.forEach((s,i)=>{if((s.t+' '+s.s+' '+s.h).toLowerCase().includes(q))out.push({k:'สรุป',t:f.name+' • หัวข้อ '+(i+1)+' '+s.t,go:()=>{selectFile(f.id);setTimeout(()=>{const el=document.getElementById(f.id+'-s'+i);if(el)el.scrollIntoView({behavior:'smooth'});},150);}});});
+  });
+  SIMS.forEach(s=>{if(s.t.toLowerCase().includes(q))out.push({k:'จำลอง',t:s.t,go:()=>gotoSim(s.id)});});
+  if('แบบทดสอบ quiz ทดสอบ'.includes(q))out.push({k:'ทดสอบ',t:'แบบทดสอบท้ายบท 30 ข้อ',go:()=>showTab('quiz')});
+  sRes.innerHTML=out.slice(0,8).map((o,i)=>'<button data-i="'+i+'"><span class="k">'+o.k+'</span><span>'+o.t+'</span></button>').join('')||'<button><span class="k">—</span><span>ไม่พบผลลัพธ์</span></button>';
+  sRes.classList.add('on');
+  $$('#sres button').forEach(b=>b.onclick=()=>{const o=out[+b.dataset.i];if(o){o.go();sRes.classList.remove('on');sIn.value='';}});
+});
+document.addEventListener('click',e=>{if(!e.target.closest('.searchwrap'))sRes.classList.remove('on');});
+let fs=16;
+function setFs(v){
+  fs=Math.min(20,Math.max(13,v));
+  document.documentElement.style.fontSize=fs+'px';
+  refreshCanvases();
+}
+$('#fontPlus').onclick=()=>setFs(fs+1);
+$('#fontMinus').onclick=()=>setFs(fs-1);
+$('#themeBtn').onclick=()=>{const l=document.documentElement.dataset.theme==='light';document.documentElement.dataset.theme=l?'':'light';$('#themeBtn').textContent=l?'🌙':'☀️';refreshCanvases();};
+$('#printBtn').onclick=()=>window.print();
+let addN=3;
+function addNewFile(){
+  const name=$('#newFileName').value.trim()||('ชีตสัปดาห์ที่ '+(addN-2));
+  const desc=$('#newFileDesc').value.trim()||('รอแนบเนื้อหาสรุป');
+  const id='fx'+Date.now();
+  FILES.push({id,code:'ไฟล์ '+addN,name:name,icon:'📗',tagline:desc,meta:'เพิ่มในคลังเมื่อ '+new Date().toLocaleDateString('th-TH'),tags:['สรุป .md'],
+   sections:[{t:'เนื้อหาสรุป (รอเพิ่ม)',s:'placeholder — วางชีตที่นี่',h:'<div class="drop"><div class="big">📝</div><p>วางเนื้อหาสรุปของไฟล์นี้ที่นี่ — โครงสร้างหน้าและสารบัญพร้อมแล้ว</p></div>'}]});
+  $('#addedList').innerHTML+='<div class="box" style="margin:8px 0"><h5>✅ '+name+'</h5><p>'+desc+' — สร้างการ์ดไฟล์ + หน้าอ่าน + สารบัญเรียบร้อย</p></div>';
+  $('#newFileName').value='';$('#newFileDesc').value='';addN++;
+  renderSidebar();renderHome();updateProgress();
+  const nc=document.querySelector('[data-file="'+id+'"]');if(nc)nc.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* ================= SIM MODULES (ผูกใหม่ได้ทุก render) ================= */
+SIM_INITS.push(function(){ /* 1 DNA */
+  const cv=$('#dnaCv'); if(!cv) return;
+  let ctx,W=0,H=0;
+  let photons=[],radicals=[],bursts=[],breaks=[],flashes=[];
+  let nD=0,nI=0,nS=0,auto=false,prot=false,t=0,acc=0;
+  function fit(){const d=Math.min(window.devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;if(W<10)return;cv.width=W*d;cv.height=H*d;ctx=cv.getContext('2d');ctx.setTransform(d,0,0,d,0,0);}
+  regCanvas(cv,fit,null);
+  const dnaY=(x,st)=>H*0.5+H*0.20*Math.sin(x*0.045+t*0.015+(st?Math.PI:0));
+  function fire(n){for(let i=0;i<n;i++)photons.push({x:-10-Math.random()*60,y:H*0.15+Math.random()*H*0.7,vx:2.2+Math.random()*1.6,done:false,stop:W*(0.3+Math.random()*0.55)});}
+  $('#dnaFire').onclick=()=>{if(W>10)fire(6);};
+  $('#dnaAuto').onclick=e=>{auto=!auto;e.target.classList.toggle('on',auto);e.target.textContent=auto?'⏸ หยุดอัตโนมัติ':'▶ อัตโนมัติ';};
+  $('#dnaProt').onclick=e=>{prot=!prot;e.target.classList.toggle('on',prot);e.target.textContent='💊 Amifostine: '+(prot?'ON':'OFF');};
+  $('#dnaRepair').onclick=()=>{breaks=[];photons=[];radicals=[];bursts=[];flashes=[];nD=0;nI=0;nS=0;upd();};
+  $('#dnaRate').oninput=e=>$('#dnaRateOut').textContent=e.target.value;
+  function addBreak(x,k){breaks.push({x,k});flashes.push({x,y:dnaY(x,0),r:4,a:1});if(k==='d')nD++;else nI++;upd();}
+  function upd(){
+    $('#dnaDirect').textContent=nD;$('#dnaIndirect').textContent=nI;$('#dnaScav').textContent=nS;$('#dnaBreaks').textContent=breaks.length;
+    const v=$('#dnaVerdict'),b=breaks.length;
+    if(b===0){v.className='verdict v-ok';v.textContent='เซลล์ปกติ — ยังไม่มีความเสียหาย';}
+    else if(b<=2){v.className='verdict v-ok';v.textContent='ความเสียหายเล็กน้อย — โอกาสสูงซ่อมสำเร็จ (successful repair)';}
+    else if(b<=5){v.className='verdict v-warn';v.textContent='เสียหายปานกลาง — เสี่ยงซ่อมผิด (modified cell) → stochastic: มะเร็ง/กลายพันธุ์';}
+    else{v.className='verdict v-bad';v.textContent='เสียหายรุนแรง — เซลล์ตาย (cell death) → deterministic: เนื้อเยื่อ/อวัยวะเสียหาย';}
+  }
+  function loop(){
+    if(!cv.isConnected)return;
+    requestAnimationFrame(loop);
+    if(!cv.offsetParent||W<10)return;
+    t++;ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='rgba(56,189,248,.10)';
+    for(let i=0;i<26;i++){ctx.beginPath();ctx.arc((i*97+t*0.2)%W,(i*53)%H,2,0,7);ctx.fill();}
+    for(let st=0;st<2;st++){
+      ctx.beginPath();let started=false;
+      for(let x=0;x<=W;x+=3){
+        if(breaks.some(b=>Math.abs(x-b.x)<12)){started=false;continue;}
+        const y=dnaY(x,st);
+        if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle=st?'#818cf8':'#22d3ee';ctx.lineWidth=3;ctx.stroke();
+    }
+    for(let x=6;x<W;x+=16){
+      if(breaks.some(b=>Math.abs(x-b.x)<14))continue;
+      ctx.beginPath();ctx.moveTo(x,dnaY(x,0));ctx.lineTo(x,dnaY(x,1));
+      ctx.strokeStyle='rgba(148,163,184,.5)';ctx.lineWidth=1.4;ctx.stroke();
+    }
+    breaks.forEach(b=>{ctx.fillStyle='rgba(225,29,72,.9)';ctx.beginPath();ctx.arc(b.x,dnaY(b.x,0),4,0,7);ctx.fill();ctx.beginPath();ctx.arc(b.x,dnaY(b.x,1),4,0,7);ctx.fill();});
+    if(auto){acc+=(+$('#dnaRate').value)/45;while(acc>1){acc--;fire(1);}}
+    photons=photons.filter(p=>{
+      p.x+=p.vx;
+      ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x-14,p.y);ctx.lineTo(p.x,p.y);ctx.stroke();
+      if(!p.done&&p.x>=p.stop){
+        p.done=true;
+        if(Math.random()<0.25)addBreak(p.x,'d');
+        else{bursts.push({x:p.x,y:p.y,a:1});radicals.push({x:p.x,y:p.y,tx:p.x,life:60,scav:prot&&Math.random()<0.55});}
+        return false;
+      }
+      return p.x<W+20;
+    });
+    bursts=bursts.filter(b=>{b.a-=0.05;ctx.strokeStyle='rgba(56,189,248,'+Math.max(b.a,0)+')';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(b.x,b.y,(1-b.a)*22+3,0,7);ctx.stroke();return b.a>0;});
+    radicals=radicals.filter(r=>{
+      r.life--;
+      const ty=dnaY(r.tx,(r.life%2)?0:1);
+      r.y+=(ty-r.y)*0.06;r.x+=Math.sin(r.life*0.4)*0.8;
+      if(r.scav){ctx.fillStyle='rgba(148,163,184,.85)';ctx.beginPath();ctx.arc(r.x,r.y,3.5,0,7);ctx.fill();if(r.life<=0){nS++;upd();}return r.life>0;}
+      ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(r.x,r.y,4,0,7);ctx.fill();
+      ctx.fillStyle='#e0f2fe';ctx.font='9px monospace';ctx.fillText('OH•',r.x+5,r.y-4);
+      if(Math.abs(r.y-ty)<5){addBreak(r.tx,'i');return false;}
+      return r.life>0;
+    });
+    flashes=flashes.filter(f=>{f.a-=0.06;f.r+=1.4;ctx.strokeStyle='rgba(251,191,36,'+Math.max(f.a,0)+')';ctx.lineWidth=2;ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,7);ctx.stroke();return f.a>0;});
+  }
+  upd();loop();
+});
+SIM_INITS.push(function(){ /* 2 crossroads */
+  if(!$('#sim-cross'))return;
+  const P={
+   repair:{c:'v-ok',n:['☢️ DNA เสียหาย','🛠️ ซ่อมสำเร็จ (identical)','✅ เซลล์รอด ทำงานปกติ'],x:'เส้นทาง A — Successful repair: เซลล์รอดและทำงานปกติ ไม่เกิดผลทางคลินิก'},
+   death:{c:'v-bad',n:['☢️ DNA เสียหายหนัก','☠️ Cell Death','🫀 Damage to Organ → Death of Organism','= DETERMINISTIC'],x:'เส้นทาง B — Deterministic: เซลล์ตายจำนวนมาก → อวัยวะเสียหาย • ความรุนแรงเพิ่มตามโดส มี threshold'},
+   somatic:{c:'v-warn',n:['☢️ DNA เสียหาย','🧟 Modified cell (รอดแต่ซ่อมผิด)','🧍 Somatic cells','🎗️ Cancer / Leukemia','= STOCHASTIC'],x:'เส้นทาง C — Stochastic (somatic): มะเร็ง/ลูคีเมีย • ไม่มี threshold (LNT) • severity คงที่'},
+   germ:{c:'v-warn',n:['☢️ DNA เสียหาย','🧟 Modified cell','🧬 Germ cells','👶 Hereditary Effects','= STOCHASTIC'],x:'เส้นทาง D — Stochastic (germ): การกลายพันธุ์ส่งต่อทางพันธุกรรมสู่ลูกหลาน'}
+  };
+  $$('#sim-cross [data-path]').forEach(b=>b.onclick=()=>{
+    const p=P[b.dataset.path],f=$('#crossFlow');f.innerHTML='';
+    p.n.forEach((n,i)=>{if(i){const a=document.createElement('span');a.className='arrow';a.textContent='→';f.appendChild(a);}const s=document.createElement('span');s.className='fnode lit';s.textContent=n;f.appendChild(s);});
+    const v=$('#crossOut');v.className='verdict '+p.c;v.textContent=p.x;
+  });
+});
+SIM_INITS.push(function(){ /* 3 body map */
+  if(!$('#organLayer'))return;
+  const ORG={
+   brain:{th:'สมอง / CNS',lv:'low',ar:'Serial (ผู้ใหญ่) / ปริมาตรสำคัญ',ce:'Glial cells + หลอดเลือด',fx:'ผู้ใหญ่ radioresistant • เด็ก <12 ปี ฉายทั้งสมองลดพัฒนาการ',la:'>40 Gy ปริมาตรใหญ่ → การทำงานลดถาวร',to:'ก้านสมอง Dmax < 54 Gy'},
+   lens:{th:'เลนส์ตา',lv:'high',ar:'Serial (dose-limiting)',ce:'เซลล์เลนส์',fx:'ต้อกระจก (cataract)',la:'เสี่ยงเริ่ม 2 Gy, สูงมาก 4 Gy',to:'Dmax < 10 Gy'},
+   thyroid:{th:'ต่อมไทรอยด์',lv:'med',ar:'Parallel',ce:'Follicular cells',fx:'เซลล์ทำลายจากไอโอดีนรังสี',la:'เพิ่มความเสี่ยงมะเร็งไทรอยด์ในเด็ก',to:'—'},
+   esoph:{th:'หลอดอาหาร',lv:'high',ar:'Serial',ce:'เยื่อบุ squamous',fx:'Esophagitis กลืนเจ็บ',la:'Stricture ตีบตัน',to:'Serial → คุม Dmax'},
+   lungs:{th:'ปอด',lv:'med',ar:'Parallel',ce:'Pneumocytes, endothelium',fx:'Radiation pneumonitis',la:'Progressive fibrosis • <ครึ่งปอดมักไม่มีผลคลินิก',to:'Mean < 20 Gy'},
+   heart:{th:'หัวใจ',lv:'med',ar:'Parallel/ผสม',ce:'Endothelium, เยื่อหุ้มหัวใจ',fx:'เยื่อหุ้มหัวใจอักเสบ',la:'โรคหลอดเลือดหัวใจ',to:'Mean < 26 Gy'},
+   breast:{th:'เต้านม',lv:'high',ar:'Parallel (เป้าหมายรักษา)',ce:'เนื้อเยื่อเต้านม',fx:'Erythema ผิวหนัง',la:'เพิ่มความเสี่ยงมะเร็งเต้านม',to:'—'},
+   liver:{th:'ตับ',lv:'med',ar:'Parallel',ce:'Hepatocytes',fx:'RILD',la:'30 Gy ทั้งอวัยวะอาจเสียชีวิต',to:'Mean < 30–32 Gy'},
+   stomach:{th:'กระเพาะอาหาร',lv:'high',ar:'Serial',ce:'Secretory cells',fx:'คลื่นไส้ อาเจียน แผล',la:'Ulcer เลือดออก',to:'Dmax < 54 Gy'},
+   sbowel:{th:'ลำไส้เล็ก',lv:'vhigh',ar:'Serial',ce:'Crypt cells',fx:'Mucosal depopulation, ท้องเสีย',la:'Fibrosis → stricture',to:'เลี่ยงปริมาตรโดสสูง'},
+   colon:{th:'ลำไส้ใหญ่/ทวาร',lv:'med',ar:'Serial',ce:'เยื่อบุ',fx:'Proctitis',la:'Fibrosis, fistula',to:'Dmax < 55 Gy'},
+   kidneys:{th:'ไต',lv:'med',ar:'Parallel',ce:'Tubules, glomeruli',fx:'Nephropathy',la:'ความดันสูง, การกรองลด',to:'Mean < 18 Gy'},
+   marrow:{th:'ไขกระดูก',lv:'vhigh',ar:'Parallel (ทั่วร่าง)',ce:'Hematopoietic stem cells',fx:'WBC/platelets ลด',la:'เสี่ยง leukemia',to:'เลี่ยงปริมาตรมาก'},
+   gonads:{th:'อวัยวะสืบพันธุ์',lv:'vhigh',ar:'—',ce:'Germ cells',fx:'เป็นหมัน',la:'Hereditary effects',to:'ป้องกันเข้มงวด'},
+   cord:{th:'ไขสันหลัง',lv:'low',ar:'Serial (critical path)',ce:'Glial + endothelium',fx:'—',la:'Myelopathy → อัมพาต',to:'Dmax < 45–50 Gy'},
+   muscle:{th:'กล้ามเนื้อ/กระดูกโตเต็มวัย',lv:'low',ar:'—',ce:'Non-cycling cells',fx:'ทนรังสีสูง',la:'เด็ก <2 ปี growth plate เสีย',to:'—'}
+  };
+  const LVL={vhigh:['p-vhigh','ไวสูงมาก'],high:['p-high','ไวสูง'],med:['p-med','ปานกลาง'],low:['p-low','ไวต่ำ']};
+  $$('#organLayer .organ').forEach(g=>{
+    const k=g.dataset.key;g.classList.add('lv-'+ORG[k].lv);
+    g.onclick=()=>{
+      $$('#organLayer .organ').forEach(x=>x.classList.remove('sel'));g.classList.add('sel');
+      const o=ORG[k];
+      $('#organInfo').innerHTML='<h5>'+o.th+' <span class="pill '+LVL[o.lv][0]+'">'+LVL[o.lv][1]+'</span></h5>'+
+       '<div class="kv"><span>โครงสร้าง</span><b>'+o.ar+'</b></div><div class="kv"><span>เซลล์เป้าหมาย</span><b>'+o.ce+'</b></div><div class="kv"><span>ผลเฉียบพลัน</span><b>'+o.fx+'</b></div><div class="kv"><span>ผลระยะยาว</span><b>'+o.la+'</b></div><div class="kv"><span>Constraint</span><b>'+o.to+'</b></div>';
+    };
+  });
+  $$('#sim-body [data-flt]').forEach(b=>b.onclick=()=>{
+    $$('#sim-body [data-flt]').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    const f=b.dataset.flt;
+    $$('#organLayer .organ').forEach(g=>g.classList.toggle('dim',f!=='all'&&ORG[g.dataset.key].lv!==f));
+  });
+});
+SIM_INITS.push(function(){ /* 4 ARS */
+  const el=$('#arsDose'); if(!el)return;
+  const sv=v=>+(0.1*Math.pow(1000,v/1000)).toFixed(2);
+  function upd(){
+    const d=sv(+el.value);$('#arsOut').textContent=d+' Sv';
+    let s,su,de,sy,ph,pv;
+    if(d<1){s='ต่ำกว่าเกณฑ์ ARS';su='—';de='~0%';sy='อาจคลื่นไส้เบา ๆ ไม่มีกลุ่มอาการเต็มรูป';ph=['⚡ Prodromal: อาจไม่มี','🕊️ ฟื้นตัวสมบูรณ์'];pv='v-ok';}
+    else if(d<2){s='Bone Marrow';su='เป็นเดือน';de='0–10%';sy='คลื่นไส้ อาเจียน early • ติดเชื้อ/เลือดออกจาก marrow suppression';ph=['🤢 Prodromal','😌 Latent','🤒 Manifest','✅ ฟื้นตัว'];pv='v-ok';}
+    else if(d<10){s='Severe Bone Marrow';su='เป็นสัปดาห์';de='0–90%';sy='ไขกระดูกล้มเหลวรุนแรง: ติดเชื้อรุนแรง เลือดออก ซีด อาจต้อง transplant';ph=['🤢 Prodromal รุนแรง','😌 Latent สั้น','🤒 Manifest','☠️/✅'];pv='v-warn';}
+    else if(d<=15){s='Gastrointestinal';su='~2 สัปดาห์';de='90–100%';sy='ท้องเสียรุนแรง ไข้ เสียน้ำ/อิเล็กโทรไลต์ ลำไส้ลอก → sepsis';ph=['🤢 Prodromal ทันที','😌 Latent สั้นมาก','💧 GI manifest','☠️ เสียชีวิต'];pv='v-bad';}
+    else{s='Neuro / CV';su='1–4 ชั่วโมง';de='100%';sy='สมองบวม ชัก ความดันล้มเหลว ระบบหัวใจหลอดเลือดพังทันที';ph=['⚡ CNS manifest ทันที','☠️ เสียชีวิตในชั่วโมง'];pv='v-bad';}
+    $('#arsSynd').textContent=s;$('#arsSurv').textContent=su;$('#arsDeath').textContent=de;$('#arsSym').textContent=sy;
+    const pw=$('#arsPhase');pw.innerHTML='';ph.forEach(p=>{const sp=document.createElement('span');sp.className='fnode lit';sp.textContent=p;pw.appendChild(sp);});
+    $('#arsPhaseTxt').textContent='ลำดับเฟส: prodromal → latent → manifest illness → (ฟื้นตัว หรือ เสียชีวิต)';
+    const v=$('#arsVerdict');v.className='verdict '+pv;
+    v.textContent=d<1?'✅ โดสต่ำกว่าเกณฑ์ ARS — เฝ้าสังเกต':d<2?'⚠️ Bone marrow syndrome: รอดได้ส่วนใหญ่ด้วยการประคอง':d<10?'🚨 Severe bone marrow syndrome: ต้องรักษาเข้มข้น':d<=15?'☠️ GI syndrome: อัตราตายสูงมาก':'☠️ Neuro/CV syndrome: เสียชีวิตภายในชั่วโมง';
+  }
+  el.oninput=upd;upd();
+});
+SIM_INITS.push(function(){ /* 5 skin */
+  const dEl=$('#skinDose'),tEl=$('#skinDay'); if(!dEl)return;
+  const BASE={skKer:'#e9c9a4',skGran:'#dca87e',skPrick:'#d09069',skBasal:'#8a5fa8',skLam:'#c07a68',skFib:'#a8763f',skSub:'#e0b493'};
+  const FAC={skKer:.5,skGran:.6,skPrick:.8,skBasal:1,skLam:.7,skFib:.4,skSub:.25};
+  function upd(){
+    const D=+dEl.value,day=+tEl.value,late=day>180;
+    $('#skinDoseOut').textContent=D+' Gy';
+    $('#skinDayOut').textContent=day+(late?' วัน (ระยะยาว)':' วัน');
+    let stage='ไม่มีปฏิกิริยา',cls='v-ok',red=0,fib=0;
+    if(D<6){stage='แทบไม่มีปฏิกิริยา (<6–8 Gy)';}
+    else if(!late){
+      if(day<7){stage='ระยะฟักตัว (ยังไม่แดง)';red=D>=10?0.15:0;}
+      else if(day<21){stage='Erythema (ผิวแดงอักเสบ)';red=Math.min(.75,.2+D/60);cls=D>=10?'v-warn':'v-ok';}
+      else if(day<35&&D>=15){stage='Dry desquamation (ลอกแห้ง)';red=.8;cls='v-warn';}
+      else if(day<50&&D>=30){stage='Moist desquamation (ลอกเปียก)';red=.9;cls='v-bad';}
+      else if(D>=50){stage='Necrosis (เนื้อตาย)';red=1;cls='v-bad';}
+      else if(D>=10){stage='Erythema ค่อยจาง';red=.4;cls='v-warn';}
+    }else{
+      if(D>=10){stage='Late effects: Atrophy + Fibrosis + Telangiectasia';red=.3;fib=.7;cls='v-warn';}
+    }
+    Object.keys(BASE).forEach(id=>{
+      let col=lerp(BASE[id],'#c22525',red*FAC[id]);
+      if(id==='skFib'&&fib)col=lerp(col,'#6b4416',fib);
+      document.getElementById(id).setAttribute('fill',col);
+    });
+    const mk=document.getElementById('skMarks');while(mk.firstChild)mk.removeChild(mk.firstChild);
+    if(!late&&D>=15&&day>=21){
+      const n=Math.min(9,Math.floor((D-10)/6));
+      for(let i=0;i<n;i++){
+        const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        c.setAttribute('cx',60+i*62);c.setAttribute('cy',(D>=30&&day>=35)?10:4);c.setAttribute('r',D>=30?5:3);
+        c.setAttribute('fill',D>=50?'#7f1d1d':'#fecaca');mk.appendChild(c);
+      }
+    }
+    if(late&&D>=10){
+      for(let i=0;i<7;i++){
+        const l=document.createElementNS('http://www.w3.org/2000/svg','path');
+        l.setAttribute('d','M'+(50+i*85)+' 150 q6 -14 12 0');l.setAttribute('stroke','#b91c1c');l.setAttribute('fill','none');l.setAttribute('stroke-width','1.6');mk.appendChild(l);
+      }
+    }
+    const v=$('#skinVerdict');v.className='verdict '+cls;
+    v.textContent='โดส '+D+' Gy • วัน '+day+' → '+stage+(late?' • ผมร่วง/ต่อมเหงื่อถูกทำลายร่วมได้':' • ลำดับ: Erythema → Dry → Moist → Necrosis ตามโดส');
+  }
+  dEl.oninput=upd;tEl.oninput=upd;upd();
+});
+SIM_INITS.push(function(){ /* 6 eye */
+  const el=$('#eyeDose'); if(!el)return;
+  let shield=false;
+  $('#eyeShield').onclick=e=>{shield=!shield;e.target.classList.toggle('on',shield);e.target.textContent='🥽 Eye shield: '+(shield?'ON':'OFF');upd();};
+  function upd(){
+    const raw=+el.value/10,eff=shield?raw*0.35:raw;
+    $('#eyeOut').textContent=raw.toFixed(1)+' Gy';
+    $('#eyeEff').textContent=eff.toFixed(1)+' Gy';
+    document.getElementById('lensOp').setAttribute('opacity',Math.min(.95,Math.max(.05,(eff-1)/6)).toFixed(2));
+    let risk,cls;
+    if(eff<2){risk='ต่ำมาก (ต่ำกว่าเกณฑ์เสี่ยง)';cls='v-ok';}
+    else if(eff<4){risk='เริ่มเสี่ยง (≥2 Gy)';cls='v-warn';}
+    else if(eff<10){risk='สูงมาก (≥4 Gy)';cls='v-bad';}
+    else{risk='เกิน constraint (Dmax 10 Gy)';cls='v-bad';}
+    $('#eyeRisk').textContent=risk.split(' ')[0];
+    const v=$('#eyeVerdict');v.className='verdict '+cls;
+    v.textContent=risk+' • '+(shield?'eye shield ลดโดสอาชีพได้ ~65%':'เปิด eye shield เพื่อลดโดสจาก fluoroscopy')+(eff>=10?' ❌ เกิน dose constraint ของเลนส์':'');
+  }
+  el.oninput=upd;upd();
+});
+SIM_INITS.push(function(){ /* 7 mucositis */
+  const w=$('#mucoWk'),p=$('#paroDose'); if(!w)return;
+  function upd(){
+    const wk=+w.value,paro=+p.value,dose=Math.min(wk*10,70);
+    $('#mucoWkOut').textContent='wk '+wk;$('#paroOut').textContent=paro+' Gy';$('#mucoDose').textContent=dose+' Gy';
+    let g=0;
+    if(wk>=2&&wk<3)g=1;if(wk>=3&&wk<5)g=2;if(wk>=5&&wk<=7)g=3;if(wk>7&&wk<=10)g=Math.max(1,3-(wk-7));if(wk>10)g=0;
+    $('#mucoGrade').textContent=g?('Grade '+g):'0';
+    const ul=document.getElementById('mucUlcers');while(ul.firstChild)ul.removeChild(ul.firstChild);
+    for(let i=0;i<g*4;i++){
+      const c=document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+      c.setAttribute('cx',70+((i*53)%170));c.setAttribute('cy',55+((i*37)%55));c.setAttribute('rx',6+g);c.setAttribute('ry',4+g*0.7);
+      c.setAttribute('fill','rgba(150,20,50,'+(0.35+g*0.15).toFixed(2)+')');c.setAttribute('stroke','#b91c1c');ul.appendChild(c);
+    }
+    document.getElementById('mucBase').setAttribute('fill',lerp('#e8a3ae','#8f1220',g/4*0.9));
+    let pr,cls;
+    if(paro<20){pr='ต่ำมาก';cls='v-ok';}else if(paro<26){pr='ต่ำ (บรรลุเป้า)';cls='v-ok';}else if(paro<40){pr='ปานกลาง-สูง';cls='v-warn';}else{pr='สูงมาก (ปากแห้งถาวร)';cls='v-bad';}
+    $('#paroRisk').textContent=pr;
+    const v=$('#mucoVerdict');v.className='verdict '+(g>=3?'v-bad':g>=2?'v-warn':'v-ok');
+    v.textContent=wk===0?'ยังไม่เริ่มฉาย — เยื่อบุปกติ':wk<2?'สัปดาห์แรก: ยังไม่มี mucositis ชัดเจน':wk<=7?('สัปดาห์ '+wk+': Mucositis Grade '+g+(g>=3?' — กลืนอาหารแข็งไม่ได้ ต้องประคองโภชนาการ':'')+' • พีคท้ายคอร์ส'):('หลังจบ '+(wk-7)+' สัปดาห์: กำลังฟื้นตัว (ฟื้น 2–3 wk) Grade '+g)+' • Parotid Mean '+paro+' Gy → xerostomia '+pr;
+  }
+  w.oninput=upd;p.oninput=upd;upd();
+});
+SIM_INITS.push(function(){ /* 8 blood */
+  const cv=$('#blCv'); if(!cv)return;
+  let ctx,W=0,H=0,day=0,playing=false;
+  function fit(){const d=Math.min(window.devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;if(W<10)return;cv.width=W*d;cv.height=H*d;ctx=cv.getContext('2d');ctx.setTransform(d,0,0,d,0,0);}
+  const bell=(d,n,s)=>Math.exp(-Math.pow(d-n,2)/(2*s*s));
+  const vals=(D,d)=>{const dep=Math.min(.95,D/8);return{plt:100-100*dep*.9*bell(d,4,4),wbc:100-100*dep*bell(d,8,6),rbc:100-100*dep*.7*bell(d,26,10)};};
+  function draw(){
+    if(!ctx||W<10)return;
+    const C=themeCols(),D=+$('#blDose').value/10;
+    ctx.clearRect(0,0,W,H);
+    const L=38,R=W-12,T=12,B=H-26;
+    ctx.strokeStyle=C.grid;
+    for(let i=0;i<=4;i++){const y=T+(B-T)*i/4;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(R,y);ctx.stroke();ctx.fillStyle=C.txt;ctx.font='9px monospace';ctx.fillText((100-i*25)+'%',4,y+3);}
+    ctx.fillStyle=C.txt;
+    for(let d=0;d<=60;d+=10)ctx.fillText('d'+d,L+(R-L)*d/60-8,B+15);
+    const line=(k,col)=>{ctx.beginPath();for(let d=0;d<=60;d++){const v=vals(D,d)[k],x=L+(R-L)*d/60,y=B-(B-T)*v/100;d?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.strokeStyle=col;ctx.lineWidth=2.4;ctx.stroke();};
+    line('plt','#fbbf24');line('wbc','#fb7185');line('rbc','#38bdf8');
+    const cx=L+(R-L)*day/60;
+    ctx.strokeStyle=C.cursor;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(cx,T);ctx.lineTo(cx,B);ctx.stroke();ctx.setLineDash([]);
+    const v=vals(D,day);
+    $('#blDay').textContent=Math.round(day);
+    $('#blPlt').textContent=v.plt.toFixed(0)+'%';$('#blWbc').textContent=v.wbc.toFixed(0)+'%';$('#blRbc').textContent=v.rbc.toFixed(0)+'%';
+    const vd=$('#blVerdict');
+    if(D<0.5){vd.className='verdict v-ok';vd.textContent='โดสต่ำมาก — ระบบเลือดแทบไม่กระทบ';}
+    else if(v.wbc<30){vd.className='verdict v-bad';vd.textContent='🚨 WBC ต่ำมาก → เสี่ยงติดเชื้อรุนแรง (neutropenia)';}
+    else if(v.plt<40){vd.className='verdict v-warn';vd.textContent='⚠️ Platelets ต่ำ → เสี่ยงเลือดออก';}
+    else if(v.rbc<60){vd.className='verdict v-warn';vd.textContent='⚠️ RBC ลด → ซีด อ่อนเพลีย (ช้าสุด 3–4 สัปดาห์)';}
+    else{vd.className='verdict v-ok';vd.textContent='✅ ค่าเลือดยังอยู่ในเกณฑ์ปลอดภัย';}
+  }
+  regCanvas(cv,fit,draw);
+  function tick(){ if(!cv.isConnected){playing=false;return;} if(!playing)return; if(cv.offsetParent){day+=0.35;if(day>60){day=60;playing=false;$('#blPlay').textContent='▶ เล่นเส้นเวลา';}draw();} requestAnimationFrame(tick); }
+  $('#blPlay').onclick=e=>{playing=!playing;e.target.textContent=playing?'⏸ หยุด':'▶ เล่นเส้นเวลา';if(playing)tick();};
+  $('#blReset').onclick=()=>{day=0;playing=false;$('#blPlay').textContent='▶ เล่นเส้นเวลา';draw();};
+  $('#blDose').oninput=e=>{$('#blDoseOut').textContent=(+e.target.value/10).toFixed(1)+' Gy';draw();};
+  draw();
+});
+SIM_INITS.push(function(){ /* 9 serial/parallel game */
+  const S=$('#segSerial'),P=$('#segPara'); if(!S)return;
+  const N=10;
+  function build(el){el.innerHTML='';for(let i=0;i<N;i++){const d=document.createElement('div');d.className='seg';d.textContent=i+1;d.onclick=()=>{d.classList.toggle('hit');upd();};el.appendChild(d);}}
+  build(S);build(P);
+  function upd(){
+    const sh=S.querySelectorAll('.hit').length,ph=P.querySelectorAll('.hit').length;
+    const sf=sh>0?0:100,pf=Math.round((N-ph)/N*100);
+    $('#serFn').textContent=sf+'%';$('#paraFn').textContent=pf+'%';
+    const v=$('#archVerdict');
+    if(sh===0&&ph===0){v.className='verdict v-ok';v.textContent='คลิกช่องเพื่อเริ่มวางแผน — ลองทำลาย 1 ช่องของ serial เทียบกับ parallel';}
+    else if(sh>0&&pf>=60){v.className='verdict v-bad';v.textContent='❌ Serial พัง 100% จากจุดเสียเพียง '+sh+' จุด (เช่น ไขสันหลัง → อัมพาต) ขณะที่ parallel ยังทำงาน '+pf+'% — เหตุผลที่ serial คุมด้วย Dmax';}
+    else if(sh>0){v.className='verdict v-bad';v.textContent='❌ Serial ล้มเหลวทั้งอวัยวะ • Parallel เหลือ '+pf+'% (ต่ำกว่า reserve → มีอาการทางคลินิก)';}
+    else{v.className='verdict v-warn';v.textContent='Parallel เหลือหน้าที่ '+pf+'% — ยังทนได้ถ้าเหลือเพียงพอ (volume-dependent)';}
+  }
+  $('#archReset').onclick=()=>{build(S);build(P);upd();};
+  upd();
+});
+SIM_INITS.push(function(){ /* 10 therapeutic window */
+  const cv=$('#twCv'); if(!cv)return;
+  let ctx,W=0,H=0;
+  function fit(){const d=Math.min(window.devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;if(W<10)return;cv.width=W*d;cv.height=H*d;ctx=cv.getContext('2d');ctx.setTransform(d,0,0,d,0,0);}
+  const logi=(x,d50,k)=>1/(1+Math.exp(-(x-d50)/k));
+  const curves=dfx=>({tcp:D=>logi(D*(dfx+10)/12,57,4.5),ntcp:D=>logi(D*(dfx+3)/5,85,4)});
+  function draw(){
+    if(!ctx||W<10)return;
+    const C=themeCols();
+    const D=+$('#twDose').value,dfx=+$('#twFx').value,cc=curves(dfx),tcp=cc.tcp,ntcp=cc.ntcp;
+    ctx.clearRect(0,0,W,H);
+    const L=46,R=W-14,T=14,B=H-30;
+    ctx.strokeStyle=C.grid;ctx.lineWidth=1;
+    for(let i=0;i<=5;i++){const y=T+(B-T)*i/5;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(R,y);ctx.stroke();}
+    ctx.fillStyle=C.txt;ctx.font='10px monospace';
+    for(let i=0;i<=5;i++)ctx.fillText((100-i*20)+'%',8,T+(B-T)*i/5+3);
+    for(let g=0;g<=120;g+=20)ctx.fillText(g+' Gy',L+(R-L)*g/120-12,B+16);
+    ctx.beginPath();
+    for(let d=0;d<=120;d++){const x=L+(R-L)*d/120,y=B-(B-T)*tcp(d);d?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+    for(let d=120;d>=0;d--){const x=L+(R-L)*d/120,y=B-(B-T)*ntcp(d);ctx.lineTo(x,y);}
+    ctx.closePath();ctx.fillStyle='rgba(52,211,153,.15)';ctx.fill();
+    const plot=(fn,col)=>{ctx.beginPath();for(let d=0;d<=120;d++){const x=L+(R-L)*d/120,y=B-(B-T)*fn(d);d?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.strokeStyle=col;ctx.lineWidth=2.6;ctx.stroke();};
+    plot(ntcp,'#fb7185');plot(tcp,'#34d399');
+    const cx=L+(R-L)*D/120;
+    ctx.strokeStyle=C.cursor;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(cx,T);ctx.lineTo(cx,B);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#34d399';ctx.beginPath();ctx.arc(cx,B-(B-T)*tcp(D),5,0,7);ctx.fill();
+    ctx.fillStyle='#fb7185';ctx.beginPath();ctx.arc(cx,B-(B-T)*ntcp(D),5,0,7);ctx.fill();
+    ctx.font='bold 11px sans-serif';ctx.fillStyle='#34d399';ctx.fillText('TCP',R-32,T+14);ctx.fillStyle='#fb7185';ctx.fillText('NTCP',R-42,T+30);
+    const tv=tcp(D),nv=ntcp(D);
+    $('#twDoseOut').textContent=D+' Gy';
+    $('#twTcp').textContent=(tv*100).toFixed(0)+'%';
+    $('#twNtcp').textContent=(nv*100).toFixed(1)+'%';
+    $('#twFxN').textContent=Math.round(D/dfx)+' ครั้ง';
+    $('#twWin').textContent=((tv-nv)*100).toFixed(0)+'%';
+    const v=$('#twVerdict'),w=tv-nv;
+    if(w>0.75){v.className='verdict v-ok';v.textContent='✅ อยู่ใน Therapeutic Window ดีมาก (TCP สูง, NTCP ต่ำ)';}
+    else if(w>0.45){v.className='verdict v-warn';v.textContent='⚠️ พอใช้: ยังอยู่ใน window แต่เริ่มแลกกับภาวะแทรกซ้อน';}
+    else{v.className='verdict v-bad';v.textContent='❌ นอก Therapeutic Window: NTCP ไล่ทัน TCP';}
+  }
+  regCanvas(cv,fit,draw);
+  $('#twDose').oninput=draw;$('#twFx').onchange=draw;
+  draw();
+});
+SIM_INITS.push(function(){ /* 11 BED */
+  const D=$('#bedD'),N=$('#bedN'); if(!D)return;
+  function upd(){
+    const d=+D.value,n=+N.value,dpf=d/n;
+    $('#bedDOut').textContent=d;$('#bedNOut').textContent=n;
+    const b10=n*dpf*(1+dpf/10),b3=n*dpf*(1+dpf/3),eq=b3/(1+2/3);
+    $('#bedDpf').textContent=dpf.toFixed(2);$('#bedT10').textContent=b10.toFixed(1);$('#bedT3').textContent=b3.toFixed(1);$('#bedEq2').textContent=eq.toFixed(1);
+    const v=$('#bedVerdict');
+    if(dpf>3.5){v.className='verdict v-bad';v.textContent='⚠️ Fraction ใหญ่ ('+dpf.toFixed(1)+' Gy/fx): BED₃ พุ่งสูง — ใช้เฉพาะ hypofraction/SBRT ในอวัยวะ parallel';}
+    else if(dpf<1.5){v.className='verdict v-ok';v.textContent='Fraction เล็ก: ถนอมเนื้อเยื่อ late-responding ดี แต่ต้องเพิ่มจำนวนครั้ง';}
+    else{v.className='verdict v-ok';v.textContent='✅ Conventional fractionation (~'+dpf.toFixed(1)+' Gy/fx): สมดุล TCP/NTCP ดี';}
+    if(eq>100)v.textContent+=' • EQD2₃ สูงมาก ระวังอวัยวะ serial!';
+  }
+  D.oninput=upd;N.oninput=upd;
+  $$('#sim-bed [data-pre]').forEach(b=>b.onclick=()=>{const a=b.dataset.pre.split(',');D.value=a[0];N.value=a[1];upd();});
+  upd();
+});
+SIM_INITS.push(function(){ /* 12 dose comparator */
+  const box=$('#doseChips'); if(!box)return;
+  const DATA=[{k:'uro',n:'Urography (X-ray)',d:8,r:0.04},{k:'lum',n:'Lumbar spine (X-ray)',d:5,r:0.025},{k:'abd',n:'Abdomen (X-ray)',d:2.5,r:0.013},{k:'che',n:'Chest (X-ray)',d:0.25,r:0.0013},{k:'ext',n:'Extremities (X-ray)',d:0.025,r:0.00013},{k:'myo',n:'Myocardium Tl-201',d:23,r:0.12},{k:'bon',n:'Bone Tc-99m MDP',d:3.6,r:0.018},{k:'thy',n:'Thyroid Tc-99m',d:1.1,r:0.006},{k:'lun',n:'Lungs Tc-99m MAA',d:0.9,r:0.005},{k:'kid',n:'Kidney Cr-51 EDTA',d:0.01,r:0.00005}];
+  let sel=new Set(['che','myo']);
+  box.innerHTML='';
+  DATA.forEach(x=>{const b=document.createElement('button');b.className='btn sm'+(sel.has(x.k)?' on':'');b.textContent=(x.d>6?'💊 ':'🩻 ')+x.n;b.onclick=()=>{if(sel.has(x.k))sel.delete(x.k);else sel.add(x.k);b.classList.toggle('on');draw();};box.appendChild(b);});
+  function draw(){
+    const items=DATA.filter(x=>sel.has(x.k)).sort((a,b)=>b.d-a.d);
+    const max=Math.max.apply(null,items.map(i=>i.d).concat([1]));
+    $('#doseBars').innerHTML=items.map(i=>{
+      const days=Math.round(i.d/2.4*365);
+      return '<div class="barrow"><span>'+i.n+'</span><div class="bar"><i style="width:'+(i.d/max*100)+'%"></i></div><span class="val">'+i.d+' mSv</span></div><div style="font-size:.7rem;color:var(--muted);margin:-2px 0 8px 0">ความเสี่ยง '+i.r+'% • เทียบพื้นหลัง ~'+(days<1?'<1':days)+' วัน • เทียบ chest X-ray ~'+(i.d/0.25).toFixed(0)+' ครั้ง</div>';
+    }).join('')||'<p style="color:var(--muted);font-size:.84rem">ยังไม่ได้เลือกการตรวจ</p>';
+    const tot=items.reduce((s,i)=>s+i.d,0);
+    const v=$('#doseVerdict');v.className='verdict '+(tot>10?'v-bad':tot>3?'v-warn':'v-ok');
+    v.textContent=items.length?('โดสรวมที่เลือก: '+tot.toFixed(2)+' mSv ≈ พื้นหลังธรรมชาติ '+Math.round(tot/2.4*365)+' วัน • หลัก ALARA: ต่ำสุดสมเหตุสมผล'):'เลือกการตรวจด้านบนเพื่อเปรียบเทียบ';
+  }
+  draw();
+});
+/* ---- ไฟล์ 2: 13 LET/QF ---- */
+SIM_INITS.push(function(){
+  const gy=$('#letGy'); if(!gy)return;
+  const type=$('#letType'), qfWrap=$('#letQfWrap'), qfSlider=$('#letQf');
+  function qf(){ const v=type.value; if(v==='c')return +qfSlider.value; if(v==='1b')return 1; return +v; }
+  function dots(){ const q=qf(); const g=$('#letDots'); let html=''; const n=Math.round(6+q*2.2); const col=q>5?'#fb7185':'#38bdf8';
+    for(let i=0;i<n;i++){const x=30+i*(580/n); html+='<circle cx="'+x.toFixed(0)+'" cy="'+(70+((i%2)?9:-9))+'" r="'+(2+q*0.12).toFixed(1)+'" fill="'+col+'"/>';}
+    g.innerHTML=html; }
+  function upd(){ const d=+gy.value/10; const q=qf(); const sv=d*q;
+    $('#letGyOut').textContent=d.toFixed(1)+' Gy';
+    qfWrap.style.display = type.value==='c' ? '' : 'none';
+    $('#letQfOut').textContent=qfSlider.value;
+    $('#letSv').textContent=sv.toFixed(1)+' Sv';
+    $('#letQfV').textContent=q;
+    $('#letX').textContent=q+'×';
+    dots();
+    const v=$('#letVerdict');
+    if(q>=10){v.className='verdict v-bad';v.textContent='High LET: ถ่ายเทพลังงานหนาแน่นในระยะสั้น → Direct damage / double-strand breaks — อันตรายทางชีวภาพ '+q+' เท่าของแกมมาที่ Gy เท่ากัน';}
+    else{v.className='verdict v-ok';v.textContent='Low LET: ถ่ายเทพลังงานเบาบางกระจาย → ส่วนใหญ่เป็น Indirect damage ผ่านอนุมูลอิสระ — 1 Gy = 1 Sv';}
+  }
+  gy.oninput=upd; type.onchange=upd; qfSlider.oninput=upd; upd();
+});
+/* ---- ไฟล์ 2: 14 Whole-body levels ---- */
+SIM_INITS.push(function(){
+  const el=$('#wblDose'); if(!el)return;
+  const sv=v=>+(0.05*Math.pow(1000,v/1000)).toFixed(2);
+  function upd(){ const d=sv(+el.value); $('#wblOut').textContent=d+' Sv';
+    let lv,syn,de,tm,sym,pv;
+    if(d<0.3){lv='Level 1';syn='—';de='0%';tm='—';sym='ไม่มีอาการแสดงทางคลินิก (No clinical symptoms)';pv='v-ok';}
+    else if(d<1){lv='Level 2';syn='—';de='0%';tm='—';sym='อาการแพ้รังสีระดับเบา (Mild radiation sickness): คลื่นไส้เบา ๆ อ่อนเพลีย';pv='v-ok';}
+    else if(d<2.5){lv='Level 3';syn='Hematopoietic (เริ่ม)';de='10% ใน 30 วัน';tm='เป็นเดือน';sym='ภาวะพิษระดับอ่อน: คลื่นไส้ อาเจียน เม็ดเลือดเริ่มลด';pv='v-warn';}
+    else if(d<5){lv='Level 4';syn='Hematopoietic (= LD50)';de='50% ใน 30 วัน';tm='เป็นสัปดาห์–เดือน';sym='ภาวะพิษรุนแรง: Pancytopenia ไข้ เลือดออก ติดเชื้อ (= LD50/30 มนุษย์ 3–4 Sv)';pv='v-bad';}
+    else if(d<10){lv='Level 5';syn='GI + Hematopoietic';de='เกือบ 100% ใน 14 วัน';tm='เป็นวัน–สัปดาห์';sym='ARS เต็มรูป: ท้องร่วงรุนแรง ขาดน้ำ เสียสมดุลเกลือแร่';pv='v-bad';}
+    else{lv='Level 6';syn='GI + CNS';de='100% ใน 7 วัน';tm='ชั่วโมง–วัน';sym='ความเสียหายรุนแรงต่อ GI และระบบประสาท: ชัก กระวนกระวาย ไวต่อสัมผัส';pv='v-bad';}
+    $('#wblLv').textContent=lv;$('#wblSynd').textContent=syn;$('#wblDeath').textContent=de;$('#wblTime').textContent=tm;$('#wblSym').textContent=sym;
+    const v=$('#wblVerdict');v.className='verdict '+pv;
+    v.textContent = d<1? '✅ ต่ำกว่าเกณฑ์อาการเฉียบพลัน — ยังต้องคุมความเสี่ยง stochastic ตาม ALARA' : d<5 ? '⚠️ ช่วง Hematopoietic syndrome: รอดได้หากประคองดี/ปลูกถ่ายไขกระดูก' : '☠️ เกิน LD50 มาก: GI/CNS ล้มเหลว อัตราตายสูงมาก';
+  }
+  el.oninput=upd;upd();
+});
+/* ---- ไฟล์ 2: 15 haematological response ---- */
+SIM_INITS.push(function(){
+  const cv=$('#hemoCv'); if(!cv)return;
+  let ctx,W=0,H=0,day=0,playing=false,dose=1;
+  function fit(){const d=Math.min(window.devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;if(W<10)return;cv.width=W*d;cv.height=H*d;ctx=cv.getContext('2d');ctx.setTransform(d,0,0,d,0,0);}
+  const on=(d,t0,s)=>1/(1+Math.exp(-(d-t0)/s));
+  const rec=(d,t1,s)=>Math.exp(-Math.max(0,d-t1)/s);
+  function vals(D,d){
+    const f=D===3?1:0.45;
+    return {
+      lym:Math.max(2,100-95*f*on(d,1,0.8)*rec(d,D===3?40:18,14)),
+      neu:Math.max(2,100-88*f*on(d,5,2)*rec(d,D===3?35:16,12)),
+      plt:Math.max(2,100-82*f*on(d,7,3)*rec(d,D===3?38:18,12)),
+      hb:Math.max(20,100-50*f*on(d,12,6)*rec(d,D===3?45:25,15))
+    };
+  }
+  function draw(){
+    if(!ctx||W<10)return;
+    const C=themeCols();
+    ctx.clearRect(0,0,W,H);
+    const L=38,R=W-12,T=12,B=H-26;
+    ctx.strokeStyle=C.grid;
+    for(let i=0;i<=4;i++){const y=T+(B-T)*i/4;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(R,y);ctx.stroke();ctx.fillStyle=C.txt;ctx.font='9px monospace';ctx.fillText((100-i*25)+'%',4,y+3);}
+    ctx.fillStyle=C.txt;
+    for(let d=0;d<=60;d+=10)ctx.fillText('d'+d,L+(R-L)*d/60-8,B+15);
+    const line=(k,col)=>{ctx.beginPath();for(let d=0;d<=60;d++){const v=vals(dose,d)[k],x=L+(R-L)*d/60,y=B-(B-T)*v/100;d?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.strokeStyle=col;ctx.lineWidth=2.4;ctx.stroke();};
+    line('lym','#fb7185');line('neu','#fbbf24');line('plt','#818cf8');line('hb','#34d399');
+    const cx=L+(R-L)*day/60;
+    ctx.strokeStyle=C.cursor;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(cx,T);ctx.lineTo(cx,B);ctx.stroke();ctx.setLineDash([]);
+    ctx.font='bold 10px sans-serif';
+    ctx.fillStyle='#fb7185';ctx.fillText('Lymph',R-46,T+12);
+    ctx.fillStyle='#fbbf24';ctx.fillText('Neut',R-46,T+26);
+    ctx.fillStyle='#818cf8';ctx.fillText('Plt',R-46,T+40);
+    ctx.fillStyle='#34d399';ctx.fillText('Hb',R-46,T+54);
+    const v=vals(dose,day);
+    $('#hemoDay').textContent=Math.round(day);
+    $('#hemoLym').textContent=v.lym.toFixed(0)+'%';$('#hemoNeu').textContent=v.neu.toFixed(0)+'%';$('#hemoPlt').textContent=v.plt.toFixed(0)+'%';$('#hemoHb').textContent=v.hb.toFixed(0)+'%';
+    const vd=$('#hemoVerdict');
+    if(v.lym<20){vd.className='verdict v-bad';vd.textContent='🚨 Lymphopenia รุนแรง — Lymphocyte ลดเร็วสุด ใช้เป็น biological dosimeter ประเมินโดส';}
+    else if(v.neu<30){vd.className='verdict v-bad';vd.textContent='🚨 Neutropenia → เสี่ยงติดเชื้อรุนแรง (กลไกตายของ hematopoietic syndrome)';}
+    else if(v.plt<30){vd.className='verdict v-warn';vd.textContent='⚠️ Thrombocytopenia → เสี่ยงตกเลือด (hemorrhage)';}
+    else if(v.hb<60){vd.className='verdict v-warn';vd.textContent='⚠️ Anemia — โลหิตจาง (RBC ลดช้าสุด อายุ ~120 วัน)';}
+    else{vd.className='verdict v-ok';vd.textContent='✅ ค่าเม็ดเลือดยังพอประคองได้ (dose '+dose+' Gy)';}
+  }
+  regCanvas(cv,fit,draw);
+  function tick(){ if(!cv.isConnected){playing=false;return;} if(!playing)return; if(cv.offsetParent){day+=0.35;if(day>60){day=60;playing=false;$('#hemoPlay').textContent='▶ เล่นเส้นเวลา';}draw();} requestAnimationFrame(tick); }
+  $('#hemo1').onclick=e=>{dose=1;e.target.classList.add('on');$('#hemo3').classList.remove('on');draw();};
+  $('#hemo3').onclick=e=>{dose=3;e.target.classList.add('on');$('#hemo1').classList.remove('on');draw();};
+  $('#hemoPlay').onclick=e=>{playing=!playing;e.target.textContent=playing?'⏸ หยุด':'▶ เล่นเส้นเวลา';if(playing)tick();};
+  $('#hemoReset').onclick=()=>{day=0;playing=false;$('#hemoPlay').textContent='▶ เล่นเส้นเวลา';draw();};
+  draw();
+});
+/* ---- ไฟล์ 2: 16 LD50 ---- */
+SIM_INITS.push(function(){
+  const box=$('#ldBars'); if(!box)return;
+  const VERT=[['Pig',2.5],['Guinea pig',2.5],['Dog',2.75],['Human',3.25],['Monkey',4.75],['Mouse',6.2],['Hamster',7.0],['Rat',7.1],['Rabbit',7.25],['Turtle',15]];
+  const MICRO=[['E. coli',56],['Snail',100],['Yeast',300],['Fruit fly',600],['Amoeba',1000],['Paramecia',3000]];
+  let micro=false;
+  function drawBars(){
+    const list=VERT.concat(micro?MICRO:[]);
+    const max=Math.log10(3000);
+    box.innerHTML=list.map(it=>{const w=Math.max(2,Math.log10(it[1])/max*100); const hl=it[0]==='Human';
+      return '<div class="barrow"><span>'+it[0]+(hl?' ⭐':'')+'</span><div class="bar"><i style="width:'+w.toFixed(1)+'%;'+(hl?'background:linear-gradient(90deg,#34d399,#38bdf8)':'')+'"></i></div><span class="val">'+it[1]+' Gy</span></div>';}).join('');
+  }
+  $('#ldMicroOn').onclick=e=>{micro=true;e.target.classList.add('on');$('#ldMicroOff').classList.remove('on');drawBars();};
+  $('#ldMicroOff').onclick=e=>{micro=false;e.target.classList.add('on');$('#ldMicroOn').classList.remove('on');drawBars();};
+  drawBars();
+  const cv=$('#ldCv'); let ctx,W=0,H=0;
+  function fit(){const d=Math.min(window.devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;if(W<10)return;cv.width=W*d;cv.height=H*d;ctx=cv.getContext('2d');ctx.setTransform(d,0,0,d,0,0);}
+  const logi=(x,d50,k)=>1/(1+Math.exp(-(x-d50)/k));
+  function drawC(){
+    if(!ctx||W<10)return;
+    const C=themeCols();
+    ctx.clearRect(0,0,W,H);
+    const L=40,R=W-14,T=12,B=H-26;
+    ctx.strokeStyle=C.grid;ctx.lineWidth=1;
+    for(let i=0;i<=4;i++){const y=T+(B-T)*i/4;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(R,y);ctx.stroke();ctx.fillStyle=C.txt;ctx.font='9px monospace';ctx.fillText((100-i*25)+'%',4,y+3);}
+    ctx.fillStyle=C.txt;
+    for(let g=0;g<=10;g+=2)ctx.fillText(g+' Gy',L+(R-L)*g/10-10,B+15);
+    ctx.beginPath();
+    for(let d=0;d<=10;d+=0.1){const x=L+(R-L)*d/10,y=B-(B-T)*logi(d,3.25,0.55);d?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+    ctx.strokeStyle='#fb7185';ctx.lineWidth=2.6;ctx.stroke();
+    const y50=B-(B-T)*0.5, x50=L+(R-L)*3.25/10;
+    ctx.strokeStyle=C.cursor;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(L,y50);ctx.lineTo(x50,y50);ctx.lineTo(x50,B);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#fb7185';ctx.beginPath();ctx.arc(x50,y50,5,0,7);ctx.fill();
+    ctx.font='bold 10px sans-serif';ctx.fillStyle=C.txt;ctx.fillText('LD50/30 มนุษย์ ≈ 3–4 Gy',x50+8,y50-8);
+  }
+  regCanvas(cv,fit,drawC);
+  drawC();
+});
+/* ---- ไฟล์ 2: 17 ICRP ---- */
+SIM_INITS.push(function(){
+  const role=$('#icrpRole'); if(!role)return;
+  const LIM={occ:{eff:[20,'20 mSv (เฉลี่ย 5 ปี; ปีใด ๆ ≤50)'],lens:[20,'20 mSv'],skin:[500,'500 mSv'],hands:[500,'500 mSv']},
+             pub:{eff:[1,'1 mSv'],lens:[15,'15 mSv'],skin:[50,'50 mSv'],hands:[null,'—']}};
+  function upd(){
+    const d=+$('#icrpDose').value; $('#icrpOut').textContent=d+' mSv';
+    const o=LIM[role.value][$('#icrpOrgan').value];
+    const lim=o[0];
+    $('#icrpLim').textContent=o[1];
+    const v=$('#icrpVerdict');
+    if(lim===null){$('#icrpRatio').textContent='—';v.className='verdict v-ok';v.textContent='ICRP ไม่ได้กำหนดขีดจำกัดมือ/เท้าสำหรับบุคคลทั่วไป (ไม่ใช่กลุ่มสัมผัสหลัก)';return;}
+    const r=d/lim; $('#icrpRatio').textContent=(r*100).toFixed(0)+'%';
+    if(role.value==='occ' && $('#icrpOrgan').value==='eff'){
+      if(d<=20){v.className='verdict v-ok';v.textContent='✅ ภายในขีดจำกัดเฉลี่ย 20 mSv/ปี (ICRP 103)';}
+      else if(d<=50){v.className='verdict v-warn';v.textContent='⚠️ เกินค่าเฉลี่ย 20 mSv/ปี แต่ยังต่ำกว่าเพดาน 50 mSv ในปีเดียว — ต้องตรวจสอบเฉลี่ยย้อนหลัง 5 ปี';}
+      else{v.className='verdict v-bad';v.textContent='❌ เกินเพดาน 50 mSv ในปีเดียว — ผิดเกณฑ์ ICRP';}
+    } else if(d<=lim){v.className='verdict v-ok';v.textContent='✅ ภายในขีดจำกัด ICRP 103 (2007)';}
+    else{v.className='verdict v-bad';v.textContent='❌ เกินขีดจำกัด '+o[1]+'/ปี — ต้องลดโดสตามหลัก ALARA';}
+  }
+  role.onchange=upd;$('#icrpOrgan').onchange=upd;$('#icrpDose').oninput=upd;upd();
+});
+
+/* ================= QUIZ 30 ข้อ ================= */
+(function(){
+  const QS=[
+   {q:'ความเสียหาย DNA จาก indirect action คิดเป็นกี่เปอร์เซ็นต์?',o:['25%','50%','75%','100%'],a:2,e:'Indirect ผ่าน OH• จากน้ำ = 75% • direct = 25%'},
+   {q:'อนุภาคใดอันตรายที่สุดเมื่อเข้าสู่ร่างกายทางภายใน?',o:['Gamma','Beta','Alpha','X-ray'],a:2,e:'Alpha หนักประจุสูง ถ่ายพลังงานหนาแน่นใกล้จุดสลาย'},
+   {q:'ข้อใดถูกต้องเกี่ยวกับ stochastic effects?',o:['มี threshold ชัดเจน','ความรุนแรงเพิ่มตามโดส','ไม่มี threshold (LNT) เพิ่มเฉพาะความน่าจะเป็น','เกิดจากเซลล์ตายจำนวนมาก'],a:2,e:'Stochastic = เซลล์รอดแต่กลายพันธุ์ • LNT • severity คงที่'},
+   {q:'ข้อใดเป็น deterministic effect?',o:['Leukemia','ต้อกระจก','มะเร็งเต้านม','การกลายพันธุ์พันธุกรรม'],a:1,e:'ต้อกระจก/แผลไหม้/ผมร่วง = deterministic'},
+   {q:'ความเสี่ยงต้อกระจกเริ่มเห็นที่โดสเท่าใด?',o:['0.5 Gy','2 Gy','10 Gy','45 Gy'],a:1,e:'เริ่มที่ 2 Gy สูงมากที่ 4 Gy • เลนส์ Dmax < 10 Gy'},
+   {q:'Dmax ของไขสันหลังตาม tolerance map คือ?',o:['20 Gy','26 Gy','45–50 Gy','70 Gy'],a:2,e:'Spinal cord Dmax < 45–50 Gy (serial)'},
+   {q:'อวัยวะใดเป็น parallel organ?',o:['ไขสันหลัง','เส้นประสาทตา','ปอด','หลอดอาหาร'],a:2,e:'ปอด/ไต/ตับ/ต่อมน้ำลาย = parallel'},
+   {q:'Serial organs ควรถูกจำกัดด้วยค่าใด?',o:['Mean dose','V20','Dmax','Integral dose'],a:2,e:'Serial พังทั้งอันจากจุดร้อนจุดเดียว → Dmax'},
+   {q:'หลังรับรังสี WBC ลดลงในช่วงใด?',o:['2–4 วัน','5–10 วัน','3–4 สัปดาห์','6 เดือน'],a:1,e:'Platelets 2–4 วัน • WBC 5–10 วัน • RBC 3–4 สัปดาห์'},
+   {q:'เซลล์เลือดใดทนรังสีมากที่สุด?',o:['Lymphocyte','Platelet','Neutrophil','RBC'],a:3,e:'RBC โตเต็มวัยไม่แบ่งตัว → ทนสุด'},
+   {q:'มะเร็งเต้านม 50 Gy แบ่ง 25 ครั้ง = โดสต่อครั้ง?',o:['1.8 Gy','2 Gy','2.5 Gy','5 Gy'],a:1,e:'50/25 = 2 Gy/fx'},
+   {q:'สิ่งใดช่วยขยาย therapeutic window?',o:['เพิ่มโดสต่อครั้ง','Fractionation','ฉายครั้งเดียวจบ','ลดเวลาซ่อมแซม'],a:1,e:'แบ่งครั้งให้เนื้อเยื่อปกติซ่อมแซม → window กว้างขึ้น'},
+   {q:'ARS โดส 10–15 Sv ตรงกับกลุ่มอาการใด?',o:['Bone marrow','Gastrointestinal','Neurological','ไม่เกิดอาการ'],a:1,e:'GI syndrome ท้องเสียรุนแรง รอด ~2 wk ตาย 90–100%'},
+   {q:'โดส >50 Sv มีระยะรอดเท่าใด?',o:['1–4 ชั่วโมง','2 สัปดาห์','เป็นเดือน','เป็นปี'],a:0,e:'Neuro/CV → เสียชีวิตใน 1–4 ชม. ตาย 100%'},
+   {q:'Amifostine จัดเป็นสารประเภทใด?',o:['Radiosensitizer','Radioprotector','Chemotherapy','วิตามิน'],a:1,e:'ช่วยป้องกัน/บรรเทาผลรังสี (scavenging radical)'},
+   {q:'เซลล์ hypoxic (ขาดออกซิเจน) มีลักษณะใด?',o:['ไวรังสีมากขึ้น','ดื้อรังสีมากขึ้น','ไม่แตกต่าง','ตายทันที'],a:1,e:'ขาดออกซิเจน → ดื้อรังสีมากขึ้น'},
+   {q:'Effective dose ของ Tl-201 chloride (myocardium)?',o:['0.9 mSv','3.6 mSv','23 mSv','0.01 mSv'],a:2,e:'23 mSv สูงสุดในตาราง nucmed ความเสี่ยง 0.12%'},
+   {q:'Mucositis เริ่มปรากฏในช่วงใด?',o:['วันแรก','สัปดาห์ที่ 2–3','เดือนที่ 6','หลังจบ 1 ปี'],a:1,e:'เริ่ม wk 2–3 พีคท้ายคอร์ส ฟื้น 2–3 wk หลังจบ'},
+   {q:'เซลล์เป้าหมายหลักของรังสีใน CNS?',o:['Neuron','Glial cells และหลอดเลือด','Myelin','Microglia เท่านั้น'],a:1,e:'Glial cells + endothelium • ผู้ใหญ่ radioresistant'},
+   {q:'หลัก ALARA ใช้กับสาขาใดเป็นหลัก?',o:['Radiation therapy','Diagnostic radiology','Nuclear medicine รักษาโรค','Brachytherapy'],a:1,e:'รังสีวินิจฉัยมุ่งภาพชัดโดสต่ำสุดสมเหตุสมผล'},
+   {q:'สูตร LET คือข้อใด?',o:['dE/dt (keV/s)','dE/dl (keV/µm)','E×QF','D×RBE'],a:1,e:'LET = dE (keV) / dl (µm) — อัตราถ่ายทอดพลังงานต่อระยะทาง'},
+   {q:'รับรังสี Alpha 0.1 Gy จะได้โดสสมมูลเท่าใด (QF=20)?',o:['0.1 Sv','1 Sv','2 Sv','20 Sv'],a:2,e:'Sv = Gy × QF = 0.1 × 20 = 2 Sv'},
+   {q:'อุบัติการณ์มะเร็งไทรอยด์ในเด็กหลัง Chernobyl เกิดจากไอโซโทปใด?',o:['Cs-137','I-131','Co-60','Ra-226'],a:1,e:'I-131 สะสมในต่อมไทรอยด์เด็ก → thyroid cancer'},
+   {q:'Radium dial painters เสี่ยงมะเร็งใดเป็นพิเศษ?',o:['มะเร็งตับ','มะเร็งปอด+ Osteosarcoma','มะเร็งผิวหนัง','Leukemia เท่านั้น'],a:1,e:'เรเดียมคล้ายแคลเซียม สะสมในกระดูก → osteosarcoma + สูดดม → มะเร็งปอด'},
+   {q:'ตามกฎ Bergonié & Tribondeau เซลล์ใดไวรังสีสุด?',o:['แบ่งตัวช้า แปรสภาพแล้ว','แบ่งตัวเร็ว ยังไม่แปรสภาพ อนาคตแบ่งตัวยาว','เซลล์ประสาทโตเต็มวัย','เซลล์กล้ามเนื้อ'],a:1,e:'Highly mitotic + undifferentiated + long dividing future'},
+   {q:'ระยะ cell cycle ใดไวรังสีที่สุด?',o:['S phase','G1','G2 และ M','G0'],a:2,e:'G2/M ไวสุด • S phase ดื้อสุด (modifiers)'},
+   {q:'LD50/30 ของมนุษย์ประมาณเท่าใด?',o:['1–2 Gy','3–4 Gy (300 rad)','7–8 Gy','56 Gy'],a:1,e:'มนุษย์ 3–4 Gy = 300 rad • ตายจาก hematopoietic syndrome เป็นหลัก'},
+   {q:'GI syndrome มีช่วงโดสและเวลาเสียชีวิตอย่างไร?',o:['1–10 Gy / สัปดาห์','10–50 Gy / 3–10 วัน','>50 Gy / ชั่วโมง','0.5–1 Gy / ไม่ตาย'],a:1,e:'10–50 Gy → เยื่อบุลำไส้หลุดลอก → sepsis/ขาดน้ำ → ตาย 3–10 วัน'},
+   {q:'จุดเด่นของ lymphocyte หลังรับรังสีคืออะไร?',o:['ลดช้าสุด','ลดเร็วสุด ใช้เป็น biological dosimeter','ไม่ลดเลย','เพิ่มชั่วคราว'],a:1,e:'ตายแบบ interphase death → ลดเร็วสุด ใช้ประเมินโดสทางชีวภาพ'},
+   {q:'ขีดจำกัด effective dose ผู้ปฏิบัติงานตาม ICRP 103 คือ?',o:['1 mSv/ปี','20 mSv/ปี เฉลี่ย 5 ปี (ปีใด ๆ ≤50)','500 mSv/ปี','15 mSv/ปี'],a:1,e:'20 mSv/ปี เฉลี่ย 5 ปี และปีใดปีหนึ่งต้องไม่เกิน 50 mSv'}
+  ];
+  let order=[],right=0,wrong=0;
+  function shuffle(a){return a.map(x=>[Math.random(),x]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);}
+  function render(){
+    order=shuffle(QS.slice());right=0;wrong=0;
+    $('#qRight').textContent=0;$('#qWrong').textContent=0;$('#qLeft').textContent=order.length;
+    const box=$('#quizBox');box.innerHTML='';
+    order.forEach((q,i)=>{
+      const c=document.createElement('div');c.className='qcard';
+      c.innerHTML='<div class="qt">ข้อ '+(i+1)+'. '+q.q+'</div>'+q.o.map((o,j)=>'<button class="qopt" data-i="'+i+'" data-j="'+j+'">'+String.fromCharCode(65+j)+'. '+o+'</button>').join('')+'<div class="qexp" id="exp'+i+'">💡 '+q.e+'</div>';
+      box.appendChild(c);
+    });
+    $$('#quizBox .qopt').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i,j=+b.dataset.j,q=order[i],card=b.parentElement;
+      if(card.dataset.done)return;card.dataset.done='1';
+      card.querySelectorAll('.qopt')[q.a].classList.add('right');
+      if(j===q.a)right++;else{wrong++;b.classList.add('wrong');}
+      document.getElementById('exp'+i).classList.add('on');
+      $('#qRight').textContent=right;$('#qWrong').textContent=wrong;$('#qLeft').textContent=order.length-(right+wrong);
+      if(right+wrong===order.length){
+        const s=document.createElement('div');s.className='verdict '+(right>=24?'v-ok':right>=15?'v-warn':'v-bad');
+        s.textContent='🏁 จบแล้ว! คะแนน '+right+'/'+order.length+' ('+Math.round(right/order.length*100)+'%) '+(right>=24?'ยอดเยี่ยม พร้อมสอบ!':right>=15?'ดี — ทบทวนจุดที่ผิดอีกครั้ง':'ควรอ่านสรุปอีกรอบแล้วลองใหม่');
+        box.appendChild(s);
+      }
+    });
+  }
+  $('#quizRestart').onclick=render;render();
+})();
+
+/* ================= INIT ================= */
+ensureFile('c1');
+renderHome();
+renderSimIndex();
+updateProgress();
+
+function applyUrlHash(){
+  const h=(window.location.hash||'').toLowerCase();
+  if(h==='#c1'||h==='#file1'||h==='#major-organs'||h==='#organs'){
+    selectFile('c1');
+  } else if(h==='#c2'||h==='#file2'||h==='#whole-body'||h==='#ars'||h==='#tbi'){
+    selectFile('c2');
+  } else if(h==='#sim'||h==='#sims'||h==='#simulations'){
+    showTab('sim');
+  } else if(h==='#quiz'||h==='#exam'||h==='#test'){
+    showTab('quiz');
+  } else if(h==='#home'||h==='#index'){
+    showTab('home');
+  }
+}
+window.addEventListener('hashchange', applyUrlHash);
+applyUrlHash();
+
+requestAnimationFrame(refreshCanvases);
+</script>
+</body>
+</html>

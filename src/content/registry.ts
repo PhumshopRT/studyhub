@@ -6,6 +6,7 @@ import physiologySubject from './subjects/physiology/subject';
 import pathologySubject from './subjects/pathology/subject';
 import radiologySubject from './subjects/radiology/subject';
 import radiationPhysicsSubject from './subjects/radiation-physics/subject';
+import radiobiologySubject from './subjects/radiobiology/subject';
 
 // Import Chapter definitions (Real Physiology content from Qwen / PhysioStudy)
 import respiratoryPhysiologyChapter from './subjects/physiology/chapters/respiratory-physiology';
@@ -30,12 +31,22 @@ import radiologyPacsArchitectureChapter from './subjects/radiology/chapters/radi
 import radiationQuantitiesUnitsChapter from './subjects/radiation-physics/chapters/radiation-quantities-units';
 import radioactivityNuclearDecayChapter from './subjects/radiation-physics/chapters/radioactivity-nuclear-decay';
 
+// Import Chapter definitions (Radiobiology: Major Organs & Whole Body Effects)
+import radiationEffectMajorOrgansChapter from './subjects/radiobiology/chapters/radiation-effect-major-organs';
+import radiationEffectWholeBodyChapter from './subjects/radiobiology/chapters/radiation-effect-whole-body';
+
 // Internal in-memory registry maps
 const subjectsRegistry = new Map<string, Subject>();
 const chaptersRegistry = new Map<string, Chapter>();
 
 // Register initial data with validation
-const initialSubjects = [physiologySubject, pathologySubject, radiologySubject, radiationPhysicsSubject];
+const initialSubjects = [
+  physiologySubject,
+  pathologySubject,
+  radiologySubject,
+  radiationPhysicsSubject,
+  radiobiologySubject,
+];
 const initialChapters = [
   respiratoryPhysiologyChapter,
   giTractPhysiologyChapter,
@@ -52,6 +63,8 @@ const initialChapters = [
   radiologyPacsArchitectureChapter,
   radiationQuantitiesUnitsChapter,
   radioactivityNuclearDecayChapter,
+  radiationEffectMajorOrgansChapter,
+  radiationEffectWholeBodyChapter,
 ];
 
 initialSubjects.forEach((sub) => {

@@ -23,6 +23,16 @@ import styles from './HomePage.module.css';
 
 const FEATURED_SIMULATIONS = [
   {
+    id: 'sim-radiobiology-3d',
+    title: 'แบบจำลอง 3D ผลของรังสีต่อร่างกายและกลุ่มอาการ ARS',
+    subtitle: 'Three.js 3D Radiobiology Studio',
+    desc: 'สแกนร่างกาย 3 มิติ, ตัวเลื่อนโดส ARS 0–60 Gy (ไขกระดูก, ทางเดินอาหาร, ระบบประสาท), สถาปัตยกรรม Serial vs Parallel, และการทำลายดีเอ็นเอ',
+    path: '/chapter/radiobiology/radiation-effect-whole-body',
+    tag: '3D Radiobiology',
+    tagColor: '#059669',
+    icon: '🧬',
+  },
+  {
     id: 'sim-radiation-physics-3d',
     title: 'แบบจำลอง 3D ฟิสิกส์นิวเคลียร์และการสลายตัวของสารกัมมันตรังสี',
     subtitle: 'Three.js 3D Quantum Nuclear Studio',
