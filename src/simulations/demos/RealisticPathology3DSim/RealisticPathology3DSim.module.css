@@ -11,10 +11,15 @@
   user-select: none;
 }
 
+.container.fullscreen,
 .container:fullscreen,
 .container:-webkit-full-screen {
+  position: fixed;
+  inset: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
+  z-index: 99999;
   border-radius: 0;
   border: none;
 }

@@ -15,10 +15,12 @@
 
 .simContainer.fullscreen {
   position: fixed;
+  inset: 0;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   z-index: 99999;
   border-radius: 0;
   border: none;

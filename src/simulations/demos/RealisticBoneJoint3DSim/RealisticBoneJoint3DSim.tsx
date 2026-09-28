@@ -690,8 +690,43 @@ export const RealisticBoneJoint3DSim: FC = () => {
   }, [activeFilter]);
 
   const toggleFullscreen = useCallback(() => {
-    setIsFullscreen((prev) => !prev);
+    setIsFullscreen((prev) => {
+      const next = !prev;
+      if (next) {
+        try {
+          if (containerRef.current && typeof containerRef.current.requestFullscreen === 'function') {
+            containerRef.current.requestFullscreen().catch(() => {});
+          }
+        } catch {
+          // ignore on iPad
+        }
+      } else {
+        try {
+          if (document.fullscreenElement && typeof document.exitFullscreen === 'function') {
+            document.exitFullscreen().catch(() => {});
+          }
+        } catch {
+          // ignore
+        }
+      }
+      return next;
+    });
   }, []);
+
+  useEffect(() => {
+    if (isFullscreen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') toggleFullscreen();
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isFullscreen, toggleFullscreen]);
 
   const resetCamera = useCallback(() => {
     setActiveView('isometric');

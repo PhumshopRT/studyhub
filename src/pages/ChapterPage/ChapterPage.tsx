@@ -24,7 +24,8 @@ export const ChapterPage: React.FC = () => {
   const { subjectId, chapterId } = useParams<{ subjectId: string; chapterId: string }>();
   const [scrollPercent, setScrollPercent] = useState<number>(0);
   const [isFullWidth, setIsFullWidth] = useState<boolean>(() => {
-    return localStorage.getItem('study_reader_fullwidth') === 'true';
+    const stored = localStorage.getItem('study_reader_fullwidth');
+    return stored === null ? true : stored === 'true';
   });
   const [isMobileTocOpen, setIsMobileTocOpen] = useState<boolean>(false);
   const lastPercentRef = useRef<number>(0);
@@ -174,10 +175,10 @@ export const ChapterPage: React.FC = () => {
                   fontSize: '0.85rem',
                   transition: 'all var(--transition-fast)',
                 }}
-                title={isFullWidth ? 'กลับสู่มุมมองปกติ (Standard Mode)' : 'ขยายเต็มหน้าจอ ไร้ขอบข้าง (Full Width / Theater Mode)'}
+                title={isFullWidth ? 'เปลี่ยนเป็นมุมมองคอลัมน์แคบ (Standard Column)' : 'ขยายเต็มความกว้างหน้าจอ (Full Width Reading Mode)'}
               >
                 {isFullWidth ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-                <span>{isFullWidth ? 'มุมมองปกติ' : 'ขยายเต็มจอ'}</span>
+                <span>{isFullWidth ? 'มุมมองแคบ' : 'เต็มหน้าจอ'}</span>
               </button>
 
               <button

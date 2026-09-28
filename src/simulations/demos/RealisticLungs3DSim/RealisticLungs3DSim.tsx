@@ -821,27 +821,62 @@ export const RealisticLungs3DSim: FC = () => {
     controlsRef.current.update();
   }, []);
 
-  const handleToggleFullscreen = () => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    if (!document.fullscreenElement) {
-      el.requestFullscreen?.().then(() => setIsFullscreen(true)).catch(() => {});
-    } else {
-      document.exitFullscreen?.().then(() => setIsFullscreen(false)).catch(() => {});
-    }
-  };
+  const handleToggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => {
+      const next = !prev;
+      if (next) {
+        try {
+          if (containerRef.current && typeof containerRef.current.requestFullscreen === 'function') {
+            containerRef.current.requestFullscreen().catch(() => {});
+          }
+        } catch {
+          // ignore on iPad
+        }
+      } else {
+        try {
+          if (document.fullscreenElement && typeof document.exitFullscreen === 'function') {
+            document.exitFullscreen().catch(() => {});
+          }
+        } catch {
+          // ignore
+        }
+      }
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     const handleFsChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      if (!document.fullscreenElement) {
+        setIsFullscreen(false);
+      }
     };
     document.addEventListener('fullscreenchange', handleFsChange);
     return () => document.removeEventListener('fullscreenchange', handleFsChange);
   }, []);
 
+  useEffect(() => {
+    if (isFullscreen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') handleToggleFullscreen();
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isFullscreen, handleToggleFullscreen]);
+
   return (
-    <div className={`${styles.simWrapper} ${isTheater ? styles.theaterMode : ''}`}>
+    <div
+      ref={containerRef}
+      className={`${styles.simWrapper} ${isFullscreen ? styles.fullscreen : ''} ${
+        isTheater ? styles.theaterMode : ''
+      }`}
+    >
       {/* Simulation Header */}
       <div className={styles.simHeader}>
         <div className={styles.headerTitleGroup}>

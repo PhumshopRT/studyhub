@@ -659,20 +659,51 @@ export const RealisticPathology3DSim: FC = () => {
     setSelectedPin(null);
   }, []);
 
-  // Fullscreen Toggle
-  const handleToggleFullscreen = () => {
-    if (!containerRef.current) return;
-    if (!document.fullscreenElement) {
-      containerRef.current.requestFullscreen().catch((err) => console.error(err));
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen().catch((err) => console.error(err));
-      setIsFullscreen(false);
+  // Fullscreen Toggle (Supports iPad Safari, Android, and Desktop)
+  const handleToggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => {
+      const next = !prev;
+      if (next) {
+        try {
+          if (containerRef.current && typeof containerRef.current.requestFullscreen === 'function') {
+            containerRef.current.requestFullscreen().catch(() => {});
+          }
+        } catch {
+          // ignore on iPad
+        }
+      } else {
+        try {
+          if (document.fullscreenElement && typeof document.exitFullscreen === 'function') {
+            document.exitFullscreen().catch(() => {});
+          }
+        } catch {
+          // ignore
+        }
+      }
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (isFullscreen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') handleToggleFullscreen();
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     }
-  };
+  }, [isFullscreen, handleToggleFullscreen]);
 
   return (
-    <div ref={containerRef} className={`${styles.container} ${isTheater ? styles.theater : ''}`}>
+    <div
+      ref={containerRef}
+      className={`${styles.container} ${isFullscreen ? styles.fullscreen : ''} ${isTheater ? styles.theater : ''}`}
+    >
       <canvas ref={canvasRef} className={styles.canvasWrapper} />
       <div className={styles.reticle} />
 

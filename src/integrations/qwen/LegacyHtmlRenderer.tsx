@@ -58,11 +58,38 @@ export const LegacyHtmlRenderer: React.FC<LegacyHtmlRendererProps> = ({
 
   useEffect(() => {
     const handleFsChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      if (!document.fullscreenElement) {
+        setIsFullscreen(false);
+      }
     };
     document.addEventListener('fullscreenchange', handleFsChange);
     return () => document.removeEventListener('fullscreenchange', handleFsChange);
   }, []);
+
+  // Lock body scroll and handle ESC key when in fullscreen
+  useEffect(() => {
+    if (isFullscreen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setIsFullscreen(false);
+          try {
+            if (document.fullscreenElement && typeof document.exitFullscreen === 'function') {
+              document.exitFullscreen().catch(() => {});
+            }
+          } catch {
+            // ignore
+          }
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isFullscreen]);
 
   const handleReload = () => {
     setIsLoading(true);
@@ -70,28 +97,50 @@ export const LegacyHtmlRenderer: React.FC<LegacyHtmlRendererProps> = ({
     setReloadKey((prev) => prev + 1);
   };
 
-  const handleToggleFullscreen = () => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    if (!document.fullscreenElement) {
-      container.requestFullscreen?.().then(() => setIsFullscreen(true)).catch(() => {});
-    } else {
-      document.exitFullscreen?.().then(() => setIsFullscreen(false)).catch(() => {});
-    }
-  };
+  const handleToggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => {
+      const next = !prev;
+      const container = containerRef.current;
+      if (next) {
+        try {
+          if (container && typeof container.requestFullscreen === 'function') {
+            container.requestFullscreen().catch(() => {});
+          }
+        } catch {
+          // ignore on iPad / iOS Safari
+        }
+      } else {
+        try {
+          if (document.fullscreenElement && typeof document.exitFullscreen === 'function') {
+            document.exitFullscreen().catch(() => {});
+          }
+        } catch {
+          // ignore
+        }
+      }
+      return next;
+    });
+  }, []);
 
   return (
     <div
       ref={containerRef}
       style={{
-        border: '1px solid var(--border-color)',
+        position: isFullscreen ? 'fixed' : 'relative',
+        top: isFullscreen ? 0 : undefined,
+        left: isFullscreen ? 0 : undefined,
+        right: isFullscreen ? 0 : undefined,
+        bottom: isFullscreen ? 0 : undefined,
+        inset: isFullscreen ? 0 : undefined,
+        width: isFullscreen ? '100vw' : '100%',
+        height: isFullscreen ? '100dvh' : 'auto',
+        zIndex: isFullscreen ? 99999 : undefined,
+        border: isFullscreen ? 'none' : '1px solid var(--border-color)',
         borderRadius: isFullscreen ? 0 : 'var(--radius-lg)',
         backgroundColor: 'var(--bg-surface)',
         boxShadow: isFullscreen ? 'none' : 'var(--shadow-md)',
         overflow: 'hidden',
         margin: isFullscreen ? 0 : '24px 0',
-        height: isFullscreen ? '100vh' : 'auto',
         display: isFullscreen ? 'flex' : 'block',
         flexDirection: 'column',
       }}
@@ -142,23 +191,23 @@ export const LegacyHtmlRenderer: React.FC<LegacyHtmlRendererProps> = ({
           <button
             type="button"
             onClick={handleToggleFullscreen}
-            title={isFullscreen ? 'ออกจากโหมดเต็มจอ' : 'ขยายเต็มจอในหน้านี้ (In-page Fullscreen)'}
+            title={isFullscreen ? 'ออกจากโหมดเต็มจอ (Esc)' : 'ขยายเต็มจอทั้งหน้า (iPad/PC/Mobile Fullscreen)'}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '4px',
-              padding: '6px 11px',
+              gap: '6px',
+              padding: isFullscreen ? '8px 14px' : '6px 12px',
               borderRadius: 'var(--radius-sm)',
-              border: '1px solid var(--primary-border)',
-              backgroundColor: 'var(--primary-light)',
-              color: 'var(--primary)',
-              fontSize: '0.8rem',
-              fontWeight: 600,
+              border: isFullscreen ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid var(--primary-border)',
+              backgroundColor: isFullscreen ? 'rgba(239, 68, 68, 0.12)' : 'var(--primary-light)',
+              color: isFullscreen ? '#ef4444' : 'var(--primary)',
+              fontSize: '0.85rem',
+              fontWeight: 700,
               cursor: 'pointer',
             }}
           >
-            {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-            {isFullscreen ? 'ออกเต็มจอ' : 'ขยายเต็มจอ'}
+            {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+            {isFullscreen ? 'ออกจากเต็มจอ (Esc)' : 'ขยายเต็มจอ'}
           </button>
 
           <button
@@ -214,7 +263,7 @@ export const LegacyHtmlRenderer: React.FC<LegacyHtmlRendererProps> = ({
           width: '100%',
           flex: isFullscreen ? 1 : undefined,
           minHeight: isFullscreen ? 0 : `${iframeHeight}px`,
-          height: isFullscreen ? 'calc(100vh - 56px)' : undefined,
+          height: isFullscreen ? 'calc(100dvh - 56px)' : undefined,
         }}
       >
         {hasError ? (

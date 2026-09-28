@@ -222,15 +222,56 @@ export const RealisticRadiationPhysics3DSim: FC = () => {
     return () => window.removeEventListener('vite:preloadError', handlePreloadError);
   }, []);
 
-  // Handle Fullscreen Toggle
-  const toggleFullscreen = () => {
-    if (!mountRef.current) return;
-    if (!document.fullscreenElement) {
-      mountRef.current.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
-    } else {
-      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+  // Handle Fullscreen Toggle (Supports iPad Safari, Android, and Desktop)
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => {
+      const next = !prev;
+      if (next) {
+        try {
+          if (mountRef.current && typeof mountRef.current.requestFullscreen === 'function') {
+            mountRef.current.requestFullscreen().catch(() => {});
+          }
+        } catch {
+          // ignore on iPad / iOS Safari
+        }
+      } else {
+        try {
+          if (document.fullscreenElement && typeof document.exitFullscreen === 'function') {
+            document.exitFullscreen().catch(() => {});
+          }
+        } catch {
+          // ignore
+        }
+      }
+      return next;
+    });
+  }, []);
+
+  // Sync with native fullscreen changes and lock body scroll on iPad/mobile
+  useEffect(() => {
+    const handleFsChange = () => {
+      if (!document.fullscreenElement) {
+        setIsFullscreen(false);
+      }
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, []);
+
+  useEffect(() => {
+    if (isFullscreen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') toggleFullscreen();
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     }
-  };
+  }, [isFullscreen, toggleFullscreen]);
 
   // Reset Camera
   const resetCamera = useCallback(() => {
@@ -701,8 +742,16 @@ export const RealisticRadiationPhysics3DSim: FC = () => {
   return (
     <div
       ref={mountRef}
-      className={styles.workstationContainer}
-      style={{ minHeight: isFullscreen ? '100vh' : '620px', position: 'relative' }}
+      className={`${styles.workstationContainer} ${isFullscreen ? styles.fullscreen : ''}`}
+      style={{
+        minHeight: isFullscreen ? '100dvh' : '620px',
+        position: isFullscreen ? 'fixed' : 'relative',
+        top: isFullscreen ? 0 : undefined,
+        left: isFullscreen ? 0 : undefined,
+        width: isFullscreen ? '100vw' : '100%',
+        height: isFullscreen ? '100dvh' : 'auto',
+        zIndex: isFullscreen ? 99999 : undefined,
+      }}
     >
       {/* Top Header Bar */}
       <div className={styles.topBar}>
