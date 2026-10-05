@@ -282,6 +282,97 @@ export const RealisticRadiobiology3DSim: React.FC = () => {
     return texture;
   };
 
+  // Helper: Iris Radial Stroma Canvas Texture
+  const createIrisTexture = (): THREE.Texture => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      const cx = 256;
+      const cy = 256;
+      const grad = ctx.createRadialGradient(cx, cy, 50, cx, cy, 250);
+      grad.addColorStop(0, '#0c4a6e');
+      grad.addColorStop(0.5, '#0284c7');
+      grad.addColorStop(0.85, '#0369a1');
+      grad.addColorStop(1, '#082f49');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 512);
+
+      ctx.strokeStyle = 'rgba(186, 230, 253, 0.45)';
+      ctx.lineWidth = 1.5;
+      for (let a = 0; a < Math.PI * 2; a += 0.04) {
+        ctx.beginPath();
+        const r1 = 70 + Math.sin(a * 18) * 15;
+        const r2 = 240 + Math.cos(a * 24) * 8;
+        ctx.moveTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
+        ctx.lineTo(cx + Math.cos(a) * r2, cy + Math.sin(a) * r2);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      for (let a = 0; a <= Math.PI * 2 + 0.1; a += 0.05) {
+        const r = 140 + Math.sin(a * 12) * 8;
+        const x = cx + Math.cos(a) * r;
+        const y = cy + Math.sin(a) * r;
+        if (a === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, 65, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(12, 74, 110, 0.9)';
+      ctx.lineWidth = 8;
+      ctx.stroke();
+    }
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+    return texture;
+  };
+
+  // Helper: Cataract Posterior Subcapsular Opacity Texture
+  const createCataractGranularTexture = (): THREE.Texture => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      const cx = 256;
+      const cy = 256;
+      ctx.clearRect(0, 0, 512, 512);
+
+      for (let i = 0; i < 600; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.pow(Math.random(), 0.75) * 190;
+        const x = cx + Math.cos(angle) * dist;
+        const y = cy + Math.sin(angle) * dist;
+        const radius = Math.random() * 5 + 2;
+        const opacity = (1 - dist / 210) * (Math.random() * 0.7 + 0.3);
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(254, 240, 138, ${opacity})`;
+        ctx.fill();
+      }
+
+      for (let j = 0; j < 24; j++) {
+        const a = (j / 24) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(a) * 170, cy + Math.sin(a) * 170);
+        ctx.strokeStyle = 'rgba(253, 230, 138, 0.4)';
+        ctx.lineWidth = 6;
+        ctx.stroke();
+      }
+    }
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+    return texture;
+  };
+
   // Three.js Scene Setup (Mounts once)
   useEffect(() => {
     if (!canvasRef.current || !mountRef.current) return;
@@ -642,7 +733,7 @@ export const RealisticRadiobiology3DSim: React.FC = () => {
     });
 
     // ==========================================
-    // BUILD 4: PROCEDURAL FETAL TERATOGENESIS 3D MODEL
+    // BUILD 4: PROCEDURAL FETAL TERATOGENESIS 3D MODEL (img2threejs v2.0)
     // ==========================================
     const fetalGroup = fetalModelGroupRef.current;
     fetalGroup.clear();
@@ -650,103 +741,174 @@ export const RealisticRadiobiology3DSim: React.FC = () => {
     fetalGroup.position.set(0, 0.2, 0);
     fetalGroup.visible = false;
 
-    // 1. Translucent Uterine Amniotic Sac
-    const uterusGeo = new THREE.SphereGeometry(1.35, 32, 24);
+    // 1. Translucent Uterine Amniotic Sac with PBR Fluid Scattering
+    const uterusGeo = new THREE.SphereGeometry(1.4, 36, 28);
     const uterusMat = new THREE.MeshPhysicalMaterial({
-      color: 0x831843,
-      roughness: 0.25,
-      transmission: 0.88,
-      thickness: 1.5,
+      color: 0x9d174d,
+      roughness: 0.18,
+      transmission: 0.86,
+      thickness: 1.8,
       transparent: true,
-      opacity: 0.35,
+      opacity: 0.32,
+      ior: 1.34,
       clippingPlanes: [clippingPlaneRef.current],
     });
     const uterus = new THREE.Mesh(uterusGeo, uterusMat);
-    uterus.scale.set(0.9, 1.15, 0.85);
+    uterus.scale.set(0.92, 1.2, 0.88);
     fetalGroup.add(uterus);
 
     // 2. Developing Embryo / Fetus Body Group
     const embryoGroup = new THREE.Group();
     fetalGroup.add(embryoGroup);
 
-    // Cranial Head Sphere with Cerebral Cortex
-    const embryoHeadGeo = new THREE.SphereGeometry(0.44, 32, 32);
-    const embryoSkinMat = new THREE.MeshStandardMaterial({
-      color: 0xfbcfe8,
-      roughness: 0.35,
+    // Anatomical Embryo Head (Fronto-nasal Prominence + Maxillary Arches)
+    const embryoHeadGeo = new THREE.SphereGeometry(0.46, 32, 32);
+    const embryoSkinMat = new THREE.MeshPhysicalMaterial({
+      color: 0xfce7f3,
+      roughness: 0.3,
+      transmission: 0.2,
+      thickness: 0.6,
       emissive: 0xf43f5e,
-      emissiveIntensity: 0.2,
+      emissiveIntensity: 0.15,
       clippingPlanes: [clippingPlaneRef.current],
     });
     const embryoHead = new THREE.Mesh(embryoHeadGeo, embryoSkinMat);
-    embryoHead.position.set(0, 0.42, 0.1);
+    embryoHead.position.set(0, 0.44, 0.12);
     embryoGroup.add(embryoHead);
 
-    // Glowing Developing Cerebral Cortex (Neurons 8-15wk target)
-    const cortexGeo = new THREE.SphereGeometry(0.36, 24, 24);
-    const cortexMat = new THREE.MeshStandardMaterial({
+    // Dual Brain Vesicles: Forebrain (Telencephalon) & Midbrain (Mesencephalon)
+    const forebrainGeo = new THREE.SphereGeometry(0.35, 24, 24);
+    const midbrainGeo = new THREE.SphereGeometry(0.28, 20, 20);
+    const fetalBrainMat = new THREE.MeshStandardMaterial({
       color: 0x38bdf8,
       emissive: 0x0284c7,
-      emissiveIntensity: 0.75,
+      emissiveIntensity: 0.8,
       wireframe: true,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.75,
     });
-    const cortex = new THREE.Mesh(cortexGeo, cortexMat);
-    cortex.position.set(0, 0.45, 0.1);
-    embryoGroup.add(cortex);
+    const forebrain = new THREE.Mesh(forebrainGeo, fetalBrainMat);
+    forebrain.position.set(0, 0.48, 0.14);
+    const midbrain = new THREE.Mesh(midbrainGeo, fetalBrainMat);
+    midbrain.position.set(0, 0.32, -0.05);
+    embryoGroup.add(forebrain, midbrain);
 
-    // Optic Eye Placode
-    const eyePlacodeGeo = new THREE.SphereGeometry(0.08, 16, 16);
-    const eyePlacodeMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
-    const eyeL = new THREE.Mesh(eyePlacodeGeo, eyePlacodeMat);
-    eyeL.position.set(0.24, 0.44, 0.36);
-    const eyeR = new THREE.Mesh(eyePlacodeGeo, eyePlacodeMat);
-    eyeR.position.set(-0.24, 0.44, 0.36);
-    embryoGroup.add(eyeL, eyeR);
+    // Optic Placode & Retinal Pigment Disk
+    const eyeCupGeo = new THREE.SphereGeometry(0.09, 16, 16);
+    const eyeCupMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
+    const eyeLensPlacodeGeo = new THREE.SphereGeometry(0.045, 12, 12);
+    const eyeLensPlacodeMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, emissiveIntensity: 0.9 });
+    const eyeL = new THREE.Mesh(eyeCupGeo, eyeCupMat);
+    eyeL.position.set(0.26, 0.46, 0.36);
+    const placodeL = new THREE.Mesh(eyeLensPlacodeGeo, eyeLensPlacodeMat);
+    placodeL.position.set(0.28, 0.47, 0.39);
+    const eyeR = new THREE.Mesh(eyeCupGeo, eyeCupMat);
+    eyeR.position.set(-0.26, 0.46, 0.36);
+    const placodeR = new THREE.Mesh(eyeLensPlacodeGeo, eyeLensPlacodeMat);
+    placodeR.position.set(-0.28, 0.47, 0.39);
+    embryoGroup.add(eyeL, placodeL, eyeR, placodeR);
 
-    // C-shaped Curved Spine Body
-    const spineCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0, 0.38, 0.05),
-      new THREE.Vector3(-0.18, 0.18, 0.02),
-      new THREE.Vector3(-0.28, -0.08, -0.02),
-      new THREE.Vector3(-0.16, -0.35, 0.05),
-      new THREE.Vector3(0.12, -0.42, 0.18),
-    ]);
-    const spineGeo = new THREE.TubeGeometry(spineCurve, 32, 0.18, 16, false);
+    // Natural C-shaped Embryonic Body Curve
+    const spinePoints = [
+      new THREE.Vector3(0, 0.4, 0.05),
+      new THREE.Vector3(-0.16, 0.22, 0.02),
+      new THREE.Vector3(-0.28, 0.02, -0.02),
+      new THREE.Vector3(-0.26, -0.22, 0.01),
+      new THREE.Vector3(-0.12, -0.42, 0.08),
+      new THREE.Vector3(0.14, -0.48, 0.2),
+    ];
+    const spineCurve = new THREE.CatmullRomCurve3(spinePoints);
+    const spineGeo = new THREE.TubeGeometry(spineCurve, 40, 0.19, 18, false);
     const spineMesh = new THREE.Mesh(spineGeo, embryoSkinMat);
     embryoGroup.add(spineMesh);
 
-    // Limb Buds
+    // Anatomical Somites (10 segmented paired mesodermal somite blocks along spine)
+    const somiteMat = new THREE.MeshStandardMaterial({
+      color: 0xf472b6,
+      roughness: 0.4,
+      emissive: 0xdb2777,
+      emissiveIntensity: 0.25,
+    });
+    for (let s = 1; s <= 10; s++) {
+      const u = s / 11;
+      const pt = spineCurve.getPoint(u);
+      const somiteGeo = new THREE.BoxGeometry(0.06, 0.05, 0.05);
+      const somiteL = new THREE.Mesh(somiteGeo, somiteMat);
+      somiteL.position.set(pt.x + 0.12, pt.y, pt.z);
+      const somiteR = new THREE.Mesh(somiteGeo, somiteMat);
+      somiteR.position.set(pt.x - 0.12, pt.y, pt.z);
+      embryoGroup.add(somiteL, somiteR);
+    }
+
+    // Beating Embryonic Tubular Heart (Pericardial bulge)
+    const heartTubeGeo = new THREE.SphereGeometry(0.13, 20, 20);
+    const heartTubeMat = new THREE.MeshStandardMaterial({
+      color: 0xef4444,
+      emissive: 0xb91c1c,
+      emissiveIntensity: 0.7,
+      roughness: 0.25,
+    });
+    const fetalHeart = new THREE.Mesh(heartTubeGeo, heartTubeMat);
+    fetalHeart.position.set(0.02, 0.14, 0.24);
+    embryoGroup.add(fetalHeart);
+
+    // Limb Buds with digital rays
     const limbMat = embryoSkinMat.clone();
-    const armBudGeo = new THREE.CapsuleGeometry(0.08, 0.22, 8, 16);
+    const armBudGeo = new THREE.CapsuleGeometry(0.08, 0.24, 8, 16);
     const armBud = new THREE.Mesh(armBudGeo, limbMat);
     armBud.rotation.z = Math.PI / 4;
-    armBud.position.set(0.18, 0.05, 0.22);
+    armBud.position.set(0.2, 0.08, 0.24);
     const legBud = new THREE.Mesh(armBudGeo, limbMat);
     legBud.rotation.z = -Math.PI / 6;
-    legBud.position.set(0.12, -0.32, 0.25);
+    legBud.position.set(0.14, -0.34, 0.27);
     embryoGroup.add(armBud, legBud);
 
-    // Umbilical Cord
-    const cordCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0, -0.1, 0.15),
-      new THREE.Vector3(0.25, -0.2, 0.35),
-      new THREE.Vector3(0.45, -0.4, 0.5),
-      new THREE.Vector3(0.65, -0.65, 0.45),
-    ]);
-    const cordGeo = new THREE.TubeGeometry(cordCurve, 24, 0.045, 8, false);
-    const cordMat = new THREE.MeshStandardMaterial({
-      color: 0x60a5fa,
-      emissive: 0x2563eb,
-      emissiveIntensity: 0.3,
-      roughness: 0.3,
+    // Helical 3-Vessel Umbilical Cord (Dual Arteries + Single Vein spiraling)
+    const cordLength = 36;
+    const arteryPoints1: THREE.Vector3[] = [];
+    const arteryPoints2: THREE.Vector3[] = [];
+    const veinPoints: THREE.Vector3[] = [];
+    for (let c = 0; c <= cordLength; c++) {
+      const t = c / cordLength;
+      const angle = t * Math.PI * 4.5;
+      const baseX = t * 0.7;
+      const baseY = -0.1 - t * 0.55;
+      const baseZ = 0.15 + t * 0.35;
+      const r = 0.045;
+      arteryPoints1.push(new THREE.Vector3(baseX + Math.cos(angle) * r, baseY + Math.sin(angle) * r, baseZ));
+      arteryPoints2.push(new THREE.Vector3(baseX + Math.cos(angle + Math.PI) * r, baseY + Math.sin(angle + Math.PI) * r, baseZ));
+      veinPoints.push(new THREE.Vector3(baseX, baseY, baseZ));
+    }
+    const cordVeinGeo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(veinPoints), 32, 0.038, 8, false);
+    const cordArteryGeo1 = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(arteryPoints1), 32, 0.022, 6, false);
+    const cordArteryGeo2 = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(arteryPoints2), 32, 0.022, 6, false);
+    const veinMat = new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0x991b1b, emissiveIntensity: 0.3 });
+    const arteryMat = new THREE.MeshStandardMaterial({ color: 0x3b82f6, emissive: 0x1d4ed8, emissiveIntensity: 0.3 });
+    embryoGroup.add(new THREE.Mesh(cordVeinGeo, veinMat));
+    embryoGroup.add(new THREE.Mesh(cordArteryGeo1, arteryMat));
+    embryoGroup.add(new THREE.Mesh(cordArteryGeo2, arteryMat));
+
+    // Neuroblast Migration Particles (Showing migration disruption 8-15wk)
+    const neuroParticlesGeo = new THREE.BufferGeometry();
+    const neuroCount = 70;
+    const neuroPositions = new Float32Array(neuroCount * 3);
+    for (let i = 0; i < neuroCount * 3; i += 3) {
+      neuroPositions[i] = (Math.random() - 0.5) * 0.75;
+      neuroPositions[i + 1] = 0.46 + (Math.random() - 0.5) * 0.65;
+      neuroPositions[i + 2] = 0.12 + (Math.random() - 0.5) * 0.75;
+    }
+    neuroParticlesGeo.setAttribute('position', new THREE.BufferAttribute(neuroPositions, 3));
+    const neuroMat = new THREE.PointsMaterial({
+      color: 0x38bdf8,
+      size: 0.06,
+      transparent: true,
+      opacity: 0.9,
     });
-    const cordMesh = new THREE.Mesh(cordGeo, cordMat);
-    embryoGroup.add(cordMesh);
+    const neuroParticles = new THREE.Points(neuroParticlesGeo, neuroMat);
+    fetalGroup.add(neuroParticles);
 
     // ==========================================
-    // BUILD 5: PROCEDURAL OCULAR LENS & CATARACT MODEL
+    // BUILD 5: PROCEDURAL OCULAR LENS & CATARACT MODEL (img2threejs v2.0)
     // ==========================================
     const cataractGroup = cataractModelGroupRef.current;
     cataractGroup.clear();
@@ -754,85 +916,133 @@ export const RealisticRadiobiology3DSim: React.FC = () => {
     cataractGroup.position.set(0, 0.2, 0);
     cataractGroup.visible = false;
 
-    // Eyeball Globe (Sclera) with Coronal Cutaway
-    const eyeGlobeGeo = new THREE.SphereGeometry(1.4, 32, 24);
+    // 1. Eyeball Globe (Sclera) with Coronal Anatomical Cutaway
+    const eyeGlobeGeo = new THREE.SphereGeometry(1.4, 36, 28);
     const scleraMat = new THREE.MeshStandardMaterial({
-      color: 0xf1f5f9,
-      roughness: 0.3,
+      color: 0xf8fafc,
+      roughness: 0.25,
       metalness: 0.05,
       clippingPlanes: [clippingPlaneRef.current],
     });
     const sclera = new THREE.Mesh(eyeGlobeGeo, scleraMat);
     cataractGroup.add(sclera);
 
-    // Cornea Transparent Anterior Dome
-    const corneaGeo = new THREE.SphereGeometry(0.85, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2.2);
+    // 2. Cornea Transparent Anterior Dome with Optical Refraction
+    const corneaGeo = new THREE.SphereGeometry(0.88, 36, 20, 0, Math.PI * 2, 0, Math.PI / 2.1);
     const corneaMat = new THREE.MeshPhysicalMaterial({
-      color: 0xe0f2fe,
-      roughness: 0.05,
-      transmission: 0.95,
-      thickness: 0.8,
+      color: 0xf0f9ff,
+      roughness: 0.04,
+      transmission: 0.97,
+      thickness: 0.9,
+      ior: 1.376,
       transparent: true,
       opacity: 0.6,
     });
     const cornea = new THREE.Mesh(corneaGeo, corneaMat);
     cornea.rotation.x = Math.PI / 2;
-    cornea.position.set(0, 0, 0.75);
+    cornea.position.set(0, 0, 0.78);
     cataractGroup.add(cornea);
 
-    // Iris Ring (Rich Blue Iris)
-    const irisGeo = new THREE.RingGeometry(0.25, 0.65, 32);
+    // 3. Iris with Radial Stromal Fibrils Texture & Pupil
+    const irisGeo = new THREE.RingGeometry(0.24, 0.68, 36);
     const irisMat = new THREE.MeshStandardMaterial({
-      color: 0x0284c7,
-      roughness: 0.4,
+      map: createIrisTexture(),
+      roughness: 0.35,
       side: THREE.DoubleSide,
     });
     const iris = new THREE.Mesh(irisGeo, irisMat);
-    iris.position.set(0, 0, 0.65);
+    iris.position.set(0, 0, 0.66);
     cataractGroup.add(iris);
 
-    // Biconvex Crystalline Lens
-    const lensGeo = new THREE.SphereGeometry(0.55, 32, 32);
+    // 4. Biconvex Crystalline Lens (Anterior + Posterior Curves)
+    const lensGeo = new THREE.SphereGeometry(0.56, 36, 36);
     const lensMat = new THREE.MeshPhysicalMaterial({
       color: 0xf8fafc,
-      roughness: 0.1,
-      transmission: 0.9,
-      thickness: 1.2,
+      roughness: 0.08,
+      transmission: 0.92,
+      thickness: 1.3,
+      ior: 1.406,
       transparent: true,
-      opacity: 0.75,
+      opacity: 0.8,
       clippingPlanes: [clippingPlaneRef.current],
     });
     const crystallineLens = new THREE.Mesh(lensGeo, lensMat);
-    crystallineLens.scale.set(1.0, 1.0, 0.45);
+    crystallineLens.scale.set(1.0, 1.0, 0.44);
     crystallineLens.position.set(0, 0, 0.4);
     cataractGroup.add(crystallineLens);
 
-    // Equatorial Germinative Epithelial Ring (Active Mitosis Zone)
-    const equatorialRingGeo = new THREE.TorusGeometry(0.54, 0.035, 16, 32);
+    // Central Embryonic Lens Nucleus
+    const nucleusGeo = new THREE.SphereGeometry(0.28, 24, 24);
+    const nucleusMat = new THREE.MeshPhysicalMaterial({
+      color: 0xfef9c3,
+      roughness: 0.15,
+      transmission: 0.85,
+      transparent: true,
+      opacity: 0.5,
+    });
+    const nucleus = new THREE.Mesh(nucleusGeo, nucleusMat);
+    nucleus.scale.set(1.0, 1.0, 0.4);
+    nucleus.position.set(0, 0, 0.4);
+    cataractGroup.add(nucleus);
+
+    // 5. Equatorial Germinative Epithelial Ring (16 Mitotic Cells Studded)
+    const equatorialRingGeo = new THREE.TorusGeometry(0.55, 0.038, 16, 36);
     const equatorialMat = new THREE.MeshStandardMaterial({
       color: 0x10b981,
       emissive: 0x059669,
-      emissiveIntensity: 0.9,
+      emissiveIntensity: 1.1,
     });
     const equatorialRing = new THREE.Mesh(equatorialRingGeo, equatorialMat);
     equatorialRing.position.set(0, 0, 0.4);
     cataractGroup.add(equatorialRing);
 
-    // Posterior Subcapsular Cataract Opacity Mesh (PSC)
-    const pscGeo = new THREE.SphereGeometry(0.32, 24, 24, 0, Math.PI * 2, 0, Math.PI / 2);
+    // Proliferating Mitotic Cell Spheres on Equator
+    const mitoticCellGeo = new THREE.SphereGeometry(0.032, 12, 12);
+    const mitoticCellMat = new THREE.MeshStandardMaterial({
+      color: 0x34d399,
+      emissive: 0x10b981,
+      emissiveIntensity: 1.4,
+    });
+    for (let m = 0; m < 16; m++) {
+      const angle = (m / 16) * Math.PI * 2;
+      const cell = new THREE.Mesh(mitoticCellGeo, mitoticCellMat);
+      cell.position.set(Math.cos(angle) * 0.55, Math.sin(angle) * 0.55, 0.4);
+      cataractGroup.add(cell);
+    }
+
+    // 6. Posterior Subcapsular Cataract (PSC) with Granular Breadcrumb Texture
+    const pscGeo = new THREE.SphereGeometry(0.34, 32, 32, 0, Math.PI * 2, 0, Math.PI / 1.9);
     const pscMat = new THREE.MeshStandardMaterial({
+      map: createCataractGranularTexture(),
       color: 0xfef08a,
-      roughness: 0.85,
+      roughness: 0.9,
       emissive: 0xeab308,
-      emissiveIntensity: 0.35,
+      emissiveIntensity: 0.4,
       transparent: true,
-      opacity: 0.45,
+      opacity: 0.55,
+      depthWrite: false,
     });
     const pscMesh = new THREE.Mesh(pscGeo, pscMat);
     pscMesh.rotation.x = -Math.PI / 2;
-    pscMesh.position.set(0, 0, 0.28);
+    pscMesh.position.set(0, 0, 0.26);
     cataractGroup.add(pscMesh);
     pscMeshRef.current = pscMesh;
+
+    // 7. Clinical Slit-Lamp Biomicroscopy Optical Light Beam (Tyndall flare)
+    const slitBeamGeo = new THREE.PlaneGeometry(0.12, 2.6);
+    const slitBeamMat = new THREE.MeshBasicMaterial({
+      color: 0x7dd3fc,
+      transparent: true,
+      opacity: 0.4,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const slitBeam = new THREE.Mesh(slitBeamGeo, slitBeamMat);
+    slitBeam.rotation.y = Math.PI / 4;
+    slitBeam.rotation.z = Math.PI / 6;
+    slitBeam.position.set(0.1, 0, 0.45);
+    cataractGroup.add(slitBeam);
 
     // 7. Raycasting for Pin selection
     const raycaster = new THREE.Raycaster();
@@ -866,6 +1076,11 @@ export const RealisticRadiobiology3DSim: React.FC = () => {
       // Slow idle rotation of body or DNA
       if (activeMode === 'dna') {
         dnaGroup.rotation.y = elapsed * 0.4;
+      } else if (activeMode === 'fetal') {
+        fetalGroup.position.y = 0.2 + Math.sin(elapsed * 1.6) * 0.035;
+        fetalGroup.rotation.y = Math.sin(elapsed * 0.6) * 0.18;
+      } else if (activeMode === 'cataract') {
+        cataractGroup.rotation.y = Math.sin(elapsed * 0.4) * 0.12;
       }
 
       // Heartbeat pulse
