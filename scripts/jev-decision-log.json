@@ -293,5 +293,62 @@
       "input_tokens": 724,
       "output_tokens": 166
     }
+  },
+  {
+    "timestamp": "2026-10-05T12:31:50.710Z",
+    "model": "jev-1.13.0",
+    "taskContext": "อัพเกรดโมเดล 3D Radiobiology เป็น img2threejs v2.0 มาตรฐานระดับ Photorealistic Medical Education Simulation",
+    "answers": {
+      "dna_damage_radiation_mechanism": {
+        "type": "choice",
+        "choice": "major_minor_grooves_with_dsb_foci",
+        "confidence": 1,
+        "probabilities": {
+          "simple_ladder": 0,
+          "major_minor_grooves_with_dsb_foci": 1
+        }
+      },
+      "performance_budget": {
+        "type": "choice",
+        "choice": "procedural_instancing_and_optimized_drawcalls",
+        "confidence": 1,
+        "probabilities": {
+          "procedural_instancing_and_optimized_drawcalls": 1,
+          "unoptimized_meshes": 0
+        }
+      },
+      "pbr_material_pipeline": {
+        "type": "choice",
+        "choice": "canvas_pbr_maps_with_subsurface_scattering",
+        "confidence": 1,
+        "probabilities": {
+          "unlit_canvas_textures": 0,
+          "canvas_pbr_maps_with_subsurface_scattering": 1,
+          "standard_materials_only": 0
+        }
+      },
+      "fetal_anatomical_fidelity": {
+        "type": "choice",
+        "choice": "full_carnegie_features",
+        "confidence": 0.97,
+        "probabilities": {
+          "full_carnegie_features": 0.99,
+          "simple_cylinder_mesh": 0.01
+        }
+      },
+      "ocular_cataract_fidelity": {
+        "type": "choice",
+        "choice": "anatomical_zonules_wedl_cells_and_slit_lamp",
+        "confidence": 0.92,
+        "probabilities": {
+          "anatomical_zonules_wedl_cells_and_slit_lamp": 0.96,
+          "simple_flat_ring": 0.04
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 997,
+      "output_tokens": 294
+    }
   }
 ]
