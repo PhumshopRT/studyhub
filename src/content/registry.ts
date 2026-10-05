@@ -31,9 +31,10 @@ import radiologyPacsArchitectureChapter from './subjects/radiology/chapters/radi
 import radiationQuantitiesUnitsChapter from './subjects/radiation-physics/chapters/radiation-quantities-units';
 import radioactivityNuclearDecayChapter from './subjects/radiation-physics/chapters/radioactivity-nuclear-decay';
 
-// Import Chapter definitions (Radiobiology: Major Organs & Whole Body Effects)
+// Import Chapter definitions (Radiobiology: Major Organs, Whole Body & Hereditary/Teratogenic)
 import radiationEffectMajorOrgansChapter from './subjects/radiobiology/chapters/radiation-effect-major-organs';
 import radiationEffectWholeBodyChapter from './subjects/radiobiology/chapters/radiation-effect-whole-body';
+import radiationHereditaryTeratogenicChapter from './subjects/radiobiology/chapters/radiation-hereditary-teratogenic';
 
 // Internal in-memory registry maps
 const subjectsRegistry = new Map<string, Subject>();
@@ -65,6 +66,7 @@ const initialChapters = [
   radioactivityNuclearDecayChapter,
   radiationEffectMajorOrgansChapter,
   radiationEffectWholeBodyChapter,
+  radiationHereditaryTeratogenicChapter,
 ];
 
 initialSubjects.forEach((sub) => {

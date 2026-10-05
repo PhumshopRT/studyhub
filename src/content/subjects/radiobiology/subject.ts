@@ -13,6 +13,7 @@ export const radiobiologySubject: Subject = {
   chapterIds: [
     'radiation-effect-major-organs',
     'radiation-effect-whole-body',
+    'radiation-hereditary-teratogenic',
   ],
 };
 

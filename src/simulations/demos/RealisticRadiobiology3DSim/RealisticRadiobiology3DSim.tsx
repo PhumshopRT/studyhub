@@ -14,6 +14,8 @@ import {
   Zap,
   Shield,
   Layers,
+  Baby,
+  Eye,
   X,
 } from 'lucide-react';
 import {
@@ -32,7 +34,7 @@ interface AnatomyPin {
   id: string;
   nameTh: string;
   nameEn: string;
-  category: 'Hematopoietic' | 'Gastrointestinal' | 'Cerebrovascular' | 'Ocular' | 'Serial' | 'Parallel';
+  category: 'Hematopoietic' | 'Gastrointestinal' | 'Cerebrovascular' | 'Ocular' | 'Serial' | 'Parallel' | 'Teratogenic' | 'Hereditary';
   position: [number, number, number];
   td5: string;
   acuteReaction: string;
@@ -107,6 +109,28 @@ const RADIOBIOLOGY_PINS: AnatomyPin[] = [
     chronicReaction: 'Radiation Fibrosis (เนื้อปอดเป็นพังผืดแข็ง แลกเปลี่ยนก๊าซไม่ได้ถาวร)',
     clinicalNote: 'ตัวอย่าง "Parallel Organ" — อวัยวะสามารถทนต่อรังสีปริมาณสูงเฉพาะจุดได้ดี หากควบคุมปริมาณรังสีเฉลี่ยทั้งก้อน (Mean Dose)',
   },
+  {
+    id: 'pin-fetus-conceptus',
+    nameTh: 'ทารกในครรภ์และตัวอ่อน (Developing Conceptus & Fetus)',
+    nameEn: 'Conceptus & Organogenesis Vulnerability',
+    category: 'Teratogenic',
+    position: [0, -0.15, 0.22],
+    td5: 'NCRP: ตลอดครรภ์ <= 500 mRem (5 mSv), รายเดือน <= 50 mRem | Cutoff ยุติครรภ์ 100 mSv',
+    acuteReaction: 'Preimplantation (0-7d): All or None (0.1 Sv), Organogenesis (2-8w): Malformations (0.25 Sv)',
+    chronicReaction: 'Fetal 8-15wk: Mental retardation (0.12-0.2 Gy, Neurons) & Microcephaly (<8wk, Glia)',
+    clinicalNote: 'ช่วง 8-15 สัปดาห์ การย้ายที่ของนิวรอนไปสร้าง Cerebral Cortex ไวต่อรังสีสูงสุด หลังสัปดาห์ที่ 25 ความเสี่ยงลดลง 4 เท่า',
+  },
+  {
+    id: 'pin-gonads-repro',
+    nameTh: 'อวัยวะสืบพันธุ์ (Gonads: Testes & Ovaries)',
+    nameEn: 'Spermatogonia & Follicles (Genetic Risk)',
+    category: 'Hereditary',
+    position: [0, -0.65, 0.15],
+    td5: 'หมันชั่วคราวชาย 0.15 Sv, หมันถาวรชาย 3.5-6 Sv, หมันถาวรหญิง 2.5-6 Sv',
+    acuteReaction: 'Oligospermia / Aspermia ใน 6-8 สัปดาห์ (เพศชายไวมากเนื่องจาก Spermatogonia แบ่งตัวต่อเนื่อง)',
+    chronicReaction: 'Permanent Sterility, Doubling Dose ~1 Sv (Spontaneous mutation rate x 2)',
+    clinicalNote: 'รังสีไม่สร้างมิวเทชันชนิดใหม่ แต่เพิ่มอัตรา Spontaneous mutation ส่วนใหญ่เป็นยีนด้อย (Recessive)',
+  },
 ];
 
 export const RealisticRadiobiology3DSim: React.FC = () => {
@@ -121,13 +145,18 @@ export const RealisticRadiobiology3DSim: React.FC = () => {
   // Group references
   const humanBodyGroupRef = useRef<THREE.Group>(new THREE.Group());
   const dnaModelGroupRef = useRef<THREE.Group>(new THREE.Group());
+  const fetalModelGroupRef = useRef<THREE.Group>(new THREE.Group());
+  const cataractModelGroupRef = useRef<THREE.Group>(new THREE.Group());
+  const pscMeshRef = useRef<THREE.Mesh | null>(null);
   const organsMeshMapRef = useRef<Map<string, THREE.Mesh>>(new Map());
   const pinsGroupRef = useRef<THREE.Group>(new THREE.Group());
   const clippingPlaneRef = useRef<THREE.Plane>(new THREE.Plane(new THREE.Vector3(0, 0, -1), 10));
 
   // Simulation State
-  const [activeMode, setActiveMode] = useState<'anatomy' | 'dna' | 'serial_parallel'>('anatomy');
+  const [activeMode, setActiveMode] = useState<'anatomy' | 'dna' | 'serial_parallel' | 'fetal' | 'cataract'>('anatomy');
   const [doseGy, setDoseGy] = useState<number>(3.5);
+  const [gestationalWeek, setGestationalWeek] = useState<number>(10);
+  const [lensDoseGy, setLensDoseGy] = useState<number>(1.2);
   const [selectedPin, setSelectedPin] = useState<AnatomyPin | null>(null);
   const [isAmifostineOn, setIsAmifostineOn] = useState<boolean>(false);
   const [isCutawayOn, setIsCutawayOn] = useState<boolean>(false);
@@ -594,6 +623,10 @@ export const RealisticRadiobiology3DSim: React.FC = () => {
           ? '#a855f7'
           : pin.category === 'Serial'
           ? '#eab308'
+          : pin.category === 'Teratogenic'
+          ? '#ec4899'
+          : pin.category === 'Hereditary'
+          ? '#8b5cf6'
           : '#06b6d4';
 
       const spriteMat = new THREE.SpriteMaterial({
@@ -607,6 +640,199 @@ export const RealisticRadiobiology3DSim: React.FC = () => {
       sprite.userData = { pinData: pin };
       pinsGroup.add(sprite);
     });
+
+    // ==========================================
+    // BUILD 4: PROCEDURAL FETAL TERATOGENESIS 3D MODEL
+    // ==========================================
+    const fetalGroup = fetalModelGroupRef.current;
+    fetalGroup.clear();
+    scene.add(fetalGroup);
+    fetalGroup.position.set(0, 0.2, 0);
+    fetalGroup.visible = false;
+
+    // 1. Translucent Uterine Amniotic Sac
+    const uterusGeo = new THREE.SphereGeometry(1.35, 32, 24);
+    const uterusMat = new THREE.MeshPhysicalMaterial({
+      color: 0x831843,
+      roughness: 0.25,
+      transmission: 0.88,
+      thickness: 1.5,
+      transparent: true,
+      opacity: 0.35,
+      clippingPlanes: [clippingPlaneRef.current],
+    });
+    const uterus = new THREE.Mesh(uterusGeo, uterusMat);
+    uterus.scale.set(0.9, 1.15, 0.85);
+    fetalGroup.add(uterus);
+
+    // 2. Developing Embryo / Fetus Body Group
+    const embryoGroup = new THREE.Group();
+    fetalGroup.add(embryoGroup);
+
+    // Cranial Head Sphere with Cerebral Cortex
+    const embryoHeadGeo = new THREE.SphereGeometry(0.44, 32, 32);
+    const embryoSkinMat = new THREE.MeshStandardMaterial({
+      color: 0xfbcfe8,
+      roughness: 0.35,
+      emissive: 0xf43f5e,
+      emissiveIntensity: 0.2,
+      clippingPlanes: [clippingPlaneRef.current],
+    });
+    const embryoHead = new THREE.Mesh(embryoHeadGeo, embryoSkinMat);
+    embryoHead.position.set(0, 0.42, 0.1);
+    embryoGroup.add(embryoHead);
+
+    // Glowing Developing Cerebral Cortex (Neurons 8-15wk target)
+    const cortexGeo = new THREE.SphereGeometry(0.36, 24, 24);
+    const cortexMat = new THREE.MeshStandardMaterial({
+      color: 0x38bdf8,
+      emissive: 0x0284c7,
+      emissiveIntensity: 0.75,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.8,
+    });
+    const cortex = new THREE.Mesh(cortexGeo, cortexMat);
+    cortex.position.set(0, 0.45, 0.1);
+    embryoGroup.add(cortex);
+
+    // Optic Eye Placode
+    const eyePlacodeGeo = new THREE.SphereGeometry(0.08, 16, 16);
+    const eyePlacodeMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
+    const eyeL = new THREE.Mesh(eyePlacodeGeo, eyePlacodeMat);
+    eyeL.position.set(0.24, 0.44, 0.36);
+    const eyeR = new THREE.Mesh(eyePlacodeGeo, eyePlacodeMat);
+    eyeR.position.set(-0.24, 0.44, 0.36);
+    embryoGroup.add(eyeL, eyeR);
+
+    // C-shaped Curved Spine Body
+    const spineCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 0.38, 0.05),
+      new THREE.Vector3(-0.18, 0.18, 0.02),
+      new THREE.Vector3(-0.28, -0.08, -0.02),
+      new THREE.Vector3(-0.16, -0.35, 0.05),
+      new THREE.Vector3(0.12, -0.42, 0.18),
+    ]);
+    const spineGeo = new THREE.TubeGeometry(spineCurve, 32, 0.18, 16, false);
+    const spineMesh = new THREE.Mesh(spineGeo, embryoSkinMat);
+    embryoGroup.add(spineMesh);
+
+    // Limb Buds
+    const limbMat = embryoSkinMat.clone();
+    const armBudGeo = new THREE.CapsuleGeometry(0.08, 0.22, 8, 16);
+    const armBud = new THREE.Mesh(armBudGeo, limbMat);
+    armBud.rotation.z = Math.PI / 4;
+    armBud.position.set(0.18, 0.05, 0.22);
+    const legBud = new THREE.Mesh(armBudGeo, limbMat);
+    legBud.rotation.z = -Math.PI / 6;
+    legBud.position.set(0.12, -0.32, 0.25);
+    embryoGroup.add(armBud, legBud);
+
+    // Umbilical Cord
+    const cordCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, -0.1, 0.15),
+      new THREE.Vector3(0.25, -0.2, 0.35),
+      new THREE.Vector3(0.45, -0.4, 0.5),
+      new THREE.Vector3(0.65, -0.65, 0.45),
+    ]);
+    const cordGeo = new THREE.TubeGeometry(cordCurve, 24, 0.045, 8, false);
+    const cordMat = new THREE.MeshStandardMaterial({
+      color: 0x60a5fa,
+      emissive: 0x2563eb,
+      emissiveIntensity: 0.3,
+      roughness: 0.3,
+    });
+    const cordMesh = new THREE.Mesh(cordGeo, cordMat);
+    embryoGroup.add(cordMesh);
+
+    // ==========================================
+    // BUILD 5: PROCEDURAL OCULAR LENS & CATARACT MODEL
+    // ==========================================
+    const cataractGroup = cataractModelGroupRef.current;
+    cataractGroup.clear();
+    scene.add(cataractGroup);
+    cataractGroup.position.set(0, 0.2, 0);
+    cataractGroup.visible = false;
+
+    // Eyeball Globe (Sclera) with Coronal Cutaway
+    const eyeGlobeGeo = new THREE.SphereGeometry(1.4, 32, 24);
+    const scleraMat = new THREE.MeshStandardMaterial({
+      color: 0xf1f5f9,
+      roughness: 0.3,
+      metalness: 0.05,
+      clippingPlanes: [clippingPlaneRef.current],
+    });
+    const sclera = new THREE.Mesh(eyeGlobeGeo, scleraMat);
+    cataractGroup.add(sclera);
+
+    // Cornea Transparent Anterior Dome
+    const corneaGeo = new THREE.SphereGeometry(0.85, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2.2);
+    const corneaMat = new THREE.MeshPhysicalMaterial({
+      color: 0xe0f2fe,
+      roughness: 0.05,
+      transmission: 0.95,
+      thickness: 0.8,
+      transparent: true,
+      opacity: 0.6,
+    });
+    const cornea = new THREE.Mesh(corneaGeo, corneaMat);
+    cornea.rotation.x = Math.PI / 2;
+    cornea.position.set(0, 0, 0.75);
+    cataractGroup.add(cornea);
+
+    // Iris Ring (Rich Blue Iris)
+    const irisGeo = new THREE.RingGeometry(0.25, 0.65, 32);
+    const irisMat = new THREE.MeshStandardMaterial({
+      color: 0x0284c7,
+      roughness: 0.4,
+      side: THREE.DoubleSide,
+    });
+    const iris = new THREE.Mesh(irisGeo, irisMat);
+    iris.position.set(0, 0, 0.65);
+    cataractGroup.add(iris);
+
+    // Biconvex Crystalline Lens
+    const lensGeo = new THREE.SphereGeometry(0.55, 32, 32);
+    const lensMat = new THREE.MeshPhysicalMaterial({
+      color: 0xf8fafc,
+      roughness: 0.1,
+      transmission: 0.9,
+      thickness: 1.2,
+      transparent: true,
+      opacity: 0.75,
+      clippingPlanes: [clippingPlaneRef.current],
+    });
+    const crystallineLens = new THREE.Mesh(lensGeo, lensMat);
+    crystallineLens.scale.set(1.0, 1.0, 0.45);
+    crystallineLens.position.set(0, 0, 0.4);
+    cataractGroup.add(crystallineLens);
+
+    // Equatorial Germinative Epithelial Ring (Active Mitosis Zone)
+    const equatorialRingGeo = new THREE.TorusGeometry(0.54, 0.035, 16, 32);
+    const equatorialMat = new THREE.MeshStandardMaterial({
+      color: 0x10b981,
+      emissive: 0x059669,
+      emissiveIntensity: 0.9,
+    });
+    const equatorialRing = new THREE.Mesh(equatorialRingGeo, equatorialMat);
+    equatorialRing.position.set(0, 0, 0.4);
+    cataractGroup.add(equatorialRing);
+
+    // Posterior Subcapsular Cataract Opacity Mesh (PSC)
+    const pscGeo = new THREE.SphereGeometry(0.32, 24, 24, 0, Math.PI * 2, 0, Math.PI / 2);
+    const pscMat = new THREE.MeshStandardMaterial({
+      color: 0xfef08a,
+      roughness: 0.85,
+      emissive: 0xeab308,
+      emissiveIntensity: 0.35,
+      transparent: true,
+      opacity: 0.45,
+    });
+    const pscMesh = new THREE.Mesh(pscGeo, pscMat);
+    pscMesh.rotation.x = -Math.PI / 2;
+    pscMesh.position.set(0, 0, 0.28);
+    cataractGroup.add(pscMesh);
+    pscMeshRef.current = pscMesh;
 
     // 7. Raycasting for Pin selection
     const raycaster = new THREE.Raycaster();
@@ -678,20 +904,32 @@ export const RealisticRadiobiology3DSim: React.FC = () => {
     };
   }, []); // Run once!
 
-  // Update Display Mode (Anatomy / DNA / Serial vs Parallel)
+  // Update Display Mode (Anatomy / DNA / Serial vs Parallel / Fetal / Cataract)
   useEffect(() => {
-    if (humanBodyGroupRef.current && dnaModelGroupRef.current && pinsGroupRef.current) {
-      if (activeMode === 'dna') {
-        humanBodyGroupRef.current.visible = false;
-        dnaModelGroupRef.current.visible = true;
-        pinsGroupRef.current.visible = false;
-      } else {
-        humanBodyGroupRef.current.visible = true;
-        dnaModelGroupRef.current.visible = false;
-        pinsGroupRef.current.visible = true;
-      }
+    if (
+      humanBodyGroupRef.current &&
+      dnaModelGroupRef.current &&
+      fetalModelGroupRef.current &&
+      cataractModelGroupRef.current &&
+      pinsGroupRef.current
+    ) {
+      humanBodyGroupRef.current.visible = activeMode === 'anatomy' || activeMode === 'serial_parallel';
+      dnaModelGroupRef.current.visible = activeMode === 'dna';
+      fetalModelGroupRef.current.visible = activeMode === 'fetal';
+      cataractModelGroupRef.current.visible = activeMode === 'cataract';
+      pinsGroupRef.current.visible = activeMode === 'anatomy';
     }
   }, [activeMode]);
+
+  // Update Cataract Opacity based on lensDoseGy
+  useEffect(() => {
+    if (pscMeshRef.current) {
+      const mat = pscMeshRef.current.material as THREE.MeshStandardMaterial;
+      const op = Math.min(0.95, Math.max(0.08, lensDoseGy / 2.2));
+      mat.opacity = op;
+      mat.emissiveIntensity = lensDoseGy >= 1.0 ? 0.45 : 0.15;
+    }
+  }, [lensDoseGy]);
 
   // Update Clipping Plane Cutaway
   useEffect(() => {
@@ -860,6 +1098,20 @@ export const RealisticRadiobiology3DSim: React.FC = () => {
           <Sliders size={14} />
           <span>Serial vs Parallel</span>
         </button>
+        <button
+          className={`${styles.modeTabBtn} ${activeMode === 'fetal' ? styles.active : ''}`}
+          onClick={() => setActiveMode('fetal')}
+        >
+          <Baby size={14} />
+          <span>Fetal Teratogenesis</span>
+        </button>
+        <button
+          className={`${styles.modeTabBtn} ${activeMode === 'cataract' ? styles.active : ''}`}
+          onClick={() => setActiveMode('cataract')}
+        >
+          <Eye size={14} />
+          <span>Lens Cataract</span>
+        </button>
       </div>
 
       {/* Anatomical Camera View Presets */}
@@ -881,90 +1133,227 @@ export const RealisticRadiobiology3DSim: React.FC = () => {
       {/* Canvas */}
       <canvas ref={canvasRef} className={styles.canvasWrapper} />
 
-      {/* ARS Dose Controller HUD (Bottom Left) */}
-      <div className={styles.arsControlPanel}>
-        <div className={styles.arsHeader}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Zap size={16} color={arsStatus.color} />
-            <span className={styles.arsStageTitle} style={{ color: arsStatus.color }}>
-              {arsStatus.stage}
-            </span>
+      {/* ARS Dose Controller HUD (Bottom Left for anatomy, serial_parallel, dna) */}
+      {(activeMode === 'anatomy' || activeMode === 'serial_parallel' || activeMode === 'dna') && (
+        <div className={styles.arsControlPanel}>
+          <div className={styles.arsHeader}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Zap size={16} color={arsStatus.color} />
+              <span className={styles.arsStageTitle} style={{ color: arsStatus.color }}>
+                {arsStatus.stage}
+              </span>
+            </div>
+            <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Dose: {doseGy.toFixed(1)} Gy (Sv)</span>
           </div>
-          <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Dose: {doseGy.toFixed(1)} Gy (Sv)</span>
-        </div>
 
-        {/* Dose Slider */}
-        <div className={styles.doseSliderWrapper}>
-          <input
-            type="range"
-            min="0"
-            max="60"
-            step="0.5"
-            value={doseGy}
-            onChange={(e) => setDoseGy(parseFloat(e.target.value))}
-            className={styles.doseSlider}
-          />
-          <div className={styles.doseMarkers}>
-            <span>0 Gy</span>
-            <span>1 Gy (BM)</span>
-            <span>4 Gy (LD50)</span>
-            <span>10 Gy (GI)</span>
-            <span>50 Gy (CNS)</span>
-            <span>60 Gy</span>
-          </div>
-        </div>
-
-        {/* ARS Live Telemetry Stats */}
-        <div className={styles.arsGrid}>
-          <div className={styles.arsStat}>
-            <div className={styles.statLabel}>อัตราการรอดชีวิต (Survival)</div>
-            <div className={styles.statValue} style={{ color: arsStatus.color }}>
-              {arsStatus.survival}
+          {/* Dose Slider */}
+          <div className={styles.doseSliderWrapper}>
+            <input
+              type="range"
+              min="0"
+              max="60"
+              step="0.5"
+              value={doseGy}
+              onChange={(e) => setDoseGy(parseFloat(e.target.value))}
+              className={styles.doseSlider}
+            />
+            <div className={styles.doseMarkers}>
+              <span>0 Gy</span>
+              <span>1 Gy (BM)</span>
+              <span>4 Gy (LD50)</span>
+              <span>10 Gy (GI)</span>
+              <span>50 Gy (CNS)</span>
+              <span>60 Gy</span>
             </div>
           </div>
-          <div className={styles.arsStat}>
-            <div className={styles.statLabel}>กลุ่มอาการหลัก (Syndrome)</div>
-            <div className={styles.statValue} style={{ fontSize: '0.78rem', color: '#f8fafc' }}>
-              {doseGy < 1 ? 'Subclinical' : doseGy <= 10 ? 'Hematopoietic' : doseGy <= 50 ? 'Gastrointestinal' : 'CNS / Vascular'}
+
+          {/* ARS Live Telemetry Stats */}
+          <div className={styles.arsGrid}>
+            <div className={styles.arsStat}>
+              <div className={styles.statLabel}>อัตราการรอดชีวิต (Survival)</div>
+              <div className={styles.statValue} style={{ color: arsStatus.color }}>
+                {arsStatus.survival}
+              </div>
+            </div>
+            <div className={styles.arsStat}>
+              <div className={styles.statLabel}>กลุ่มอาการหลัก (Syndrome)</div>
+              <div className={styles.statValue} style={{ fontSize: '0.78rem', color: '#f8fafc' }}>
+                {doseGy < 1 ? 'Subclinical' : doseGy <= 10 ? 'Hematopoietic' : doseGy <= 50 ? 'Gastrointestinal' : 'CNS / Vascular'}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Clinical Symptoms & Intervention */}
-        <div style={{ marginTop: '0.65rem', fontSize: '0.74rem', color: '#cbd5e1', lineHeight: 1.45 }}>
-          <strong style={{ color: '#f8fafc' }}>อาการแสดง:</strong> {arsStatus.symptoms}
-        </div>
-        <div style={{ marginTop: '0.4rem', fontSize: '0.72rem', color: '#94a3b8' }}>
-          <strong style={{ color: '#34d399' }}>แนวทางรักษา:</strong> {arsStatus.intervention}
-        </div>
-
-        {/* Radioprotector Toggle in DNA Mode */}
-        {activeMode === 'dna' && (
-          <div style={{ marginTop: '0.75rem', borderTop: '1px solid rgba(148, 163, 184, 0.2)', paddingTop: '0.6rem' }}>
-            <button
-              onClick={() => setIsAmifostineOn((prev) => !prev)}
-              style={{
-                width: '100%',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                background: isAmifostineOn ? 'rgba(16, 185, 129, 0.25)' : 'rgba(15, 23, 42, 0.6)',
-                border: isAmifostineOn ? '1px solid #10b981' : '1px solid rgba(148, 163, 184, 0.3)',
-                color: isAmifostineOn ? '#34d399' : '#94a3b8',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-              }}
-            >
-              <Shield size={14} />
-              <span>สารต้านรังสี Amifostine (WR-2721): {isAmifostineOn ? 'ON (ดักจับอนุมูลอิสระ)' : 'OFF'}</span>
-            </button>
+          {/* Clinical Symptoms & Intervention */}
+          <div style={{ marginTop: '0.65rem', fontSize: '0.74rem', color: '#cbd5e1', lineHeight: 1.45 }}>
+            <strong style={{ color: '#f8fafc' }}>อาการแสดง:</strong> {arsStatus.symptoms}
           </div>
-        )}
-      </div>
+          <div style={{ marginTop: '0.4rem', fontSize: '0.72rem', color: '#94a3b8' }}>
+            <strong style={{ color: '#34d399' }}>แนวทางรักษา:</strong> {arsStatus.intervention}
+          </div>
+
+          {/* Radioprotector Toggle in DNA Mode */}
+          {activeMode === 'dna' && (
+            <div style={{ marginTop: '0.75rem', borderTop: '1px solid rgba(148, 163, 184, 0.2)', paddingTop: '0.6rem' }}>
+              <button
+                onClick={() => setIsAmifostineOn((prev) => !prev)}
+                style={{
+                  width: '100%',
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  background: isAmifostineOn ? 'rgba(16, 185, 129, 0.25)' : 'rgba(15, 23, 42, 0.6)',
+                  border: isAmifostineOn ? '1px solid #10b981' : '1px solid rgba(148, 163, 184, 0.3)',
+                  color: isAmifostineOn ? '#34d399' : '#94a3b8',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                }}
+              >
+                <Shield size={14} />
+                <span>สารต้านรังสี Amifostine (WR-2721): {isAmifostineOn ? 'ON (ดักจับอนุมูลอิสระ)' : 'OFF'}</span>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Fetal Gestational Radiation HUD */}
+      {activeMode === 'fetal' && (
+        <div className={styles.arsControlPanel} style={{ maxWidth: '420px', borderColor: 'rgba(236, 72, 153, 0.4)' }}>
+          <div className={styles.arsHeader}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Baby size={16} color="#ec4899" />
+              <span className={styles.arsStageTitle} style={{ color: '#ec4899' }}>
+                {gestationalWeek <= 1
+                  ? 'Pre-implantation (0–7 วัน)'
+                  : gestationalWeek <= 2
+                  ? 'Implantation (8–14 วัน)'
+                  : gestationalWeek <= 8
+                  ? 'Major Organogenesis (สัปดาห์ที่ 2–8)'
+                  : gestationalWeek <= 15
+                  ? 'Early Fetal: Neural Migration (สัปดาห์ที่ 8–15)'
+                  : gestationalWeek <= 25
+                  ? 'Mid Fetal: Cortex Maturation (สัปดาห์ที่ 16–25)'
+                  : 'Late Fetal (สัปดาห์ที่ 26+)'}
+              </span>
+            </div>
+            <span style={{ fontSize: '0.72rem', color: '#f472b6', fontWeight: 700 }}>GA: {gestationalWeek} สัปดาห์</span>
+          </div>
+
+          <div className={styles.doseSliderWrapper}>
+            <input
+              type="range"
+              min="0"
+              max="38"
+              step="1"
+              value={gestationalWeek}
+              onChange={(e) => setGestationalWeek(parseInt(e.target.value, 10))}
+              className={styles.doseSlider}
+              style={{ accentColor: '#ec4899' }}
+            />
+            <div className={styles.doseMarkers}>
+              <span>0w (All/None)</span>
+              <span>4w (Organs)</span>
+              <span>10w (Neurons)</span>
+              <span>20w</span>
+              <span>38w (Term)</span>
+            </div>
+          </div>
+
+          <div className={styles.arsGrid}>
+            <div className={styles.arsStat} style={{ borderColor: 'rgba(236, 72, 153, 0.25)' }}>
+              <div className={styles.statLabel}>ผลกระทบหลัก (Major Effect)</div>
+              <div className={styles.statValue} style={{ fontSize: '0.74rem', color: '#fbcfe8' }}>
+                {gestationalWeek <= 1
+                  ? 'All or None (ตาย/รอด 0.1 Sv)'
+                  : gestationalWeek <= 8
+                  ? 'ความพิการเชิงโครงสร้าง (Malformation 0.25 Sv)'
+                  : gestationalWeek <= 15
+                  ? 'ปัญญาอ่อน (Neurons 0.12–0.2 Gy)'
+                  : 'ความเสี่ยงลดลง (Threshold ~0.6–0.7 Sv)'}
+              </div>
+            </div>
+            <div className={styles.arsStat} style={{ borderColor: 'rgba(236, 72, 153, 0.25)' }}>
+              <div className={styles.statLabel}>เกณฑ์ปลอดภัยสากล</div>
+              <div className={styles.statValue} style={{ fontSize: '0.74rem', color: '#34d399' }}>
+                NCRP &le; 500 mRem | Cutoff 100 mSv
+              </div>
+            </div>
+          </div>
+
+          <div style={{ marginTop: '0.65rem', fontSize: '0.74rem', color: '#cbd5e1', lineHeight: 1.45 }}>
+            <strong style={{ color: '#fbcfe8' }}>กลไกพยาธิสรีรวิทยา:</strong>{' '}
+            {gestationalWeek <= 1
+              ? 'Omnipotent cells — หากเสียหายมากจะแท้งก่อนฝังตัว (Prenatal death) หากรอดเซลล์จะซ่อมแซมได้สมบูรณ์'
+              : gestationalWeek <= 8
+              ? 'อวัยวะสำคัญกำลังสร้างรูปร่าง รังสีทำให้เซลล์ตัวอ่อนตาย นำไปสู่ Microphthalmia, Cleft palate, Skeletal deformities'
+              : gestationalWeek <= 15
+              ? 'การแบ่งตัวและการเคลื่อนย้ายของ Neurons ไปยัง Cerebral cortex ถูกขัดขวาง เกิด Mental Retardation รุนแรง'
+              : 'โครงสร้างสมองสร้างเสร็จส่วนใหญ่แล้ว ความเสี่ยงปัญญาอ่อนลดลง 4 เท่าตัว'}
+          </div>
+        </div>
+      )}
+
+      {/* Cataract Lens Radiation HUD */}
+      {activeMode === 'cataract' && (
+        <div className={styles.arsControlPanel} style={{ maxWidth: '400px', borderColor: 'rgba(56, 189, 248, 0.4)' }}>
+          <div className={styles.arsHeader}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Eye size={16} color="#38bdf8" />
+              <span className={styles.arsStageTitle} style={{ color: '#38bdf8' }}>
+                {lensDoseGy < 0.5
+                  ? 'Sub-threshold (ยังไม่เกิดต้อ)'
+                  : lensDoseGy <= 2.0
+                  ? 'Early PSC Cataract (0.5–2.0 Gy)'
+                  : 'Dense Posterior Subcapsular (>2.0 Gy)'}
+              </span>
+            </div>
+            <span style={{ fontSize: '0.72rem', color: '#38bdf8', fontWeight: 700 }}>Dose: {lensDoseGy.toFixed(1)} Gy</span>
+          </div>
+
+          <div className={styles.doseSliderWrapper}>
+            <input
+              type="range"
+              min="0"
+              max="5"
+              step="0.1"
+              value={lensDoseGy}
+              onChange={(e) => setLensDoseGy(parseFloat(e.target.value))}
+              className={styles.doseSlider}
+              style={{ accentColor: '#38bdf8' }}
+            />
+            <div className={styles.doseMarkers}>
+              <span>0 Gy</span>
+              <span>0.5 Gy (Thresh)</span>
+              <span>2.0 Gy (Severe)</span>
+              <span>3.5 Gy</span>
+              <span>5.0 Gy</span>
+            </div>
+          </div>
+
+          <div className={styles.arsGrid}>
+            <div className={styles.arsStat} style={{ borderColor: 'rgba(56, 189, 248, 0.25)' }}>
+              <div className={styles.statLabel}>ตำแหน่งรอยโรค (Pathology)</div>
+              <div className={styles.statValue} style={{ fontSize: '0.74rem', color: '#e0f2fe' }}>
+                Posterior Subcapsular (PSC)
+              </div>
+            </div>
+            <div className={styles.arsStat} style={{ borderColor: 'rgba(56, 189, 248, 0.25)' }}>
+              <div className={styles.statLabel}>ขีดจำกัดบุคลากร ICRP</div>
+              <div className={styles.statValue} style={{ fontSize: '0.74rem', color: '#34d399' }}>
+                20 mSv/ปี (ปรับลดจาก 150)
+              </div>
+            </div>
+          </div>
+
+          <div style={{ marginTop: '0.65rem', fontSize: '0.74rem', color: '#cbd5e1', lineHeight: 1.45 }}>
+            <strong style={{ color: '#38bdf8' }}>กลไก:</strong> เซลล์เยื่อบุผิวบริเวณ Equatorial Ring เสียหาย → เคลื่อนย้ายไปที่ Posterior Pole → ก่อตัวเป็นเส้นใยขุ่นขาวทึบแสง (PSC) ที่ลุกลามเร็วกว่าต้อผู้สูงอายุ
+          </div>
+        </div>
+      )}
 
       {/* Pin Drawer (Bottom Right / Side) */}
       {selectedPin && (

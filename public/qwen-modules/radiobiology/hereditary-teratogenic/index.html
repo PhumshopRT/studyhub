@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radiobio Study Hub — Hereditary & Teratogenic Effects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070b14; --bg2:#0d1322; --card:#111a2e; --card2:#16203a;
+  --line:#223052; --txt:#e8edf7; --mut:#93a1bf;
+  --amber:#fbbf24; --teal:#2dd4bf; --rose:#fb7185; --green:#34d399; --blue:#60a5fa; --violet:#a78bfa;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'Sarabun',sans-serif;font-size:16px;line-height:1.75;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(700px 460px at 88% -8%,rgba(251,191,36,.07),transparent 60%),
+             radial-gradient(800px 560px at -8% 32%,rgba(45,212,191,.06),transparent 60%),
+             radial-gradient(600px 500px at 50% 110%,rgba(96,165,250,.05),transparent 60%)}
+h1,h2,h3,h4,.btn,.seg button{font-family:'Prompt',sans-serif}
+::selection{background:rgba(251,191,36,.35)}
+#pbar{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--amber),var(--rose));z-index:99}
+.layout{display:flex;max-width:1400px;margin:0 auto;position:relative;z-index:1}
+/* ---------- Sidebar ---------- */
+aside{width:272px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 14px 40px;border-right:1px solid var(--line);background:rgba(9,13,24,.7);backdrop-filter:blur(6px)}
+.logo{display:flex;gap:12px;align-items:center;padding:4px 10px 20px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.logo svg{width:44px;height:44px;flex-shrink:0;filter:drop-shadow(0 0 10px rgba(251,191,36,.5))}
+.logo b{font-family:'Prompt';font-size:17px;line-height:1.2;display:block}
+.logo span{font-size:12px;color:var(--mut)}
+.nav a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;color:var(--mut);text-decoration:none;font-size:14.5px;border-left:3px solid transparent;transition:.18s}
+.nav a:hover{color:var(--txt);background:rgba(255,255,255,.04)}
+.nav a.active{color:var(--amber);background:rgba(251,191,36,.08);border-left-color:var(--amber)}
+.nav .tag{margin-left:auto;font-size:10px;background:rgba(45,212,191,.15);color:var(--teal);padding:1px 7px;border-radius:99px}
+/* ---------- Main ---------- */
+main{flex:1;min-width:0;padding:0 30px 90px}
+section{margin-bottom:84px;scroll-margin-top:20px}
+.hero{padding:56px 0 30px}
+.hero .chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.chip{font-size:12.5px;padding:4px 12px;border-radius:99px;border:1px solid var(--line);color:var(--mut);background:var(--card)}
+.chip.hot{border-color:rgba(251,191,36,.5);color:var(--amber);background:rgba(251,191,36,.08)}
+h1{font-size:clamp(28px,4.2vw,44px);font-weight:800;line-height:1.25;letter-spacing:-.5px}
+h1 .hl{background:linear-gradient(120deg,var(--amber),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--mut);max-width:760px;margin-top:14px;font-size:17px}
+.sec-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:26px}
+.sec-num{font-family:'Prompt';font-weight:800;font-size:34px;color:transparent;-webkit-text-stroke:1.5px rgba(251,191,36,.55);line-height:1;padding-top:2px}
+h2{font-size:clamp(21px,2.6vw,28px);font-weight:700;line-height:1.3}
+.sub{color:var(--mut);font-size:14px}
+h3{font-size:19px;margin:28px 0 12px;color:#fde68a;font-weight:600}
+h4{font-size:16px;margin-bottom:10px;color:#c7d2ea}
+p{margin-bottom:12px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+b{color:#fff}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+.card.lift{transition:.2s}
+.card.lift:hover{transform:translateY(-3px);border-color:#33507e;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.icon-big{font-size:26px;display:block;margin-bottom:8px}
+.callout{border-left:4px solid;border-radius:12px;padding:14px 18px;margin:16px 0;font-size:15px}
+.callout.amber{border-color:var(--amber);background:rgba(251,191,36,.07)}
+.callout.teal{border-color:var(--teal);background:rgba(45,212,191,.07)}
+.callout.rose{border-color:var(--rose);background:rgba(251,113,133,.08)}
+.callout.violet{border-color:var(--violet);background:rgba(167,139,250,.08)}
+.callout b:first-child{display:block;font-family:'Prompt';margin-bottom:4px}
+.must{display:inline-block;font-size:11.5px;font-family:'Prompt';background:linear-gradient(120deg,var(--amber),#f59e0b);color:#3b2503;padding:2px 10px;border-radius:99px;font-weight:600;margin-right:6px;vertical-align:middle}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin:14px 0;background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:540px}
+th{background:#182342;font-family:'Prompt';font-weight:600;text-align:left;padding:10px 13px;color:#c7d2ea;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 13px;border-bottom:1px solid #1b2745;color:#d7deee;vertical-align:top}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:rgba(96,165,250,.06)}
+td .hi{color:var(--amber);font-weight:600}
+/* tree */
+.tree{font-size:15px}
+.tree .lv{border-left:2px dashed #33507e;margin-left:10px;padding-left:18px;margin-top:6px}
+.tree .node{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin:6px 0;display:inline-block}
+.pill{display:inline-block;font-size:12px;padding:2px 10px;border-radius:99px;margin:2px 3px 2px 0}
+.pill.det{background:rgba(251,191,36,.14);color:var(--amber)}
+.pill.sto{background:rgba(45,212,191,.14);color:var(--teal)}
+/* ---------- Simulator ---------- */
+.sim{border:1px solid rgba(251,191,36,.45);border-radius:16px;overflow:hidden;margin:22px 0;background:linear-gradient(180deg,rgba(251,191,36,.05),transparent 120px),var(--card);box-shadow:0 0 40px rgba(251,191,36,.06)}
+.sim-head{font-family:'Prompt';font-weight:600;padding:13px 20px;background:rgba(251,191,36,.1);border-bottom:1px solid rgba(251,191,36,.3);font-size:15.5px;color:#fde68a}
+.sim-body{padding:20px}
+.sim-grid{display:grid;grid-template-columns:340px 1fr;gap:22px}
+@media(max-width:900px){.sim-grid{grid-template-columns:1fr}}
+label{font-size:14px;color:var(--mut);display:block;margin:14px 0 6px}
+label b{color:var(--amber);font-family:'Prompt';font-size:16px}
+input[type=range]{width:100%;appearance:none;-webkit-appearance:none;height:8px;border-radius:99px;background:#1e2b4d;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--amber);border:3px solid #0d1322;box-shadow:0 0 12px rgba(251,191,36,.6)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--amber);border:3px solid #0d1322}
+.seg{display:inline-flex;background:#0d1526;border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;color:var(--mut);padding:8px 16px;border-radius:9px;cursor:pointer;font-size:14px;font-weight:500;transition:.15s}
+.seg button.on{background:linear-gradient(120deg,var(--amber),#f59e0b);color:#2b1c02}
+.btn{border:0;cursor:pointer;font-weight:600;font-size:14.5px;padding:11px 22px;border-radius:11px;background:linear-gradient(120deg,var(--amber),#f59e0b);color:#2b1c02;box-shadow:0 6px 18px rgba(251,191,36,.25);transition:.15s;margin-top:12px}
+.btn:hover{transform:translateY(-2px)}
+.btn.ghost{background:var(--card2);color:var(--txt);border:1px solid var(--line);box-shadow:none}
+.hint{font-size:13.5px;color:var(--mut);margin-top:10px}
+canvas{width:100%;display:block;border-radius:10px}
+.readout{display:flex;flex-direction:column;gap:10px;margin:16px 0;background:#0d1526;border:1px solid var(--line);border-radius:12px;padding:14px}
+.ro{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px}
+.meter{flex:1;height:10px;background:#1e2b4d;border-radius:99px;overflow:hidden}
+.meter div{height:100%;width:0%;background:linear-gradient(90deg,var(--teal),var(--amber));transition:width .2s}
+/* pregnancy */
+.emb-view{background:radial-gradient(300px 260px at 50% 40%,#2a1130,#0d1322);border:1px solid #3d2352;border-radius:14px;padding:8px;position:relative;min-height:300px}
+.emb-badge{position:absolute;top:12px;left:12px;font-family:'Prompt';font-size:13px;padding:4px 14px;border-radius:99px;border:1px solid;background:rgba(10,10,20,.6)}
+.emb-size{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:13px;color:#d8b4fe}
+.heart{transform-box:fill-box;transform-origin:center;animation:beat 1s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}12%{transform:scale(1.4)}26%{transform:scale(1)}}
+#embFloat{animation:floaty 5s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.stage-tl{position:relative;height:26px;border-radius:8px;overflow:hidden;display:flex;margin-top:6px}
+.stage-tl div{height:100%}
+.tl-marker{position:absolute;top:-7px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:11px solid #fff;transform:translateX(-8px);transition:left .15s;filter:drop-shadow(0 0 6px rgba(255,255,255,.7));z-index:2}
+.win-row{position:relative;height:14px;margin-top:5px}
+.win{position:absolute;height:100%;border-radius:5px;opacity:.85}
+.dose-meter{position:relative;height:18px;border-radius:99px;margin:14px 0 4px;
+  background:linear-gradient(90deg,#10b981 0 16.6%,#fbbf24 16.6% 33.3%,#f97316 33.3% 50%,#ef4444 50% 100%)}
+.dm-pointer{position:absolute;top:-8px;width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-top:12px solid #fff;transform:translateX(-9px);filter:drop-shadow(0 0 5px #fff);transition:left .15s}
+.dm-flag{position:absolute;top:-3px;bottom:-3px;width:3px;background:#fff;border-radius:2px;opacity:.9;transition:left .15s}
+.dm-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--mut)}
+.verdict{border-radius:14px;padding:16px 18px;margin-top:14px;border:1px solid;font-size:15px}
+.verdict.safe{background:rgba(52,211,153,.09);border-color:rgba(52,211,153,.5)}
+.verdict.caution{background:rgba(251,191,36,.09);border-color:rgba(251,191,36,.5)}
+.verdict.warn{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.55)}
+.verdict.danger{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.55)}
+.verdict b{font-family:'Prompt';font-size:17px;display:block;margin-bottom:4px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:12px}
+.kpi .k{background:#0d1526;border:1px solid var(--line);border-radius:11px;padding:10px 12px;text-align:center}
+.kpi .k b{font-family:'Prompt';font-size:19px;display:block}
+.kpi .k span{font-size:12px;color:var(--mut)}
+.quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.quick button{font-size:12.5px;background:#0d1526;border:1px solid var(--line);color:var(--mut);padding:4px 11px;border-radius:99px;cursor:pointer}
+.quick button:hover{border-color:var(--amber);color:var(--amber)}
+/* gonad bars */
+.bar-row{display:grid;grid-template-columns:150px 1fr 80px;gap:10px;align-items:center;margin:9px 0;font-size:14px}
+.bar-track{height:14px;background:#1a2540;border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;width:0;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.bar-val{font-size:12.5px;color:var(--mut);text-align:right}
+/* punnett */
+.punsq{display:grid;grid-template-columns:60px 1fr 1fr;gap:6px;max-width:340px;margin:14px 0}
+.punsq div{background:#0d1526;border:1px solid var(--line);border-radius:10px;text-align:center;padding:12px 6px;font-family:'Prompt';font-size:16px}
+.punsq .gh{background:#182342;color:var(--teal)}
+.punsq .gAA{color:var(--green)}.punsq .gAa{color:var(--amber)}.punsq .gaa{color:var(--rose)}
+.kids{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.kid{background:#0d1526;border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-align:center;min-width:110px;animation:pop .35s}
+.kid .g{font-family:'Prompt';font-size:22px;font-weight:700}
+.kid .p{font-size:12px;padding:2px 10px;border-radius:99px;display:inline-block;margin-top:4px}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+/* quiz */
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px}
+.qtop{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);margin-bottom:10px}
+.qq{font-family:'Prompt';font-size:18px;font-weight:600;margin-bottom:16px;line-height:1.5}
+.opt{display:block;width:100%;text-align:left;background:#0d1526;border:1px solid var(--line);color:var(--txt);border-radius:11px;padding:12px 16px;margin:8px 0;cursor:pointer;font-size:15px;font-family:'Sarabun';transition:.15s}
+.opt:hover:not(:disabled){border-color:var(--amber);transform:translateX(4px)}
+.opt.ok{background:rgba(52,211,153,.15);border-color:var(--green)}
+.opt.no{background:rgba(239,68,68,.12);border-color:var(--rose)}
+.opt:disabled{cursor:default}
+.qexp{background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.4);border-radius:11px;padding:12px 16px;font-size:14px;margin-top:12px;display:none}
+.score-big{font-family:'Prompt';font-size:52px;font-weight:800;color:var(--amber)}
+/* misc */
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin-top:8px}
+.legend i{display:inline-block;width:18px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.dosebar{margin:10px 0}
+.dosebar .db-top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px}
+.dosebar .db-track{height:16px;background:#101a30;border-radius:99px;overflow:hidden}
+.dosebar .db-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--teal),var(--blue));width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.case{position:relative;overflow:hidden}
+.case .dose-tag{font-family:'Prompt';font-size:26px;font-weight:800;color:var(--rose)}
+#toTop{position:fixed;right:22px;bottom:22px;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--amber);font-size:20px;cursor:pointer;opacity:0;pointer-events:none;transition:.25s;z-index:50}
+#toTop.show{opacity:1;pointer-events:auto}
+#menuBtn{display:none;position:fixed;top:14px;left:14px;z-index:60;background:var(--card);border:1px solid var(--line);color:var(--amber);font-size:20px;padding:8px 14px;border-radius:10px;cursor:pointer}
+footer{border-top:1px solid var(--line);padding:26px 0;color:var(--mut);font-size:13.5px;text-align:center}
+.reveal{opacity:0;transform:translateY(18px);transition:.6s}
+.reveal.in{opacity:1;transform:none}
+@media(max-width:1000px){
+  aside{position:fixed;left:-290px;z-index:55;transition:.25s;background:#0a0f1c;width:270px}
+  aside.open{left:0;box-shadow:20px 0 60px rgba(0,0,0,.6)}
+  #menuBtn{display:block}
+  main{padding:0 18px 70px}
+  .bar-row{grid-template-columns:110px 1fr 70px}
+}
+</style>
+</head>
+<body>
+<div id="pbar"></div>
+<button id="menuBtn">☰</button>
+<div class="layout">
+
+<!-- ============ SIDEBAR ============ -->
+<aside id="sidebar">
+  <div class="logo">
+    <svg viewBox="0 0 100 100" fill="#fbbf24">
+      <path d="M50 50 L72 11.9 A44 44 0 0 0 28 11.9 Z"/>
+      <path d="M50 50 L72 11.9 A44 44 0 0 0 28 11.9 Z" transform="rotate(120 50 50)"/>
+      <path d="M50 50 L72 11.9 A44 44 0 0 0 28 11.9 Z" transform="rotate(240 50 50)"/>
+      <circle cx="50" cy="50" r="9"/>
+    </svg>
+    <div><b>Radiobio<br>Study Hub</b><span>Hereditary & Teratogenic</span></div>
+  </div>
+  <nav class="nav">
+    <a href="#overview">🧭 ภาพรวมผลกระทบของรังสี</a>
+    <a href="#detsto">⚡ Deterministic vs Stochastic <span class="tag">SIM</span></a>
+    <a href="#tolerance">📊 Tolerance Dose (TD5/5)</a>
+    <a href="#timeline">⏱ ไทม์ไลน์ผลของรังสี</a>
+    <a href="#cases">☢️ กรณีศึกษาอุบัติเหตุ</a>
+    <a href="#compare">🔄 เปรียบเทียบ H vs T</a>
+    <a href="#hereditary">🧬 Hereditary Effects <span class="tag">SIM</span></a>
+    <a href="#teratogenic">🤰 Teratogenic Effects <span class="tag">SIM</span></a>
+    <a href="#cataract">👁 ต้อกระจก (Cataract)</a>
+    <a href="#tools">🧮 เครื่องมือ & แปลงหน่วย</a>
+    <a href="#quiz">📝 แบบทดสอบ <span class="tag">QUIZ</span></a>
+  </nav>
+</aside>
+
+<!-- ============ MAIN ============ -->
+<main>
+<div class="hero">
+  <div class="chip-row">
+    <span class="chip hot">☢️ Radiobiology วทก 2026</span>
+    <span class="chip">SAMRIT KITTIPAYAK, PhD — Chulabhorn Royal Academy</span>
+    <span class="chip">รวมสรุป 2 ไฟล์ครบทุกหัวข้อ</span>
+    <span class="chip hot">🎮 แบบจำลองเล่นได้ 4 ตัว + แบบทดสอบ 13 ข้อ</span>
+  </div>
+  <h1>Hereditary & <span class="hl">Teratogenic Effects</span><br>of Ionizing Radiation</h1>
+  <p>สรุปครบทั้งบท: ผลของรังสีแบบ Deterministic / Stochastic, ผลทางพันธุกรรม (Hereditary), ผลก่อวิรูปต่อทารกในครรภ์ (Teratogenic), ต้อกระจก พร้อมตารางค่า threshold ทุกตัวที่ต้องจำ และแบบจำลองเชิงโต้แย้งสำหรับทบทวนก่อนสอบ</p>
+</div>
+
+<!-- ==================== 01 OVERVIEW ==================== -->
+<section id="overview" class="reveal">
+  <div class="sec-head"><div class="sec-num">01</div><div><h2>ภาพรวมผลกระทบของรังสีไอออไนซ์</h2><p class="sub">Effects of Ionizing Radiation — Overview</p></div></div>
+  <div class="grid g2">
+    <div class="card lift"><span class="icon-big">⚡</span><h4>ผลทันที (Immediate effect)</h4><p>เกิด shortly หลังรับรังสีปริมาณสูง เช่น คลื่นไส้ ผิวหนังไหม้ ผมร่วง เม็ดเลือดต่ำ ภาวะเป็นหมัน</p></div>
+    <div class="card lift"><span class="icon-big">⏳</span><h4>ผลระยะยาว (Long-term effect)</h4><p>อาจเกิดในอีก <b>หลายปี</b> หรือส่งต่อหลาย <b>ชั่วรุ่น (generations)</b> เช่น มะเร็ง ต้อกระจก ผลทางพันธุกรรม</p></div>
+  </div>
+  <h3>กลไกการเกิดผลทางชีวภาพ 2 ทาง</h3>
+  <div class="grid g2">
+    <div class="card"><h4>🎯 Direct action (การกระทำโดยตรง)</h4><p>อนุภาครังสีชนกับ <b>โมเลกุลซับซ้อนของร่างกาย (โดยเฉพาะ DNA) โดยตรง</b> ทำให้เกิดความเสียหายทันที</p></div>
+    <div class="card"><h4>💧 Indirect action (การกระทำโดยอ้อม)</h4><p>ซับซ้อนกว่า ขึ้นกับ <b>พลังงานที่รังสีสูญเสียในร่างกาย/เนื้อเยื่อ</b> แล้วเกิดปฏิกิริยาเคมีตามมา เช่น เกิด <b>free radical</b> จากน้ำในเซลล์ ไปทำลาย DNA ต่อ</p></div>
+  </div>
+  <h3>แผนภาพจำแนกผลกระทบ</h3>
+  <div class="card tree">
+    <div class="node"><b>ผลกระทบจากรังสี</b></div>
+    <div class="lv">
+      <div class="node"><b>Somatic effects</b> (ผลต่อตัวผู้รับรังสีเอง)</div>
+      <div class="lv">
+        <div class="node">Early effects <span class="pill det">Deterministic</span><br><small>คลื่นไส้ • เลือดออก • ท้องเสีย • เม็ดเลือดต่ำ (cytopenia) • ผมร่วง • เป็นหมัน</small></div>
+        <div class="node">Late effects<br><small>ต้อกระจก <span class="pill det">Deterministic</span> &nbsp; มะเร็ง/ลูคีเมีย <span class="pill sto">Stochastic</span></small></div>
+      </div>
+      <div class="node"><b>Hereditary effects</b> (ผลทางพันธุกรรม → ส่งต่อลูกหลาน) <span class="pill sto">Stochastic</span></div>
+    </div>
+  </div>
+  <div class="callout amber"><b>📌 สรุปที่ต้องจำ</b>Biological effects แบ่งเป็น 2 ประเภทใหญ่: <b>Deterministic (non-stochastic)</b> และ <b>Stochastic</b> — Deterministic = ผลระยะสั้น + บางผลระยะยาว (ต้อกระจก) ส่วน Stochastic = มะเร็ง + ผลทางพันธุกรรม</div>
+</section>
+
+<!-- ==================== 02 DET vs STO ==================== -->
+<section id="detsto" class="reveal">
+  <div class="sec-head"><div class="sec-num">02</div><div><h2>Deterministic vs Stochastic Effect</h2><p class="sub">ผลแบบกำหนดได้ vs ผลแบบสุ่ม — หัวใจของทั้งบท</p></div></div>
+  <div class="grid g2">
+    <div class="card">
+      <h4 style="color:var(--amber)">🔶 Deterministic (Non-stochastic / Tissue reaction)</h4>
+      <ul>
+        <li>ขึ้นกับ <b>เวลาที่รับรังสี, ขนาดโดส, ชนิดรังสี</b></li>
+        <li><b>มี threshold dose</b> — ต่ำกว่านี้ไม่เกิดผล (เกณฑ์ต่างกันในแต่ละคน)</li>
+        <li><b>ความรุนแรง (severity) เพิ่มตามโดส</b></li>
+        <li>กลไก: ทำลายเซลล์จำนวนมาก ความรุนแรงจึงเป็นสัดส่วนกับโดส</li>
+        <li>ตัวอย่าง: <b>ARS</b> (Acute Radiation Sickness), Chronic Radiation Sickness, ผมร่วง, ผิวไหม้, ต้อกระจก, เป็นหมัน</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--teal)">🔷 Stochastic (ผลสุ่ม / ความน่าจะเป็น)</h4>
+      <ul>
+        <li>เกิดเมื่อรับรังสี <b>ปริมาณต่ำ</b></li>
+        <li><b>ไม่มี threshold</b> — ไม่มีโดสที่รับประกันได้ว่าปลอดภัย 100%</li>
+        <li><b>ความน่าจะเป็นเพิ่มตามโดส</b> แต่ <b>ความรุนแรงไม่ขึ้นกับโดส</b> (เกิดโดยบังเอิญ)</li>
+        <li>แบ่งเป็น: <b>a) Somatic</b> (มะเร็งในตัวผู้รับ) <b>b) Genetic / Heritable</b> (ส่งต่อลูกหลาน)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout teal"><b>นิยาม Threshold ตาม ICRP 2007</b>เมื่อคนกลุ่มหนึ่งได้รับรังสีปริมาณเท่ากัน แล้วมีอาการปรากฏใน <b>1% ของคนกลุ่มนั้น</b> → โดสนั้นถือเป็น threshold dose • สำหรับ stochastic ที่โดสต่ำมาก ผลของรังสีถูกกลบด้วยปัจจัยอื่น (บุหรี่ แอลกอฮอล์) แต่ ICRP กำหนดมาตรฐานป้องกันโดย <b>สมมติว่าโดสต่ำก็อาจมีผลได้</b> (LNT concept)</div>
+
+  <!-- SIMULATOR 1 -->
+  <div class="sim">
+    <div class="sim-head">🎮 ห้องทดลอง Dose–Response — ปรับโดส ดูกราฟ และจำลองประชากร 1,000 คน</div>
+    <div class="sim-body">
+      <div class="seg" id="drMode">
+        <button data-m="det" class="on">🔶 Deterministic</button>
+        <button data-m="sto">🔷 Stochastic</button>
+      </div>
+      <div class="sim-grid" style="margin-top:18px">
+        <div>
+          <label>ปริมาณรังสี (Dose): <b id="drDoseVal">1.00 Sv</b></label>
+          <input type="range" id="drDose" min="0" max="5" step="0.05" value="1">
+          <div id="drThrWrap">
+            <label>Threshold dose: <b id="drThrVal">0.50 Sv</b></label>
+            <input type="range" id="drThr" min="0.1" max="3" step="0.1" value="0.5">
+          </div>
+          <div class="readout">
+            <div class="ro" id="roSev"><span>ความรุนแรง (Severity)</span><div class="meter"><div id="sevBar"></div></div><b id="sevPct" style="color:var(--amber)">–</b></div>
+            <div class="ro"><span id="incLab">โอกาสเกิด (Incidence)</span><b id="incPct" style="color:var(--teal)">–</b></div>
+          </div>
+          <button class="btn" id="popBtn">▶ จำลองประชากร 1,000 คน</button>
+          <p class="hint" id="popInfo">กดปุ่มเพื่อสุ่มจำลองว่าใน 1,000 คน ใครจะได้รับผลบ้าง</p>
+        </div>
+        <div>
+          <canvas id="drCanvas" height="250"></canvas>
+          <div class="legend" id="drLegend"></div>
+          <canvas id="popCanvas" height="150" style="margin-top:12px;background:#0d1526"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 03 TOLERANCE ==================== -->
+<section id="tolerance" class="reveal">
+  <div class="sec-head"><div class="sec-num">03</div><div><h2>Tolerance Dose ของอวัยวะ (TD5/5, TD50/5)</h2><p class="sub">ปริมาณรังสีที่อวัยวะทนได้ต่อการฉายทั้งอวัยวะ (whole organ irradiation)</p></div></div>
+  <p><b>TD5/5</b> = โดสที่ทำให้เกิดภาวะแทรกซ้อนรุนแรงใน <b>5%</b> ของผู้ป่วยภายใน <b>5 ปี</b> • <b>TD50/5</b> = ใน <b>50%</b> ภายใน 5 ปี (หน่วย Gy)</p>
+  <div class="grid g2">
+    <div>
+      <h4>Single Dose (ให้ครั้งเดียว)</h4>
+      <div class="tbl"><table>
+        <thead><tr><th>อวัยวะ</th><th>โดส (Gy)</th></tr></thead>
+        <tbody>
+          <tr><td>Lymphoid (ต่อมน้ำเหลือง)</td><td class="hi">2–5</td></tr>
+          <tr><td>Bone marrow (ไขกระดูก)</td><td class="hi">2–10</td></tr>
+          <tr><td>Ovary (รังไข่)</td><td class="hi">2–6</td></tr>
+          <tr><td>Testes (อัณฑะ)</td><td class="hi">2–10</td></tr>
+          <tr><td>Eye — lens (เลนส์ตา)</td><td class="hi">2–10</td></tr>
+          <tr><td>Lung (ปอด)</td><td>7–10</td></tr>
+          <tr><td>Gastrointestinal (ทางเดินอาหาร)</td><td>5–10</td></tr>
+          <tr><td>Colorectal</td><td>10–20</td></tr>
+          <tr><td>Kidney (ไต)</td><td>10–20</td></tr>
+          <tr><td>Heart (หัวใจ)</td><td>1–20</td></tr>
+          <tr><td>Liver (ตับ)</td><td>15–20</td></tr>
+          <tr><td>Mucosa / Skin</td><td>5–20 / 15–20</td></tr>
+          <tr><td>Peripheral nerve / Spinal cord</td><td>15–20</td></tr>
+          <tr><td>Brain (สมอง)</td><td>15–25</td></tr>
+          <tr><td>Bone & cartilage / Muscle</td><td>&gt;30</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div>
+      <h4>Fractionated Dose (แบ่งครั้งฉาย)</h4>
+      <div class="tbl"><table>
+        <thead><tr><th>อวัยวะ</th><th>โดส (Gy)</th></tr></thead>
+        <tbody>
+          <tr><td>Testes</td><td class="hi">1–2</td></tr>
+          <tr><td>Ovary</td><td class="hi">6–10</td></tr>
+          <tr><td>Eye (lens)</td><td class="hi">6–12</td></tr>
+          <tr><td>Lung / Kidney</td><td>20–30</td></tr>
+          <tr><td>Liver</td><td>35–40</td></tr>
+          <tr><td>Skin / Thyroid</td><td>30–40</td></tr>
+          <tr><td>Heart / Lymphoid / Bone marrow</td><td>40–50</td></tr>
+          <tr><td>Gastrointestinal / Spinal cord</td><td>50–60</td></tr>
+          <tr><td>Brain</td><td>60–70</td></tr>
+          <tr><td>Peripheral nerve / Mucosa</td><td>65–77</td></tr>
+          <tr><td>Bone & cartilage / Muscle</td><td>&gt;70</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="callout amber"><b>📌 ข้อสังเกตสำคัญ</b>ให้รังสีแบบ <b>fractionated</b> → เนื้อเยื่อทนโดสรวมได้สูงกว่าแบบ single มาก เพราะร่างกายมีเวลา <b>ซ่อมแซม (repair)</b> ระหว่างครั้ง • อวัยวะที่เซลล์แบ่งตัวเร็ว (ไขกระดูก โกนาด เลนส์ตา) ทนได้น้อย ส่วนเซลล์แบ่งตัวช้า (กระดูก กล้ามเนื้อ สมอง) ทนได้สูงกว่า</div>
+</section>
+
+<!-- ==================== 04 TIMELINE ==================== -->
+<section id="timeline" class="reveal">
+  <div class="sec-head"><div class="sec-num">04</div><div><h2>ไทม์ไลน์: จากรังสีสู่ผลทางการแพทย์</h2><p class="sub">Timing of events leading to radiation effects (10⁻¹⁵ วินาที → 100 ปี)</p></div></div>
+  <div class="tbl"><table>
+    <thead><tr><th>ระยะ</th><th>ช่วงเวลา</th><th>เหตุการณ์</th></tr></thead>
+    <tbody>
+      <tr><td><b>Physical interactions</b></td><td>10⁻¹⁵ – 10⁻¹² วินาที</td><td>Energy deposition → Excitation / ionization → Initial particle tracks</td></tr>
+      <tr><td><b>Physico-chemical</b></td><td>10⁻⁹ – 10⁻³ วินาที</td><td>Radical formation (อนุมูลอิสระ) → Diffusion, chemical reactions → Initial DNA damage / DNA breaks / base damage</td></tr>
+      <tr><td><b>Biological response</b></td><td>1 วินาที – 1 เดือน</td><td>Repair processes → Damage fixation → Cell killing → Mutations / transformations / aberrations → Proliferation of "damaged" cells</td></tr>
+      <tr><td><b>Medical effects</b></td><td class="hi">1 วัน – 100 ปี</td><td>Promotion/completion → <b>Teratogenesis</b> • <b>Carcinogenesis</b> • <b>Hereditary defects</b> • Cataractogenesis</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout teal"><b>แนวคิด</b>ทุกอย่างเริ่มจากฟิสิกส์ (เสี้ยววินาที) → เคมี → ชีวภาพ (DNA เสียหาย/ซ่อมแซม) → กว่าจะแสดงออกทางการแพทย์อาจใช้เวลา <b>หลายปีถึง 100 ปี</b> และผลทางพันธุกรรมอาจข้ามไปหลายรุ่น</div>
+</section>
+
+<!-- ==================== 05 CASES ==================== -->
+<section id="cases" class="reveal">
+  <div class="sec-head"><div class="sec-num">05</div><div><h2>กรณีศึกษา: อุบัติเหตุทางรังสี</h2><p class="sub">ตัวอย่างจริงของ Deterministic effect รุนแรง</p></div></div>
+  <div class="grid g3">
+    <div class="card lift case"><span class="dose-tag">17 Sv</span><h4>Hisashi Ouchi — Tokaimura, ญี่ปุ่น (1999)</h4><p>"Most Radioactive Man in History" ยืนเหนือถังเหล็กโดยตรง ได้รับ <b>17 sieverts</b> เกิดแผลไหม้รังสีที่รุนแรงสุดในประวัติศาสตร์ แพทย์ยื้อชีวิต <b>83 วัน</b> อย่างทรมาน</p></div>
+    <div class="card lift case"><span class="dose-tag">2011</span><h4>Fukushima Nuclear Accident</h4><p>อุบัติเหตุโรงไฟฟ้านิวเคลียร์ — ภาพผู้ป่วย (Patient A, วันที่ 26) แสดงผลของรังสีต่อผิวหนังและใบหน้าอย่างเป็นขั้นเป็นตอน</p></div>
+    <div class="card lift case"><span class="dose-tag">Co-60</span><h4>อุบัติเหตุโคบอลต์-60 สมุทรปราการ (ม.ค. 2000)</h4><p>แหล่งกำเนิด <b>Co-60</b> หลุดไปอยู่ในร้านรับซื้อของเก่า (ซอยวัดมหาวงศ์) คนงานหลายคนได้รับรังสีจนป่วยหนัก — ตัวอย่างคลาสสิกของ <b>radiation burns</b> (deterministic skin injury)</p></div>
+  </div>
+</section>
+
+<!-- ==================== 06 COMPARE ==================== -->
+<section id="compare" class="reveal">
+  <div class="sec-head"><div class="sec-num">06</div><div><h2>เปรียบเทียบ Hereditary vs Teratogenic</h2><p class="sub">ตารางสำคัญมาก — ออกสอบแน่นอน</p></div></div>
+  <div class="tbl"><table>
+    <thead><tr><th>หัวข้อ</th><th>🧬 Hereditary Effect</th><th>🤰 Teratogenic Effect</th></tr></thead>
+    <tbody>
+      <tr><td><b>Nature</b></td><td>Stochastic effect</td><td>Deterministic เป็นหลัก + มีส่วนที่เป็น Stochastic (มะเร็งในเด็ก)</td></tr>
+      <tr><td><b>Threshold</b></td><td class="hi">ไม่มี (No)</td><td class="hi">มีและไม่มี — ขึ้นกับชนิดผล (เซลล์ตายมี / มะเร็งไม่มี)</td></tr>
+      <tr><td><b>Dose level</b></td><td>Low dose effect</td><td>Low / Medium dose effect</td></tr>
+      <tr><td><b>Cause</b></td><td>รังสีเหนี่ยวนำ <b>mutation</b> ในเซลล์สืบพันธุ์</td><td><b>เซลล์ตาย</b> หรือ <b>mutation</b> ในตัวอ่อนที่กำลังพัฒนา</td></tr>
+      <tr><td><b>ตำแหน่งที่ถูกฉาย</b></td><td class="hi">Gonads ♂♀ (อัณฑะ/รังไข่)</td><td class="hi">Uterus (มดลูกของหญิงตั้งครรภ์)</td></tr>
+      <tr><td><b>Outcome</b></td><td>ลูกหลานผิดปกติ (Abnormal offspring)</td><td>ทารกในครรภ์ผิดปกติ (Abnormal offspring)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout rose"><b>🧠 ทริคจำให้แยกขาด</b><b>Hereditary</b> = ฉายที่ <b>พ่อ/แม่ ก่อนตั้งครรภ์</b> → เชื้อพันธุ์เสีย → ลูกคนต่อไปอาจผิดปกติ • <b>Teratogenic</b> = ฉาย <b>ขณะมีตัวอ่อนในครรภ์แล้ว</b> → ตัวอ่อนคนนั้นผิดปกติ</div>
+</section>
+
+<!-- ==================== 07 HEREDITARY ==================== -->
+<section id="hereditary" class="reveal">
+  <div class="sec-head"><div class="sec-num">07</div><div><h2>Hereditary (Genetic) Effects</h2><p class="sub">ผลทางพันธุกรรมจากรังสี — ชีววิทยาโกนาด, การถ่ายทอด, ดัชนีควบคุม</p></div></div>
+
+  <h3>7.1 ชีววิทยาของโกนาด</h3>
+  <div class="grid g2">
+    <div class="card"><h4>♂ Spermatogenesis (สร้างอสุจิ)</h4>
+      <p style="font-size:14.5px">Primordial germ cell → <b>Spermatogonium</b> (mitosis, แบ่งตลอดชีวิต) → Primary spermatocyte → <i>meiosis I</i> → Secondary spermatocyte → <i>meiosis II</i> → Spermatids → <b>Mature sperm</b><br><small style="color:var(--mut)">โครงสร้าง: seminiferous tubules, Sertoli cell (เซลล์พี่เลี้ยง), epididymis</small></p></div>
+    <div class="card"><h4>♀ Oogenesis (สร้างไข่)</h4>
+      <p style="font-size:14.5px">Oogonium (2n) → <b>Primary oocyte (2n) หยุดที่ prophase I ตั้งแต่ก่อนเกิด</b> → Meiosis I → Secondary oocyte + polar body → Meiosis II <b>สมบูรณ์เฉพาะเมื่อปฏิสนธิ</b> → Zygote (2n)<br><small style="color:var(--mut)">Follicle: Primordial → Primary → Growing → Mature/Graafian → Ovulation → Corpus luteum</small></p></div>
+  </div>
+  <div class="callout violet"><b>🗓 "10 Days Rule"</b>แนวทางรังสีวินิจฉัย: ถ่ายภาพรังสีบริเวณอุ้งเชิงกรานของหญิงวัยเจริญพันธุ์ภายใน <b>10 วันแรกของรอบประจำเดือน</b> (นับจากวันแรกของ menses) เพราะเป็นช่วงก่อนตกไข่ โอกาสมีตัวอ่อนต่ำที่สุด (ปัจจุบันเน้นถามประวัติ/ตรวจครรภ์ร่วมด้วย)</div>
+
+  <h3>7.2 ผลของรังสีต่อโกนาด: Lethal vs Mutagenic</h3>
+  <div class="grid g2">
+    <div class="card"><h4>☠️ Lethal effect (Sterility — ทำให้เป็นหมัน)</h4>
+      <p>♀ Nearly mature follicle &gt; Immature follicle<br>♂ <b>Spermatogonia ≫</b> Spermatocyte, Spermatid, Sperm</p></div>
+    <div class="card"><h4>🧬 Mutagenic effect (Genetic — ก่อมิวเทชัน)</h4>
+      <p>♀ Nearly mature / Mature &gt; Immature follicle<br>♂ Spermatogonia <b>≪</b> Spermatocyte, Spermatid, Sperm <span class="pill sto">ตรงข้ามกับ lethal!</span></p></div>
+  </div>
+
+  <!-- SIMULATOR 2 -->
+  <div class="sim">
+    <div class="sim-head">🎮 สำรวจความไวของเซลล์สืบพันธุ์ — สลับโหมดดูว่าเซลล์ขั้นไหน "ตายง่าย" หรือ "กลายพันธุ์ง่าย"</div>
+    <div class="sim-body">
+      <div class="seg" id="gonMode">
+        <button data-m="lethal" class="on">☠️ Lethal (Sterility)</button>
+        <button data-m="muta">🧬 Mutagenic (Genetic)</button>
+      </div>
+      <p class="hint" id="gonHint"></p>
+      <div class="grid g2" style="margin-top:10px">
+        <div class="card"><h4>♂ Male</h4><div id="gonMale"></div></div>
+        <div class="card"><h4>♀ Female</h4><div id="gonFemale"></div></div>
+      </div>
+      <div class="callout teal" id="gonNote" style="margin-bottom:0"></div>
+    </div>
+  </div>
+
+  <h3>7.3 Threshold ของภาวะเป็นหมัน (Sterility)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>อวัยวะ</th><th>ภาวะ</th><th>Threshold dose</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="2">Testes (อัณฑะ)</td><td>เป็นหมันชั่วคราว (Temporary)</td><td class="hi">0.15 Sv</td></tr>
+      <tr><td>เป็นหมันถาวร (Permanent)</td><td class="hi">3.5–6 Sv</td></tr>
+      <tr><td>Ovaries (รังไข่)</td><td>เป็นหมันถาวร</td><td class="hi">2.5–6 Sv</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout amber"><b>ทำไมชายไวกว่าหญิง? (Why male more sensitive?)</b>เพศชายมี <b>spermatogonia ที่แบ่งตัว (mitosis) ตลอดชีวิต</b> → ไวต่อรังสีตลอด → โดสแค่ 0.15 Sv ก็เป็นหมันชั่วคราวได้ ส่วนเพศหญิง <b>oocyte หยุดค้างที่ prophase I ตั้งแต่ก่อนเกิด</b> และไม่สร้างเพิ่ม จึงทนกว่า</div>
+
+  <h3>7.4 กฎการถ่ายทอดทางพันธุกรรม (Law of Inheritance)</h3>
+  <p>Germ Cell —<i>รังสีทำให้เกิด mutation</i>→ Abnormal Genotype —<i>fertilization</i>→ <b>Abnormal Phenotype</b><br>
+  ชนิด mutation: <span class="pill det">Deletion</span><span class="pill det">Duplication</span><span class="pill det">Inversion</span> • การถ่ายทอด: <b>1) Autosomal</b> (1.1 Dominant / 1.2 Recessive) <b>2) Sex-chromosome</b> (X-linked) • มนุษย์มี 23 คู่ = 22 autosome + 1 คู่เพศ</p>
+
+  <!-- SIMULATOR 3 -->
+  <div class="sim">
+    <div class="sim-head">🎮 จำลองการถ่ายทอดมิวเทชันด้อย — ดูว่าทำไมรังสี "ซ่อน" ผลทางพันธุกรรมได้หลายรุ่น</div>
+    <div class="sim-body">
+      <label>รูปแบบพ่อแม่ (a = อัลลีลด้อยที่เกิดจากรังสี):</label>
+      <select id="punSel" style="width:100%;padding:10px;border-radius:10px;background:#0d1526;color:var(--txt);border:1px solid var(--line);font-family:'Sarabun';font-size:15px"></select>
+      <div class="punsq" id="punSquare"></div>
+      <button class="btn" id="punGo">🎲 สร้างลูก 4 คน</button>
+      <div class="kids" id="punKids"></div>
+      <p class="hint" id="punInfo"></p>
+    </div>
+  </div>
+
+  <h3>7.5 ข้อเท็จจริง 4 ข้อของ Genetic Effect <span class="must">จุดที่ต้องจำ</span></h3>
+  <div class="grid g2">
+    <div class="card"><b>1. ไม่ก่อให้เกิดมิวเทชันชนิดใหม่</b><p style="margin:4px 0 0">Do <b>not</b> induce new type of mutation — ไม่มี "มิวแทนต์แบบในหนัง" รังสีทำได้เพียงเร่งสิ่งที่มีอยู่แล้วในธรรมชาติ</p></div>
+    <div class="card"><b>2. เพิ่มอัตราการกลายพันธุ์ตามธรรมชาติ</b><p style="margin:4px 0 0">Increase rate of <b>spontaneous mutation</b></p></div>
+    <div class="card"><b>3. ส่วนใหญ่เป็นยีนด้อย</b><p style="margin:4px 0 0">Majority = <b>recessive mutation</b> → มักไม่แสดงออกในรุ่นลูกทันที</p></div>
+    <div class="card"><b>4. ไม่ค่อยไวต่อมิวเทชัน</b><p style="margin:4px 0 0">Doubling dose ≈ <b>1 Sv</b> ซึ่งถือว่าสูง → ยีนทนต่อรังสีพอสมควร</p></div>
+  </div>
+
+  <h3>7.6 ดัชนีควบคุมผลกระทบทางพันธุกรรม</h3>
+  <div class="grid g2">
+    <div class="card"><h4>① Doubling Dose</h4><p>โดสที่ทำให้เกิดมิวเทชัน <b>เป็น 2 เท่า</b>ของอัตราธรรมชาติ (spontaneous rate) • ค่าจากข้อมูลฮิโรชิมะ–นางาซากิเฉลี่ย ≈ <b>156 rem (1.56 Sv)</b> → บทเรียนประมาณที่ ~1 Sv</p></div>
+    <div class="card"><h4>② Genetic Significant Dose (GSD)</h4><p>โดสเฉลี่ยที่ <b>โกนาด</b>ได้รับ คิดเฉพาะ <b>ผู้ที่มีศักยภาพจะเป็นพ่อแม่ในอนาคตทั้งประชากร</b> (คนสูงอายุไม่มีน้ำหนักเท่าวัยเจริญพันธุ์) ใช้วัดผลกระทบระดับประชากร</p></div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Genetic Indicator (ลูกหลานผู้รอดชีวิต A-bomb)</th><th>Doubling Dose (rem)</th></tr></thead>
+    <tbody>
+      <tr><td>Untoward pregnancy outcome</td><td class="hi">69</td></tr>
+      <tr><td>Childhood mortality</td><td class="hi">147</td></tr>
+      <tr><td>Sex chromosome aneuploidy</td><td class="hi">252</td></tr>
+      <tr><td><b>Simple average</b></td><td class="hi"><b>156 rem ≈ 1.56 Sv</b> (เทียบ LD50/60 = 250–300 rem)</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>7.7 แหล่งกำเนิด GSD</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>แหล่งรังสี</th><th>GSD (mRem/ปี)</th><th>แหล่งรังสี</th><th>GSD (mRem/ปี)</th></tr></thead>
+    <tbody>
+      <tr><td>🌌 Cosmic rays</td><td>28</td><td>🏥 Medical & Dental X-rays</td><td class="hi">90</td></tr>
+      <tr><td>🧍 Radionuclide ในร่างกาย</td><td>28</td><td>💉 Radiopharmaceuticals</td><td>2–4</td></tr>
+      <tr><td>🌋 Terrestrial radiation</td><td>26</td><td>🛒 Consumer products</td><td>1–2</td></tr>
+      <tr><td>💨 <b>Radon</b></td><td class="hi"><b>200</b> (ใหญ่สุด!)</td><td>☢️ Weapons testing fallout</td><td>4–5</td></tr>
+      <tr><td>🏗 Building materials</td><td>4–5</td><td>👷 Occupational / ⚛️ Nuclear power / ✈️ Air travel</td><td>&lt;1 / &lt;1 / &lt;0.5</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout teal"><b>สรุปเชิงนโยบาย</b>แหล่ง GSD ใหญ่สุดคือ <b>เรดอน (ธรรมชาติ)</b> และในฝั่งมนุษย์คือ <b>เอกซเรย์ทางการแพทย์</b> — ส่วนโรงไฟฟ้านิวเคลียร์และการทำงานมีสัดส่วนน้อยมาก (ข้อมูลเทียบเคียง: NCRP Report No. 184, 2019)</div>
+</section>
+
+<!-- ==================== 08 TERATOGENIC ==================== -->
+<section id="teratogenic" class="reveal">
+  <div class="sec-head"><div class="sec-num">08</div><div><h2>Teratogenic Effects</h2><p class="sub">ผลก่อวิรูปต่อทารกในครรภ์ — ช่วงวิกฤต, ค่า threshold และการประเมินความเสี่ยง</p></div></div>
+
+  <div class="grid g2">
+    <div class="callout teal" style="margin:0"><b>📣 คำแนะนำ IAEA สำหรับหญิงตั้งครรภ์</b>ทารกในครรภ์ไวต่อรังสีกว่าผู้ใหญ่ • ความเสี่ยงขึ้นกับ <b>อายุครรภ์ / ชนิดหัตถการ / ปริมาณรังสี</b> • หัตถการวินิจฉัยส่วนใหญ่ยังปลอดภัย • <b>อย่าเลี่ยงการตรวจที่จำเป็นต่อสุขภาพแม่</b> • แจ้งเจ้าหน้าที่ทุกครั้งหากตั้งครรภ์หรือสงสัย + ถามว่าต้องตรวจครรภ์ก่อนหรือไม่</div>
+    <div class="callout rose" style="margin:0"><b>🛡 อัปเดต 2023: เลิกใช้แผ่นตะกั่วปิดท้อง?</b>แนวโน้มปัจจุบัน <b>"Discontinuing gonadal & fetal shielding"</b> (Mainprize, Abdominal Radiology 2023) เพราะ <b>รังสีกระเจิงภายในตัวผู้ป่วย</b>ไม่ถูกลดด้วยแผ่นตะกั่วภายนอก และอาจเกิด <b>backscatter</b> เพิ่มโดสแทน → เน้น collimation + protocol โดสต่ำแทน</div>
+  </div>
+
+  <!-- SIMULATOR 4 : PREGNANCY -->
+  <div class="sim">
+    <div class="sim-head">🎮 ห้องจำลองความเสี่ยงทารกในครรภ์ — เลื่อนอายุครรภ์ + ปรับโดส ดูผลที่เกิดขึ้นจริงตามตารางบรรยาย</div>
+    <div class="sim-body">
+      <div class="sim-grid">
+        <div>
+          <label>อายุครรภ์: <b id="gaOut">–</b></label>
+          <input type="range" id="gaDay" min="0" max="280" step="1" value="40">
+          <div class="stage-tl" id="stTL">
+            <div style="width:2.5%;background:#60a5fa" title="Pre-implantation"></div>
+            <div style="width:2.5%;background:#a78bfa" title="Implantation"></div>
+            <div style="width:15%;background:#fb7185" title="Organogenesis"></div>
+            <div style="width:80%;background:#fbbf24" title="Fetal"></div>
+            <div class="tl-marker" id="tlMarker"></div>
+          </div>
+          <div style="font-size:11.5px;color:var(--mut);display:flex;justify-content:space-between"><span>ปฏิสนธิ</span><span>สัปดาห์ที่ 8</span><span>คลอด (40 สัปดาห์)</span></div>
+
+          <label style="margin-top:18px">ปริมาณรังสีที่ทารกได้รับ (Fetal dose): <b id="fdOut">50 mGy</b></label>
+          <input type="range" id="fdose" min="0" max="300" step="5" value="50">
+          <div class="quick">
+            <button data-d="5">5 (NCRP limit)</button><button data-d="10">10 (เอกซเรย์ท้อง)</button>
+            <button data-d="25">25 (CT เฟสเดียว)</button><button data-d="100">100 (cutoff)</button>
+            <button data-d="250">250 (threshold malform)</button>
+          </div>
+          <div class="dose-meter"><div class="dm-pointer" id="dmP"></div><div class="dm-flag" id="dmF"></div></div>
+          <div class="dm-labels"><span>0</span><span>50</span><span>100</span><span>150</span><span>300 mGy</span></div>
+          <div class="kpi">
+            <div class="k"><b id="kAdd" style="color:var(--rose)">–</b><span>ความเสี่ยงเพิ่มจากรังสี</span></div>
+            <div class="k"><b id="kTot" style="color:var(--amber)">–</b><span>ความเสี่ยงรวม (พื้น 4–6%)</span></div>
+            <div class="k"><b id="kThr" style="color:var(--teal)">–</b><span>Threshold ระยะนี้</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="emb-view">
+            <div class="emb-badge" id="stBadge">–</div>
+            <svg id="embSvg" viewBox="0 0 220 220" width="100%" height="270">
+              <defs>
+                <radialGradient id="wombG" cx="50%" cy="45%" r="60%"><stop offset="0%" stop-color="#4a1d4f" stop-opacity=".5"/><stop offset="100%" stop-color="#1a0f24" stop-opacity="0"/></radialGradient>
+                <linearGradient id="bodyG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fda4af"/><stop offset="1" stop-color="#fb7185"/></linearGradient>
+              </defs>
+              <circle cx="110" cy="110" r="102" fill="url(#wombG)"/>
+              <circle cx="110" cy="110" r="102" fill="none" stroke="#5b2a4a" stroke-width="1.5" stroke-dasharray="4 7"/>
+              <g id="embWrap"><g id="embFloat">
+                <g class="emb" id="eZyg"><circle cx="110" cy="110" r="34" fill="url(#bodyG)" opacity=".92"/><circle cx="110" cy="110" r="34" fill="none" stroke="#fecdd3" stroke-width="2" opacity=".6"/><circle cx="103" cy="103" r="9" fill="#e11d48" opacity=".5"/></g>
+                <g class="emb" id="eC2"><circle cx="93" cy="110" r="22" fill="url(#bodyG)"/><circle cx="127" cy="110" r="22" fill="url(#bodyG)"/></g>
+                <g class="emb" id="eC4"><circle cx="96" cy="96" r="17" fill="url(#bodyG)"/><circle cx="124" cy="96" r="17" fill="url(#bodyG)"/><circle cx="96" cy="124" r="17" fill="url(#bodyG)"/><circle cx="124" cy="124" r="17" fill="url(#bodyG)"/></g>
+                <g class="emb" id="eMor"><circle cx="110" cy="110" r="12" fill="url(#bodyG)"/><circle cx="92" cy="102" r="11" fill="url(#bodyG)"/><circle cx="128" cy="102" r="11" fill="url(#bodyG)"/><circle cx="92" cy="120" r="11" fill="url(#bodyG)"/><circle cx="128" cy="120" r="11" fill="url(#bodyG)"/><circle cx="110" cy="88" r="10" fill="url(#bodyG)"/><circle cx="110" cy="132" r="10" fill="url(#bodyG)"/></g>
+                <g class="emb" id="eBla"><circle cx="110" cy="110" r="42" fill="#fda4af" opacity=".18"/><circle cx="110" cy="110" r="42" fill="none" stroke="#fda4af" stroke-width="3"/><circle cx="130" cy="98" r="9" fill="url(#bodyG)"/><circle cx="140" cy="110" r="8" fill="url(#bodyG)"/><circle cx="131" cy="121" r="8" fill="url(#bodyG)"/></g>
+                <g class="emb" id="eImp"><path d="M14 180 Q110 152 206 180 L206 214 L14 214 Z" fill="#881337" opacity=".45"/><circle cx="110" cy="152" r="26" fill="#fda4af" opacity=".2"/><circle cx="110" cy="152" r="26" fill="none" stroke="#fda4af" stroke-width="2.5"/><circle cx="122" cy="144" r="7" fill="url(#bodyG)"/><circle cx="127" cy="153" r="6" fill="url(#bodyG)"/></g>
+                <g class="emb" id="eEmb"><path d="M100 80 C 140 74 160 102 152 130 C 145 156 116 166 98 158" stroke="url(#bodyG)" stroke-width="30" fill="none" stroke-linecap="round"/><circle cx="98" cy="86" r="30" fill="url(#bodyG)"/><circle cx="110" cy="82" r="3.6" fill="#3b0a14"/><circle class="heart" cx="120" cy="114" r="6" fill="#ef4444"/><ellipse cx="86" cy="122" rx="9" ry="13" fill="url(#bodyG)" transform="rotate(22 86 122)"/><ellipse cx="104" cy="156" rx="10" ry="14" fill="url(#bodyG)" transform="rotate(-14 104 156)"/></g>
+                <g class="emb" id="eFet"><circle cx="88" cy="86" r="34" fill="url(#bodyG)"/><ellipse cx="124" cy="134" rx="30" ry="40" fill="url(#bodyG)" transform="rotate(-22 124 134)"/><ellipse cx="102" cy="126" rx="9" ry="17" fill="#fda4af" transform="rotate(34 102 126)"/><ellipse cx="130" cy="172" rx="10" ry="20" fill="#fda4af" transform="rotate(-52 130 172)"/><circle cx="74" cy="90" r="5" fill="#f43f5e" opacity=".7"/><path d="M94 82 q7 5 14 0" stroke="#3b0a14" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle class="heart" cx="116" cy="122" r="6" fill="#ef4444"/><path d="M118 152 C 142 162 152 176 148 194" stroke="#f9a8d4" stroke-width="3" fill="none" stroke-dasharray="3 5" opacity=".8"/></g>
+              </g></g>
+            </svg>
+            <div class="emb-size" id="embSize">–</div>
+          </div>
+          <div class="verdict safe" id="verdict"><b>–</b><span>–</span></div>
+        </div>
+      </div>
+      <p class="hint">🪟 แถบหน้าต่างความไว: <span style="color:#a78bfa">Microcephaly (&lt;8 สัปดาห์)</span> • <span style="color:#fb7185">Malformation (2–8 สัปดาห์)</span> • <span style="color:#fbbf24">Mental retardation (8–25 สัปดาห์)</span> • ความเสี่ยงมะเร็ง (stochastic) มีตลอดการตั้งครรภ์</p>
+    </div>
+  </div>
+
+  <h3>8.1 การเดินทางของสัปดาห์แรก (First week in the Fallopian tube)</h3>
+  <p style="font-size:14.5px">Day 0 ปฏิสนธิ (zygote) → Day 1 first cleavage → Day 2: 2–4 เซลล์ → Day 3–4: 8-cell morula → Day 5: blastocyst (trophectoderm + inner cell mass) → Day 6–7: hatching → <b>Day 8–9: Implantation</b> ที่มดลูก</p>
+
+  <h3>8.2 ผลของรังสีต่อตัวอ่อนตามระยะตั้งครรภ์ <span class="must">ตารางสำคัญที่สุด</span></h3>
+  <div class="tbl"><table>
+    <thead><tr><th>ระยะ (Gestation stage)</th><th>ช่วงเวลา</th><th>ผลกระทบ (Effect)</th><th>Threshold dose</th></tr></thead>
+    <tbody>
+      <tr><td><b>Pre-implantation</b><br>(ก่อนฝังตัว)</td><td>0–7 วัน</td><td><b>All or None</b> • Prenatal death</td><td class="hi">0.1 Sv</td></tr>
+      <tr><td><b>Implantation</b><br>(สัปดาห์ที่ 2)</td><td>8–14 วัน</td><td>ทนต่อการตายก่อนเกิดมากขึ้น • ไวต่อความพิการน้อยลง</td><td class="hi">0.1–0.25 Sv</td></tr>
+      <tr><td><b>Organogenesis</b><br>(สัปดาห์ที่ 2–8)</td><td>15–56 วัน</td><td><b>Congenital malformation</b> • Temporary growth retardation • Neonatal death</td><td class="hi">0.25 Sv</td></tr>
+      <tr><td><b>Fetal stage</b><br>(สัปดาห์ที่ 8–คลอด)</td><td>8 สัปดาห์ – 9 เดือน</td><td><b>Mental retardation</b> • <b>Microcephaly</b> • Permanent growth retardation • Functional disorders • Late effect = มะเร็ง</td><td class="hi">MR: 0.1–0.2 Sv (8–15 สัปดาห์)<br>Microcephaly: 0.6–0.7 Sv (16–25 สัปดาห์)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout amber"><b>📌 หลักการ</b>ยิ่งตัวอ่อนอายุน้อยช่วง <b>organogenesis</b> → ยิ่งไวต่อ <b>ความพิการเชิงโครงสร้าง</b> • ช่วง <b>fetal stage</b> → ไวต่อ <b>สมองและการทำงาน</b> มากกว่า • ลำดับความทนต่อการตาย: LD50 (preimplantation) &lt; LD50 (organogenesis) &lt; LD50 (fetal)</div>
+
+  <h3>8.3 ความผิดปกติหลักที่พบในสัตว์เลี้ยงลูกด้วยนม (โดส ~2–3 Gy)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>🧠 CNS</th><th>🦴 Skeletal</th><th>👁 Ocular</th><th>อื่นๆ</th></tr></thead>
+    <tbody><tr>
+      <td>Exencephaly • Microcephaly • Mental retardation • Skull malformation • Hydrocephaly</td>
+      <td>Stunting • Abnormal limbs • Small head • Cleft palate • Club feet • Deformed arms • Spina bifida</td>
+      <td>Absence of eye(s) • Microphthalmia • Small eyes • Strabismus • Cataract • Absence of lens</td>
+      <td><b>Leukemia</b> • Genital deformities with sterility</td>
+    </tr></tbody>
+  </table></div>
+
+  <h3>8.4 Mental Retardation vs Microcephaly <span class="must">ต้องแยกให้ออก</span></h3>
+  <div class="grid g2">
+    <div class="card"><h4 style="color:var(--amber)">🧠 Mental Retardation (ปัญญาอ่อน)</h4>
+      <ul style="font-size:14.5px">
+        <li>ไวสุด: <b>สัปดาห์ที่ 8–15</b> (ขยายถึง 16–25)</li>
+        <li>Threshold: <b>0.12–0.2 Gy</b></li>
+        <li>กระบวนการ: การสร้าง <b>brain cortex</b></li>
+        <li>เซลล์เป้าหมาย: <b>Neurons</b></li>
+        <li>กลไก: แบ่งตัว/เปลี่ยนสภาพบกพร่อง + <b>การย้ายที่ (migration) ถูกรบกวน</b></li>
+        <li>หลังสัปดาห์ที่ 25 → โอกาสลด <b>4 เท่า</b></li>
+      </ul></div>
+    <div class="card"><h4 style="color:var(--violet)">🤏 Microcephaly (ศีรษะเล็ก)</h4>
+      <ul style="font-size:14.5px">
+        <li>ไวสุด: <b>ก่อนสัปดาห์ที่ 8</b></li>
+        <li>Threshold: <b>0.1–0.19 Gy</b></li>
+        <li>เซลล์เป้าหมาย: <b>Glial cell</b> (เซลล์ค้ำจุน)</li>
+        <li>Fatal dose ในคน ≈ 0.06 Gy (ตัวเลขในสไลด์)</li>
+        <li class="hint" style="margin-left:-18px">หมายเหตุ: ตารางหลักระบุ 0.6–0.7 Sv สำหรับช่วง 16–25 สัปดาห์ — จำทั้งสองบริบทตามที่สอน</li>
+      </ul></div>
+  </div>
+
+  <h3>8.5 ตัวเลขโดสที่ต้องจำ (Interesting dose estimates)</h3>
+  <div class="grid g3">
+    <div class="card"><h4>🥚 Oocyte killing</h4><p>LD50 ในไพรเมต = <b>0.05 Gy (5 rad)</b> — ไข่ถูกฆ่าได้ที่โดสต่ำมาก</p></div>
+    <div class="card"><h4>🛡 เกณฑ์ NCRP</h4><p>ตลอดการตั้งครรภ์ ≤ <b>500 mRem (5 mSv)</b><br>แต่ละเดือน ≤ <b>50 mRem (0.5 mSv)</b></p></div>
+    <div class="card"><h4>⚠️ Cutoff therapeutic abortion</h4><p><b>0.1 Gy (10 rad = 100 mSv)</b> ต่อตัวอ่อน ในช่วงไว (วันที่ 10 – สัปดาห์ที่ 26) → จุดที่ต้องปรึกษาแพทย์เชิงลึก</p></div>
+  </div>
+
+  <h3>8.6 ความเสี่ยงรวมต่อทารกในครรภ์</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Type</th><th>Rate of Risk</th></tr></thead>
+    <tbody>
+      <tr><td>Spontaneous (เกิดเองตามธรรมชาติ)</td><td class="hi">40–60 ต่อ 1,000 เด็ก (4–6%)</td></tr>
+      <tr><td>Radiation effect (ส่วนเพิ่มจากรังสี)</td><td class="hi">3 ต่อ 1,000 (0.3%) ต่อ fetal dose 10 mSv</td></tr>
+    </tbody>
+  </table></div>
+  <p>Fetal dose <b>&lt; 0.05 Sv</b> → negligible risk • <b>&gt; 0.15 Sv</b> → significant risk<br><small style="color:var(--mut)">*ครอบคลุม mortality, mental retardation, malformation และ childhood cancer</small></p>
+
+  <h3>8.7 การจัดกลุ่มความเสี่ยงของหัตถการ (Mainprize 2023)</h3>
+  <div class="grid g3">
+    <div class="card lift" style="border-color:rgba(52,211,153,.4)"><h4 style="color:var(--green)">🟢 Negligible risk</h4><p style="font-size:14px">ไม่ฉายเข้ามดลูก/ทารกโดยตรง เช่น มามโมแกรม, เอกซเรย์/CT นอกช่องท้อง → <b>ไม่ต้องยืนยันการตั้งครรภ์</b></p></div>
+    <div class="card lift" style="border-color:rgba(251,191,36,.4)"><h4 style="color:var(--amber)">🟡 Low risk</h4><p style="font-size:14px">เข้าเชิงกราน/ทารกโดยตรง แต่โดส &lt; 50 mGy เช่น Abdominal X-ray, CT เฟสเดียว → <b>ซักถาม/บันทึกสถานะครรภ์ ถ้าไม่แน่ใจให้ตรวจครรภ์</b></p></div>
+    <div class="card lift" style="border-color:rgba(239,68,68,.45)"><h4 style="color:var(--rose)">🔴 Substantial risk</h4><p style="font-size:14px">ฉายหลายครั้ง/โดสสูง เช่น CT หลายเฟส, IR/angiography, CT-PET, fluoroscopy นาน → <b>ตรวจครรภ์ + consent +ให้นักฟิสิกส์ประเมินโดส</b></p></div>
+  </div>
+</section>
+
+<!-- ==================== 09 CATARACT ==================== -->
+<section id="cataract" class="reveal">
+  <div class="sec-head"><div class="sec-num">09</div><div><h2>Late Effect อีกชนิด: ต้อกระจก (Cataract)</h2><p class="sub">Opacification ของเลนส์ตา — deterministic effect ที่มี threshold</p></div></div>
+  <div class="grid g2">
+    <div class="card"><h4>ทำไมเลนส์ตาถึงเสี่ยง?</h4>
+      <ul style="font-size:14.5px">
+        <li>เซลล์ที่แบ่งตัวได้จำกัดอยู่เฉพาะ <b>equatorial region</b> ของ epithelium</li>
+        <li><b>ไม่มีกลไกกำจัดเซลล์เสียหาย</b></li>
+        <li><b>ไม่มีเลือดมาเลี้ยง</b> → ซ่อมแซม/เก็บกวาดไม่ได้</li>
+        <li>เซลล์หลัก 2 ชนิด: epithelial cells + fiber cells</li>
+      </ul>
+      <h4 style="margin-top:14px">กลไกจากรังสี</h4>
+      <p style="font-size:14.5px">รังสีทำลายเซลล์ที่กำลังแบ่งตัว → เปลี่ยนสภาพเป็น <b>abnormal lens fiber</b> → ไม่ถูกกำจัด + ย้ายไปสะสมที่ขั้วเลนส์ (pole) → <b>ขุ่นมัว</b> เพราะไม่โปร่งแสงอีกต่อไป</p></div>
+    <div class="card"><h4>สาเหตุของต้อกระจก</h4>
+      <ul style="font-size:14.5px">
+        <li><b>อายุ (Senile) — 80%</b> ของทุกกรณี</li>
+        <li>รังสี UV ระยะยาว (นักบินพาณิชย์เสี่ยง &gt;3 เท่า)</li>
+        <li><b>รังสีไอออไนซ์ — Threshold 0.5–2 Gy</b></li>
+        <li>เบาหวาน • อ้วน • ความดัน • การบาดเจ็บ • การอักเสบ</li>
+      </ul></div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>หัวข้อ</th><th>Age-related</th><th>Radiation-induced</th></tr></thead>
+    <tbody>
+      <tr><td>สาเหตุ</td><td>กระบวนการชราภาพ</td><td>รังสีทำลายเซลล์เลนส์โดยตรง</td></tr>
+      <tr><td>ตำแหน่ง</td><td>Nuclear sclerosis / Cortical / PSC (น้อยกว่า)</td><td class="hi">Posterior Subcapsular (PSC) เป็นหลัก</td></tr>
+      <tr><td>การดำเนินโรค</td><td>ช้า หลายปี มักหลังอายุ 60</td><td class="hi">เกิดเร็วกว่า ลุกลามเร็วกว่า</td></tr>
+      <tr><td>กลไกเซลล์</td><td>Oxidative damage สะสม</td><td>Oxidative + <b>ทำลาย DNA โดยตรง</b></td></tr>
+      <tr><td>การรักษา</td><td colspan="2">ผ่าตัดเปลี่ยนเลนส์ (ทั้งสองชนิด)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ==================== 10 TOOLS ==================== -->
+<section id="tools" class="reveal">
+  <div class="sec-head"><div class="sec-num">10</div><div><h2>เครื่องมือ: แปลงหน่วย & เทียบปริมาณรังสี</h2><p class="sub">Unit Converter + Dose Comparator</p></div></div>
+  <div class="grid g2">
+    <div class="card">
+      <h4>🧮 เครื่องแปลงหน่วยรังสี</h4>
+      <div style="display:flex;gap:10px">
+        <input type="number" id="cvVal" value="1" step="any" style="flex:1;padding:10px;border-radius:10px;background:#0d1526;border:1px solid var(--line);color:#fff;font-size:17px;font-family:'Prompt'">
+        <select id="cvUnit" style="padding:10px;border-radius:10px;background:#0d1526;border:1px solid var(--line);color:#fff;font-family:'Sarabun'"></select>
+      </div>
+      <div id="cvOut" class="kpi" style="margin-top:14px"></div>
+      <p class="hint">*สมมติรังสีเอกซ์/แกมมา (wR = 1) ดังนั้น 1 Gy ≈ 1 Sv และ 1 rad ≈ 1 rem • 1 Gy = 100 rad • 1 Sv = 100 rem</p>
+    </div>
+    <div class="card">
+      <h4>📏 เทียบปริมาณรังสีจากการตรวจ (สเกลลอการิทึม)</h4>
+      <div id="doseChart"></div>
+      <p class="hint">ข้อมูลตาม NCRP Report No. 184 (2019) — ตัวเลข "เทียบพื้นหลัง" คือระยะเวลาที่ได้รับรังสีธรรมชาติในปริมาณเท่ากัน (พื้นหลัง ≈ 3.1 mSv/ปี)</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 11 QUIZ ==================== -->
+<section id="quiz" class="reveal">
+  <div class="sec-head"><div class="sec-num">11</div><div><h2>แบบทดสอบก่อนสอบ</h2><p class="sub">13 ข้อ พร้อมคำอธิบายทันทีที่ตอบ — วัดความพร้อมก่อนเข้าห้องสอบ</p></div></div>
+  <div class="qcard" id="quizBox"></div>
+</section>
+
+<footer>สรุปจากเอกสารบรรยายโดย <b>SAMRIT KITTIPAYAK, PhD</b> — Chulabhorn Royal Academy • วิชา Radiobiology วทก 2026 • รวมเนื้อหาจากสรุปทั้ง 2 ไฟล์ (ตัดส่วนซ้ำออกแล้ว) • ตัวเลขความไวในแบบจำลองเป็นค่าสัมพัทธ์เพื่อการเรียนรู้ตามลำดับที่เอกสารระบุ</footer>
+</main>
+</div>
+<button id="toTop">↑</button>
+
+<script>
+/* ================= Helpers ================= */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+/* Progress + toTop + menu */
+addEventListener('scroll',()=>{
+  const h=document.documentElement,p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+  $('#pbar').style.width=(p*100)+'%';
+  $('#toTop').style.opacity=h.scrollTop>600?1:0;$('#toTop').style.pointerEvents=h.scrollTop>600?'auto':'none';
+},{passive:true});
+$('#toTop').onclick=()=>scrollTo({top:0,behavior:'smooth'});
+$('#menuBtn').onclick=()=>$('#sidebar').classList.toggle('open');
+$$('.nav a').forEach(a=>a.onclick=()=>$('#sidebar').classList.remove('open'));
+
+/* Scrollspy */
+const secs=$$('main section[id]'),links=$$('.nav a');
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+e.target.id));}),{rootMargin:'-25% 0px -65% 0px'}).observe;
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+e.target.id));}),{rootMargin:'-25% 0px -65% 0px'});
+secs.forEach(s=>spy.observe(s));
+const rev=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rev.unobserve(e.target);}}),{threshold:.06});
+$$('.reveal').forEach(el=>rev.observe(el));
+
+/* ================= SIM 1: Dose–Response ================= */
+const DR={mode:'det',dose:1,thr:.5,p0:.05,slope:.05,maxD:5};
+let X=d=>0,Y=v=>0;
+const drInc=d=>d<=DR.thr?0:1-Math.exp(-1.15*(d-DR.thr));
+const drSev=d=>d<=DR.thr?0:Math.min(1,(d-DR.thr)/(DR.maxD-DR.thr));
+const drP=d=>Math.min(1,DR.p0+DR.slope*d);
+function drawDR(){
+  const c=$('#drCanvas'),ctx=c.getContext('2d'),dpr=devicePixelRatio||1;
+  const W=c.clientWidth||640,H=250;
+  c.width=W*dpr;c.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+  const mL=48,mR=14,mT=16,mB=36;
+  X=d=>mL+(d/DR.maxD)*(W-mL-mR); Y=v=>H-mB-v*(H-mT-mB);
+  ctx.clearRect(0,0,W,H);
+  ctx.font='11px Sarabun';
+  for(let i=0;i<=5;i++){ctx.strokeStyle='rgba(148,163,184,.12)';ctx.beginPath();ctx.moveTo(X(i),mT);ctx.lineTo(X(i),H-mB);ctx.stroke();ctx.fillStyle='#7e8db0';ctx.fillText(i+' Sv',X(i)-11,H-mB+16);}
+  for(let j=0;j<=4;j++){const v=j/4;ctx.strokeStyle='rgba(148,163,184,.1)';ctx.beginPath();ctx.moveTo(mL,Y(v));ctx.lineTo(W-mR,Y(v));ctx.stroke();ctx.fillStyle='#7e8db0';ctx.fillText(v*100+'%',10,Y(v)+4);}
+  const plot=(f,col)=>{ctx.strokeStyle=col;ctx.lineWidth=2.6;ctx.beginPath();for(let i=0;i<=220;i++){const d=DR.maxD*i/220;i?ctx.lineTo(X(d),Y(f(d))):ctx.moveTo(X(d),Y(f(d)));}ctx.stroke();};
+  const mark=(d,v,col)=>{ctx.setLineDash([4,5]);ctx.strokeStyle='rgba(255,255,255,.35)';ctx.beginPath();ctx.moveTo(X(d),mT);ctx.lineTo(X(d),H-mB);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=col;ctx.beginPath();ctx.arc(X(d),Y(v),6,0,7);ctx.fill();ctx.strokeStyle='#0d1322';ctx.lineWidth=2;ctx.stroke();};
+  if(DR.mode==='det'){
+    ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(251,113,133,.85)';ctx.beginPath();ctx.moveTo(X(DR.thr),mT);ctx.lineTo(X(DR.thr),H-mB);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#fb7185';ctx.fillText('Threshold',X(DR.thr)-26,mT+10);
+    plot(drSev,'#fbbf24');plot(drInc,'#2dd4bf');
+    mark(DR.dose,drSev(DR.dose),'#fbbf24');mark(DR.dose,drInc(DR.dose),'#2dd4bf');
+    $('#drLegend').innerHTML='<span><i style="background:#fbbf24"></i>Severity (ความรุนแรง)</span><span><i style="background:#2dd4bf"></i>Incidence (โอกาสเกิด)</span><span><i style="background:#fb7185"></i>Threshold</span>';
+  }else{
+    ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(251,113,133,.85)';ctx.beginPath();ctx.moveTo(mL,Y(DR.p0));ctx.lineTo(W-mR,Y(DR.p0));ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#fb7185';ctx.fillText('Spontaneous incidence (เกิดเองตามธรรมชาติ)',mL+8,Y(DR.p0)-7);
+    plot(drP,'#2dd4bf');mark(DR.dose,drP(DR.dose),'#2dd4bf');
+    $('#drLegend').innerHTML='<span><i style="background:#2dd4bf"></i>Probability (ความน่าจะเป็น)</span><span><i style="background:#fb7185"></i>Spontaneous baseline 5% (ไม่มี threshold)</span>';
+  }
+}
+function updDR(){
+  DR.dose=+$('#drDose').value;DR.thr=+$('#drThr').value;
+  $('#drDoseVal').textContent=DR.dose.toFixed(2)+' Sv';
+  $('#drThrVal').textContent=DR.thr.toFixed(2)+' Sv';
+  $('#drThrWrap').style.display=DR.mode==='det'?'block':'none';
+  if(DR.mode==='det'){
+    const s=drSev(DR.dose),i=drInc(DR.dose);
+    $('#sevBar').style.width=(s*100)+'%';$('#sevPct').textContent=(s*100).toFixed(0)+'%';
+    $('#incPct').textContent=(i*100).toFixed(1)+'%';$('#incLab').textContent='โอกาสเกิด (Incidence)';
+  }else{
+    $('#sevBar').style.width='0%';$('#sevPct').textContent='–';
+    $('#incPct').textContent=(drP(DR.dose)*100).toFixed(1)+'%';$('#incLab').textContent='ความน่าจะเป็น (Probability)';
+  }
+  drawDR();
+}
+let popT=null;
+function runPop(){
+  const c=$('#popCanvas'),ctx=c.getContext('2d'),dpr=devicePixelRatio||1;
+  const W=c.clientWidth||640,H=150;
+  c.width=W*dpr;c.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+  const p=DR.mode==='det'?drInc(DR.dose):drP(DR.dose);
+  const N=1000,cols=50;
+  const aff=Array.from({length:N},()=>Math.random()<p);
+  const cnt=aff.filter(Boolean).length,cw=W/cols,rh=H/20;
+  let i=0;clearInterval(popT);
+  popT=setInterval(()=>{
+    for(let k=0;k<25&&i<N;k++,i++){
+      const x=(i%cols)*cw+cw/2,y=Math.floor(i/cols)*rh+rh/2;
+      ctx.beginPath();ctx.arc(x,y,Math.min(cw,rh)*.3,0,7);
+      ctx.fillStyle=aff[i]?'#fb7185':'#28375c';ctx.fill();
+    }
+    if(i>=N){
+      clearInterval(popT);
+      let msg=`พบผู้ได้รับผล <b style="color:#fb7185">${cnt}</b> / 1,000 คน (${(cnt/10).toFixed(1)}%) — กดซ้ำได้ ผลจะเปลี่ยนทุกครั้ง = ธรรมชาติของความน่าจะเป็น`;
+      if(DR.mode==='det'&&DR.dose<=DR.thr)msg='ต่ำกว่า threshold → แทบไม่มีใครเกิดผลเลย (กดปรับโดสข้ามเส้น Threshold ดูนะ!)';
+      $('#popInfo').innerHTML=msg;
+    }
+  },14);
+}
+$$('#drMode button').forEach(b=>b.onclick=()=>{$$('#drMode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');DR.mode=b.dataset.m;updDR();clearPop();});
+$('#drDose').oninput=()=>{updDR();clearPop();};
+$('#drThr').oninput=()=>{updDR();clearPop();};
+$('#popBtn').onclick=runPop;
+function clearPop(){const c=$('#popCanvas'),ctx=c.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,c.width,c.height);$('#popInfo').textContent='กดปุ่มเพื่อสุ่มจำลองว่าใน 1,000 คน ใครจะได้รับผลบ้าง';}
+addEventListener('resize',()=>{drawDR();});
+
+/* ================= SIM 2: Gonad sensitivity ================= */
+const GON={
+ lethal:{hint:'โหมด ☠️ Lethal — เซลล์ขั้นไหนถูกฆ่า/ทำให้เป็นหมันง่ายที่สุด',
+   male:[['Spermatogonia',100],['Spermatocyte',35],['Spermatid',22],['Sperm',12]],
+   female:[['Nearly mature follicle',90],['Immature follicle',40]],
+   note:'♂ <b>Spermatogonia</b> (แบ่งตัวตลอดชีวิต) ไวที่สุด → เป็นหมันชั่วคราวได้ที่ 0.15 Sv • ♀ ฟอลลิเคิลใกล้สุกถูกฆ่าง่ายกว่าฟอลลิเคิลอ่อน'},
+ muta:{hint:'โหมด 🧬 Mutagenic — เซลล์ขั้นไหนมีโอกาสพามิวเทชันไปปฏิสนธิได้มากที่สุด',
+   male:[['Spermatogonia',12],['Spermatocyte',45],['Spermatid',62],['Sperm',85]],
+   female:[['Nearly mature / Mature',85],['Immature follicle',35]],
+   note:'กลับข้างกับ lethal! ♂ เซลล์ระยะท้าย (spermatocyte/spermatid/sperm) พกมิวเทชันไปได้มากกว่า เพราะ spermatogonia ที่เสียหายหนักมักตายไปก่อนจะโตทัน • ♀ ฟอลลิเคิลใกล้สุก/สุกแล้วไวที่สุด'}
+};
+const gonLab=v=>v>=80?'สูงมาก':v>=50?'สูง':v>=30?'ปานกลาง':'ต่ำ';
+function renderGon(mode){
+  const D=GON[mode];$('#gonHint').textContent=D.hint;
+  const mk=(arr,col)=>arr.map(([n,v])=>`<div class="bar-row"><span>${n}</span><div class="bar-track"><div class="bar-fill" data-w="${v}" style="background:linear-gradient(90deg,${col[0]},${col[1]})"></div></div><span class="bar-val">${gonLab(v)}</span></div>`).join('');
+  $('#gonMale').innerHTML=mk(D.male,['#60a5fa','#2dd4bf']);
+  $('#gonFemale').innerHTML=mk(D.female,['#f472b6','#fb7185']);
+  $('#gonNote').innerHTML='💡 '+D.note;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>$$('#gonMale .bar-fill,#gonFemale .bar-fill').forEach(b=>b.style.width=b.dataset.w+'%')));
+}
+$$('#gonMode button').forEach(b=>b.onclick=()=>{$$('#gonMode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderGon(b.dataset.m);});
+
+/* ================= SIM 3: Punnett ================= */
+const PX={
+ 'Aa×Aa':{g1:['A','a'],g2:['A','a'],desc:'พาหะทั้งคู่ — โอกาสลูก "แสดงอาการ" 25% (นี่คือเหตุผลที่มิวเทชันด้อยจากรังสีมักโผล่ช้าหลายรุ่น)'},
+ 'AA×Aa':{g1:['A','A'],g2:['A','a'],desc:'ฝ่ายหนึ่งเป็นพาหะ — ลูกไม่มีอาการเลย แต่ 50% เป็นพาหะแฝง'},
+ 'aa×AA':{g1:['a','a'],g2:['A','A'],desc:'ผู้มีอาการ × ปกติ — ลูก 100% เป็นพาหะ แต่ไม่มีใครแสดงอาการ → มิวเทชัน "ซ่อน" ข้ามรุ่นได้'},
+ 'aa×Aa':{g1:['a','a'],g2:['A','a'],desc:'ผู้มีอาการ × พาหะ — ลูกแสดงอาการถึง 50%'}
+};
+const punSel=$('#punSel');
+Object.keys(PX).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k+' — '+PX[k].desc.split('—')[0].trim();punSel.appendChild(o);});
+function pheno(g){return g==='aa'?['มีอาการ (Affected)','rgba(239,68,68,.2)','#fb7185']:g==='Aa'?['พาหะ (Carrier)','rgba(251,191,36,.18)','#fbbf24']:['ปกติ (Normal)','rgba(52,211,153,.18)','#34d399'];}
+function drawPun(){
+  const P=PX[punSel.value],el=$('#punSquare');
+  let h='<div></div>'+P.g1.map(g=>`<div class="gh">${g}</div>`).join('');
+  P.g2.forEach(g2=>{h+=`<div class="gh">${g2}</div>`;P.g1.forEach(g1=>{const kid=[g1,g2].sort((a,b)=>a<b?-1:a>b?1:0).reverse().join('').split('').sort().join('');
+    const g=kid==='aa'?'aa':(kid==='AA'?'AA':'Aa');h+=`<div class="g${g}">${g}</div>`;});});
+  el.innerHTML=h;
+  $('#punInfo').textContent='💡 '+PX[punSel.value].desc;
+  $('#punKids').innerHTML='';
+}
+punSel.onchange=drawPun;
+$('#punGo').onclick=()=>{
+  const P=PX[punSel.value],box=$('#punKids');box.innerHTML='';let aff=0,car=0;
+  for(let i=0;i<4;i++){
+    const a=P.g1[Math.floor(Math.random()*2)],b=P.g2[Math.floor(Math.random()*2)];
+    const g=[a,b].sort().join('')==='aa'?'aa':(a+b==='AA'?'AA':'Aa');
+    const [lab,bg,col]=pheno(g);if(g==='aa')aff++;if(g==='Aa')car++;
+    box.insertAdjacentHTML('beforeend',`<div class="kid"><div class="g" style="color:${col}">${g}</div><span class="p" style="background:${bg};color:${col}">${lab}</span></div>`);
+  }
+  $('#punInfo').innerHTML=`สุ่มลูก 4 คน → <b style="color:#fb7185">แสดงอาการ ${aff}</b> คน • <b style="color:#fbbf24">พาหะ ${car}</b> คน — กดซ้ำเรื่อย ๆ จะเห็นสัดส่วนเข้าใกล้ความน่าจะเป็นทางทฤษฎี • ${PX[punSel.value].desc}`;
+};
+drawPun();
+
+/* ================= SIM 4: Pregnancy ================= */
+const PREG={day:40,dose:50};
+const STG=[
+ {n:'Pre-implantation',t:'ปฏิสนธิ–วันที่ 7',c:'#60a5fa',eff:'All or None — ตัวอ่อนตายทั้งหมด หรือรอดแล้วพัฒนาต่อได้เกือบปกติ (เซลล์ยังไม่จำเพาะ)',thr:100,thrT:'≈ 100 mGy'},
+ {n:'Implantation',t:'วันที่ 8–14 (สัปดาห์ที่ 2)',c:'#a78bfa',eff:'ฝังตัวเข้าเยื่อบุมดลูก — ทนต่อการตายก่อนเกิดมากขึ้น ไวต่อความพิการน้อยลง',thr:175,thrT:'100–250 mGy'},
+ {n:'Organogenesis',t:'วันที่ 15–56 (สัปดาห์ที่ 2–8)',c:'#fb7185',eff:'อวัยวะทุกส่วนกำลังก่อตัว = ช่วงวิกฤตของความพิการเชิงโครงสร้าง (Congenital malformation)',thr:250,thrT:'≈ 250 mGy'},
+ {n:'Fetal stage',t:'สัปดาห์ที่ 8–คลอด',c:'#fbbf24',eff:'อวัยวะเจริญและปรับการทำงาน — เป้าหมายหลักคือสมอง + ความเสี่ยงมะเร็งภายหลังคลอด',thr:160,thrT:'MR 120–200 mGy'}
+];
+const stageOf=d=>d<=7?0:d<=14?1:d<=56?2:3;
+const fmtGA=d=>`${Math.floor(d/7)} สัปดาห์ ${d%7} วัน (${d} วันหลังปฏิสนธิ)`;
+const SCALE=[[0,.2],[2,.24],[4,.28],[6,.31],[14,.33],[28,.43],[56,.58],[84,.68],[112,.76],[168,.86],[224,.93],[280,1]];
+function scaleAt(d){for(let i=1;i<SCALE.length;i++){if(d<=SCALE[i][0]){const [d0,s0]=SCALE[i-1],[d1,s1]=SCALE[i];return s0+(s1-s0)*(d-d0)/(d1-d0);}}return 1;}
+const SIZE=[[4,'~2–4 มม. (เมล็ดงา)'],[8,'~1.6 ซม. (ผลราสเบอร์รี่)'],[12,'~6 ซม. (ผลมะนาว)'],[16,'~12 ซม. (ผลอะโวคาโด)'],[20,'~16 ซม. (กล้วย 1 ลูก)'],[24,'~21 ซม.'],[28,'~25 ซม. (มะเขือม่วง)'],[32,'~29 ซม.'],[36,'~33 ซม. (ผักกาดหอม 1 หัว)'],[40,'~36 ซม. CRL (ฟักทองลูกเล็ก)']];
+function sizeAt(d){const w=d/7;let s='–';for(const [wk,tx] of SIZE){if(w>=wk)s=tx;}return 'ขนาดโดยประมาณ: '+s;}
+function embAt(d){
+  const ids=['eZyg','eC2','eC4','eMor','eBla','eImp','eEmb','eFet'];
+  let id;
+  if(d<=0.5)id='eZyg';else if(d<=1.5)id='eC2';else if(d<=2.5)id='eC4';else if(d<=4.5)id='eMor';
+  else if(d<=6.5)id='eBla';else if(d<=14)id='eImp';else if(d<=56)id='eEmb';else id='eFet';
+  ids.forEach(i=>$('#'+i).style.display=i===id?'block':'none');
+  $('#embWrap').setAttribute('transform',`translate(110 110) scale(${scaleAt(d).toFixed(3)}) translate(-110 -110)`);
+}
+function fetalNote(d){const w=d/7;
+ if(w<16)return'🧠 ช่วงไวต่อสมองที่สุด: 8–15 สัปดาห์ → Mental retardation (threshold 0.12–0.2 Gy • เป้า = neurons • การสร้างเปลือกสมองและการย้ายที่ของเซลล์ถูกรบกวน)';
+ if(w<=25)return'🧠 Microcephaly เป็นความเสี่ยงเด่น (ตารางหลัก: 0.6–0.7 Sv ช่วง 16–25 สัปดาห์) • หลังสัปดาห์ที่ 25 โอกาสปัญหาสมองลดลง ~4 เท่า';
+ return'⚠️ ความเสี่ยงหลัก: ความผิดปกติด้านการทำงาน + มะเร็งภายหลังคลอด (stochastic ไม่มี threshold)';}
+function updPreg(){
+  const {day,dose}=PREG,si=stageOf(day),S=STG[si];
+  $('#gaOut').textContent=fmtGA(day);
+  $('#fdOut').textContent=dose+' mGy (≈ '+dose+' mSv สำหรับรังสีเอกซ์)';
+  $('#tlMarker').style.left=(day/280*100)+'%';
+  $('#dmP').style.left=(dose/300*100)+'%';
+  const b=$('#stBadge');b.textContent=S.n+' • '+S.t;b.style.color=S.c;b.style.borderColor=S.c;
+  $('#embSize').textContent=sizeAt(day);
+  embAt(day);
+  $('#kAdd').textContent=(dose/10*0.3).toFixed(2)+'%';
+  const tot=dose/10*0.3;$('#kTot').textContent=(4+tot).toFixed(1)+'–'+(6+tot).toFixed(1)+'%';
+  $('#kThr').textContent=S.thrT;
+  const sub=si===3?'<br><small>'+fetalNote(day)+'</small>':'';
+  const V=$('#verdict');let lv,msg;
+  const inSensitive=day>=10&&day<=26*7;
+  if(dose>=S.thr&&si<3){lv='danger';msg=`⛔ โดส ${dose} mGy ≥ threshold (${S.thrT}) ของระยะ ${S.n} → ความเสี่ยงสูงต่อผลแบบ deterministic (${S.eff.split('—')[0].trim()})`;}
+  else if(si===3&&dose>=120&&day/7<=25){lv='danger';msg=`⛔ โดส ${dose} mGy เข้าใกล้/เกิน threshold ของผลกระทบต่อสมองในช่วงสัปดาห์นี้ → ความเสี่ยงสูง`; }
+  else if(dose>=150){lv='danger';msg='⛔ เกิน 150 mGy — ความเสี่ยงมีนัยสำคัญ (significant risk) ตามเกณฑ์ในบทเรียน';}
+  else if(dose>=100&&inSensitive){lv='warn';msg=`⚠️ แตะ/เกิน 100 mGy ในช่วงสัปดาห์ที่ไว (10 วัน–26 สัปดาห์) — จุดที่บทเรียนระบุเป็น cutoff ต้องปรึกษาแพทย์อย่างใกล้ชิด`;}
+  else if(dose>=50){lv='caution';msg=`🟡 โดส ${dose} mGy ยังต่ำกว่า threshold ของระยะนี้ แต่สูงกว่าระดับ "negligible" → ควรบันทึกโดสและหลีกเลี่ยงการฉายซ้ำ`;}
+  else{lv='safe';msg=`🟢 โดส ${dose} mGy ต่ำกว่า 50 mGy → ความเสี่ยงเล็กน้อยมาก (negligible risk) ตามเกณฑ์บทเรียน • เทียบกับความเสี่ยงธรรมชาติ 4–6% ส่วนเพิ่มจากรังสี ≈ ${tot.toFixed(2)}%`;}
+  V.className='verdict '+lv;
+  V.innerHTML=`<b style="color:${lv==='safe'?'#34d399':lv==='caution'?'#fbbf24':lv==='warn'?'#f97316':'#f87171'}">${lv==='safe'?'ปลอดภัย (ความเสี่ยงต่ำมาก)':lv==='caution'?'เฝ้าระวัง':lv==='warn'?'ต้องปรึกษาแพทย์':'ความเสี่ยงสูง'}</b><span>${msg}${sub}</span><br><small style="color:var(--mut)">ผลโดยละเอียดของระยะนี้: ${S.eff}</small>`;
+}
+$('#gaDay').oninput=e=>{PREG.day=+e.target.value;updPreg();};
+$('#fdose').oninput=e=>{PREG.dose=+e.target.value;updPreg();};
+$$('.quick button').forEach(b=>b.onclick=()=>{$('#fdose').value=b.dataset.d;PREG.dose=+b.dataset.d;updPreg();});
+
+/* ================= Tools: Converter ================= */
+const U={Gy:1000,mGy:1,'μGy':.001,Sv:1000,mSv:1,rad:10,mrad:.1,rem:10,mrem:.01};
+const cvSel=$('#cvUnit');Object.keys(U).forEach(u=>{const o=document.createElement('option');o.textContent=u;cvSel.appendChild(o);});
+function conv(){
+  const v=parseFloat($('#cvVal').value)||0,mGy=v*U[cvSel.value];
+  $('#cvOut').innerHTML=Object.keys(U).filter(u=>u!==cvSel.value).map(u=>`<div class="k"><b>${(mGy/U[u]).toLocaleString(undefined,{maximumFractionDigits:4})}</b><span>${u}</span></div>`).join('');
+}
+$('#cvVal').oninput=conv;cvSel.onchange=conv;conv();
+
+/* ================= Tools: Dose chart ================= */
+const DOSES=[['เอกซเรย์ฟัน (Dental X-ray)',0.005,'≈ พื้นหลัง 1 วัน'],['เอกซเรย์ปอด (Chest X-ray)',0.1,'≈ 10 วัน'],['แมมโมแกรม (Mammography)',0.21,'≈ 26 วัน'],['เอกซเรย์ท้อง (Abdominal X-ray)',0.7,'≈ 3 เดือน'],['CT ท้อง+เชิงกราน (เฟสเดียว)',7.7,'≈ 2.6 ปี'],['CT ท้อง+เชิงกราน (2 เฟส)',15.4,'≈ 5.1 ปี'],['PET/CT ทั้งตัว',22.7,'≈ 7.6 ปี']];
+const dmin=.005,dmax=22.7;
+$('#doseChart').innerHTML=DOSES.map(([n,v,eq])=>{
+ const w=(Math.log(v)-Math.log(dmin))/(Math.log(dmax)-Math.log(dmin))*100;
+ return`<div class="dosebar"><div class="db-top"><span>${n}</span><span style="color:var(--amber)">${v} mSv <small style="color:var(--mut)">(${eq})</small></span></div><div class="db-track"><div class="db-fill" data-w="${w.toFixed(1)}"></div></div></div>`;
+}).join('')+`<div class="dosebar"><div class="db-top"><span>🌍 รังสีธรรมชาติเฉลี่ยต่อปี (อ้างอิง)</span><span style="color:var(--teal)">~3.1 mSv</span></div><div class="db-track"><div class="db-fill" data-w="${((Math.log(3.1)-Math.log(dmin))/(Math.log(dmax)-Math.log(dmin))*100).toFixed(1)}" style="background:linear-gradient(90deg,#34d399,#2dd4bf)"></div></div></div>`;
+new IntersectionObserver((es,ob)=>{es.forEach(e=>{if(e.isIntersecting){$$('#doseChart .db-fill').forEach(f=>f.style.width=f.dataset.w+'%');ob.disconnect();}});},{threshold:.3}).observe($('#doseChart'));
+
+/* ================= Quiz ================= */
+const QUIZ=[
+ {q:'ข้อใดคือลักษณะสำคัญของ Stochastic effect?',c:['มี threshold dose แน่นอน','ความรุนแรงเพิ่มตามปริมาณโดส','ไม่มี threshold — โอกาสเกิดเพิ่มตามโดส แต่ความรุนแรงไม่ขึ้นกับโดส','เกิดเฉพาะเมื่อรับโดสสูงมากเท่านั้น'],a:2,x:'Stochastic = ผลสุ่ม (มะเร็ง/ผลทางพันธุกรรม) ความน่าจะเป็นแปรผันกับโดส แต่เป็นแล้วก็คือเป็น — ความรุนแรงไม่เกี่ยวกับโดส'},
+ {q:'ข้อใดเป็น Deterministic effect?',c:['ลูคีเมีย','ต้อกระจก (Cataract)','ผลทางพันธุกรรม (Hereditary)','มะเร็งทุกชนิด'],a:1,x:'ต้อกระจกมี threshold (0.5–2 Gy) และอุบัติการณ์/ความรุนแรงเพิ่มตามโดส ส่วนมะเร็งและผลทางพันธุกรรมเป็น stochastic'},
+ {q:'การเปรียบเทียบข้อใดถูกต้อง?',c:['ทั้ง Hereditary และ Teratogenic ฉายที่มดลูก','Hereditary เกิดที่โกนาด (ก่อนตั้งครรภ์) ส่วน Teratogenic เกิดที่มดลูก (ขณะตั้งครรภ์)','ทั้งสองอย่างไม่มี threshold','Hereditary เป็น deterministic effect'],a:1,x:'Hereditary = gonads ♂♀ ก่อนปฏิสนธิ (stochastic) • Teratogenic = มดลูก/ตัวอ่อนระหว่างตั้งครรภ์'},
+ {q:'ข้อใดถูกต้องเกี่ยวกับมิวเทชันจากรังสี?',c:['รังสีสร้างมิวเทชันชนิดใหม่ที่ไม่เคยมีในธรรมชาติ','รังสีเพิ่มอัตราการเกิดมิวเทชันตามธรรมชาติที่มีอยู่แล้ว','มิวเทชันจากรังสีส่วนใหญ่เป็นยีนเด่น','ยีนไวต่อมิวเทชันจากรังสีอย่างมาก'],a:1,x:'จำ 4 ข้อ: ไม่สร้างชนิดใหม่ / เพิ่มอัตรา spontaneous / ส่วนใหญ่ recessive / ไม่ค่อยไว (doubling dose ~1 Sv)'},
+ {q:'ค่า Doubling dose โดยประมาณคือเท่าใด?',c:['0.1 Sv','~1 Sv (ข้อมูลฮิโรชิมะเฉลี่ย 156 rem)','5 Sv','10 Sv'],a:1,x:'Doubling dose = โดสที่ทำให้มิวเทชันเป็น 2 เท่าของอัตราธรรมชาติ ≈ 156 rem = 1.56 Sv'},
+ {q:'Threshold ของภาวะเป็นหมันชั่วคราวในเพศชายคือ?',c:['0.15 Sv','0.5 Sv','2.5 Sv','6 Sv'],a:0,x:'อัณฑะ: ชั่วคราว 0.15 Sv / ถาวร 3.5–6 Sv • รังไข่: ถาวร 2.5–6 Sv'},
+ {q:'ตัวอ่อนระยะ 0–7 วัน (pre-implantation) ที่ได้รับรังสี จะมีผลแบบใด?',c:['พิการเชิงโครงสร้างทันที','ปัญญาอ่อน','All or None — ตายทั้งตัวอ่อน หรือรอดแล้วพัฒนาต่อได้เกือบปกติ','ศีรษะเล็ก'],a:2,x:'เซลล์ยังไม่จำเพาะอวัยวะ ถ้าเสียหายมากก็ตาย (prenatal death) ถ้ารอดก็ชดเชยได้ — threshold ~0.1 Sv'},
+ {q:'ช่วงอายุครรภ์ที่ไวต่อความพิการเชิงโครงสร้าง (malformation) มากที่สุดคือ?',c:['0–1 สัปดาห์','สัปดาห์ที่ 2–8 (organogenesis)','สัปดาห์ที่ 8–15','ไตรมาสที่ 3'],a:1,x:'Organogenesis = ช่วงอวัยวะกำลังก่อตัว ไวที่สุดต่อความพิการ (threshold ~0.25 Sv)'},
+ {q:'ภาวะปัญญาอ่อน (mental retardation) จากรังสี ไวสุดช่วงใด และเซลล์เป้าหมายคืออะไร?',c:['ก่อน 8 สัปดาห์ — เซลล์เกลีย','สัปดาห์ที่ 8–15 — นิวรอน (neurons)','สัปดาห์ที่ 16–25 — เซลล์เกลีย','หลัง 25 สัปดาห์ — เซลล์กล้ามเนื้อ'],a:1,x:'MR ไวสุด 8–15 สัปดาห์ (ขยายถึง 25) • เป้า = neurons • กระทบการสร้างเปลือกสมองและการย้ายที่ของเซลล์ • threshold 0.12–0.2 Gy'},
+ {q:'เซลล์เป้าหมายของภาวะศีรษะเล็ก (microcephaly) ตามบทเรียนคือ?',c:['นิวรอน','เซลล์เกลีย (glial cell)','เซลล์เม็ดเลือด','เซลล์เลนส์ตา'],a:1,x:'Microcephaly ไวช่วงก่อน 8 สัปดาห์ • เป้า = glial cell • threshold 0.1–0.19 Gy (แยกกับปัญญาอ่อนที่เป้าเป็น neurons)'},
+ {q:'เกณฑ์ NCRP สำหรับปริมาณรังสีรวมที่ตัวอ่อน/ทารกได้รับตลอดการตั้งครรภ์คือ?',c:['≤ 50 mRem','≤ 500 mRem (5 mSv)','≤ 5 rem','≤ 50 mSv'],a:1,x:'ทั้งครรภ์ ≤ 500 mRem และแต่ละเดือน ≤ 50 mRem (0.5 mSv)'},
+ {q:'ต้อกระจกจากรังสีมีลักษณะเด่นอย่างไร?',c:['มักเป็น nuclear sclerosis ค่อยเป็นค่อยไปเหมือนผู้สูงอายุ','มักเป็น posterior subcapsular (PSC) และลุกลามเร็วกว่า','ไม่มี threshold dose','รักษาให้หายได้ด้วยยาหยอดตา'],a:1,x:'Radiation-induced cataract → PSC ด้านหลังเลนส์ เกิดเร็ว/ลุกลามเร็วกว่าต้อจากวัย • threshold 0.5–2 Gy • รักษาโดยผ่าตัดเปลี่ยนเลนส์'},
+ {q:'แหล่งรังสีที่ทำให้เกิด GSD สูงที่สุดในตารางคือ?',c:['เอกซเรย์ทางการแพทย์','โรงไฟฟ้านิวเคลียร์','เรดอน (Radon) ~200 mRem/ปี','รังสีคอสมิก'],a:2,x:'เรดอนครองส่วนใหญ่ของ GSD ธรรมชาติ (200 mRem/yr) ส่วนฝั่งมนุษย์คือ medical & dental X-rays (90 mRem/yr)'}
+];
+let qi=0,qs=0;
+function renderQ(){
+  const box=$('#quizBox');
+  if(qi>=QUIZ.length){
+    const pct=Math.round(qs/QUIZ.length*100);
+    const msg=pct>=85?'🏆 สุดยอด! พร้อมเข้าห้องสอบแล้ว':pct>=60?'👍 เกือบพร้อมแล้ว ทบทวนจุดที่พลาดอีกนิด':'📖 กลับอ่านสรุปด้านบนแล้วลองใหม่นะ อย่าเพิ่งท้อ!';
+    box.innerHTML=`<div style="text-align:center;padding:20px 0"><div class="score-big">${qs} / ${QUIZ.length}</div><p style="font-size:18px;margin:10px 0">${msg}</p><button class="btn" onclick="qi=0;qs=0;renderQ()">🔄 ทำใหม่อีกครั้ง</button></div>`;
+    return;
+  }
+  const Q=QUIZ[qi];
+  box.innerHTML=`<div class="qtop"><span>ข้อ ${qi+1} / ${QUIZ.length}</span><span>คะแนน: ${qs}</span></div>
+   <div class="qq">${Q.q}</div>
+   ${Q.c.map((c,i)=>`<button class="opt" data-i="${i}">${String.fromCharCode(97+i)}. ${c}</button>`).join('')}
+   <div class="qexp" id="qexp"></div>
+   <button class="btn" id="qnext" style="display:none">${qi===QUIZ.length-1?'ดูคะแนนรวม 🏁':'ข้อถัดไป →'}</button>`;
+  $$('#quizBox .opt').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;$$('#quizBox .opt').forEach(o=>o.disabled=true);
+    if(i===Q.a){b.classList.add('ok');qs++;}else{b.classList.add('no');$$('#quizBox .opt')[Q.a].classList.add('ok');}
+    const ex=$('#qexp');ex.style.display='block';
+    ex.innerHTML=(i===Q.a?'✅ <b>ถูกต้อง!</b> ':'❌ <b>ยังไม่ถูก</b> — เฉลยข้อ '+String.fromCharCode(97+Q.a)+' ')+'<br>'+Q.x;
+    $('#qnext').style.display='inline-block';
+  });
+  $('#qnext').onclick=()=>{qi++;renderQ();};
+}
+renderQ();
+
+/* init */
+updDR();drawDR();renderGon('lethal');updPreg();
+
+function applyUrlHash() {
+  const hash = window.location.hash.replace('#', '').toLowerCase();
+  if (!hash) return;
+  const target = document.getElementById(hash);
+  if (target) {
+    setTimeout(() => {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
+  }
+}
+window.addEventListener('hashchange', applyUrlHash);
+window.addEventListener('DOMContentLoaded', applyUrlHash);
+setTimeout(applyUrlHash, 300);
+</script>
+</body>
+</html>
